@@ -104,22 +104,6 @@
             gap: 6px;
         }
 
-        .btn-share-top {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(6, 43, 26, 0.6));
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            color: var(--gold-accent);
-            padding: 7px 11px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-        }
-        .btn-share-top:active { transform: scale(0.95); }
-
         .btn-room-badge {
             background: linear-gradient(135deg, rgba(46, 213, 115, 0.2), rgba(6, 43, 26, 0.7));
             border: 1px solid rgba(46, 213, 115, 0.45);
@@ -1064,10 +1048,6 @@
             <button class="btn-lang active" onclick="setLanguage('ru')">RU</button>
         </div>
         <div class="top-actions">
-            <button class="btn-share-top" id="btnShareAppTop" title="Поделиться">
-                <span>📤</span>
-                <span id="txtShareTopBtn">ПОДЕЛИТЬСЯ</span>
-            </button>
             <button class="btn-icon-top" id="btnTestAudio" title="Test Sound">🔔</button>
             <button class="btn-room-badge" id="btnOpenRoom">
                 <span class="network-indicator" id="netIndicator"></span>
@@ -1211,9 +1191,14 @@
                         <input type="file" id="inpQrGallery" accept="image/*" style="display: none;">
                     </label>
                 </div>
-                <button class="btn-primary" id="btnShareModalAction" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(46, 213, 115, 0.5)); border: 1px solid var(--gold-accent); color: #fff; padding: 11px;">
-                    📤 <span id="txtShareModalBtn">ОТПРАВИТЬ ССЫЛКУ И APK ДРУГУ</span>
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
+                    <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(46, 213, 115, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #7bed9f; padding: 11px;">
+                        🔗 <span id="txtShareRoomBtn">ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)</span>
+                    </button>
+                    <button class="btn-primary" id="btnShareApkLink" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(80, 60, 10, 0.5)); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 11px;">
+                        📲 <span id="txtShareApkBtn">ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)</span>
+                    </button>
+                </div>
             </div>
 
             <div class="m-label" id="lblCreateRoomHeader">ПАРАМЕТРЫ НОВОЙ ГРУППЫ</div>
@@ -1317,13 +1302,14 @@ const DICTIONARY = {
         tabRooms: 'КАТАЛОГ ГРУПП',
         tabCreate: '+ СОЗДАТЬ / QR',
         tabProfile: 'ПРОФИЛЬ',
-        shareBtn: 'ПОДЕЛИТЬСЯ',
-        shareModalBtn: 'ОТПРАВИТЬ ССЫЛКУ И APK ДРУГУ',
-        shareTitle: 'Fajr Awake — Приложение для совместного пробуждения на намаз',
-        shareText: 'Ассаляму алейкум! Подключайся к нашей группе в Fajr Awake для совместного пробуждения на Фаджр.',
-        shareDownloadApkText: 'Скачать Android-приложение (прямая ссылка на APK):',
-        shareWebText: 'Или открыть в браузере / подключиться к комнате:',
-        toastShareCopied: 'Ссылка для скачивания и входа скопирована в буфер!',
+        shareRoomBtn: 'ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)',
+        shareApkBtn: 'ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)',
+        shareRoomTitle: 'Приглашение в группу Fajr Awake',
+        shareRoomText: 'Подключайся к нашей группе для совместного пробуждения на Фаджр:',
+        shareApkTitle: 'Скачать приложение Fajr Awake',
+        shareApkText: 'Скачай Android-приложение Fajr Awake (прямая ссылка на APK):',
+        toastRoomCopied: 'Ссылка на комнату скопирована!',
+        toastApkCopied: 'Ссылка на скачивание APK скопирована!',
         savedRoomsHeader: 'ДОСТУПНЫЕ СЕРВЕРЫ',
         searchRoomsPlaceholder: 'Поиск группы по названию...',
         profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
@@ -1400,13 +1386,14 @@ const DICTIONARY = {
         tabRooms: 'دليل المجموعات',
         tabCreate: '+ إنشاء / QR',
         tabProfile: 'الملف الشخصي',
-        shareBtn: 'مشاركة',
-        shareModalBtn: 'إرسال الرابط وملف APK',
-        shareTitle: 'تطبيق إيقاظ الفجر — شبكة الاستيقاظ لصلاة الفجر',
-        shareText: 'السلام عليكم! انضم إلى مجموعتنا في تطبيق Fajr Awake للاستيقاظ على صلاة الفجر معاً.',
-        shareDownloadApkText: 'تحميل تطبيق أندرويد مباشرة (APK):',
-        shareWebText: 'أو فتح الرابط عبر المتصفح:',
-        toastShareCopied: 'تم نسخ رابط التحميل والانضمام!',
+        shareRoomBtn: 'مشاركة هذه الغرفة (QR)',
+        shareApkBtn: 'إرسال رابط التطبيق (APK)',
+        shareRoomTitle: 'دعوة للانضمام إلى مجموعة Fajr Awake',
+        shareRoomText: 'انضم إلى مجموعتنا للاستيقاظ على صلاة الفجر معاً:',
+        shareApkTitle: 'تحميل تطبيق Fajr Awake',
+        shareApkText: 'حمّل تطبيق أندرويد مباشرة (رابط APK):',
+        toastRoomCopied: 'تم نسخ رابط الغرفة!',
+        toastApkCopied: 'تم نسخ رابط تحميل التطبيق!',
         savedRoomsHeader: 'السيرفرات المتاحة',
         searchRoomsPlaceholder: 'بحث عن مجموعة بالاسم...',
         profileHeader: 'الملف الشخصي والموقع الجغرافي',
@@ -1483,13 +1470,14 @@ const DICTIONARY = {
         tabRooms: 'GRUP KATALOĞU',
         tabCreate: '+ OLUŞTUR / QR',
         tabProfile: 'PROFİL',
-        shareBtn: 'PAYLAŞ',
-        shareModalBtn: 'BAĞLANTIYI VE APK’YI GÖNDER',
-        shareTitle: 'Fajr Awake — Sabah Namazına Birlikte Uyanma Uygulaması',
-        shareText: 'Selamün aleyküm! Sabah namazına birlikte uyanmak için Fajr Awake grubumuza katılın.',
-        shareDownloadApkText: 'Android uygulamasını doğrudan indirin (APK):',
-        shareWebText: 'Veya tarayıcıda açın / odaya katılın:',
-        toastShareCopied: 'İndirme ve katılım bağlantısı kopyalandı!',
+        shareRoomBtn: 'BU ODAYI PAYLAŞ (QR)',
+        shareApkBtn: 'UYGULAMA BAĞLANTISINI GÖNDER (APK)',
+        shareRoomTitle: 'Fajr Awake Grup Daveti',
+        shareRoomText: 'Sabah namazına birlikte uyanmak için grubumuza katıl:',
+        shareApkTitle: 'Fajr Awake Uygulamasını İndir',
+        shareApkText: 'Fajr Awake Android uygulamasını doğrudan indir (APK):',
+        toastRoomCopied: 'Oda bağlantısı kopyalandı!',
+        toastApkCopied: 'APK indirme bağlantısı kopyalandı!',
         savedRoomsHeader: 'MEVCUT SUNUCULAR',
         searchRoomsPlaceholder: 'Grup adına göre ara...',
         profileHeader: 'PROFİL VE KONUM',
@@ -1566,13 +1554,14 @@ const DICTIONARY = {
         tabRooms: 'GROUPS DIRECTORY',
         tabCreate: '+ CREATE / QR',
         tabProfile: 'PROFILE',
-        shareBtn: 'SHARE',
-        shareModalBtn: 'SHARE LINK & APK DOWNLOAD',
-        shareTitle: 'Fajr Awake — Global Fajr Awakening Network',
-        shareText: 'Assalamu alaikum! Join our group in Fajr Awake to wake each other up for Fajr prayer.',
-        shareDownloadApkText: 'Download Android app directly (APK):',
-        shareWebText: 'Or open in browser / connect directly:',
-        toastShareCopied: 'Download & group link copied to clipboard!',
+        shareRoomBtn: 'SHARE THIS ROOM (QR)',
+        shareApkBtn: 'SEND APP DOWNLOAD LINK (APK)',
+        shareRoomTitle: 'Fajr Awake Group Invitation',
+        shareRoomText: 'Join our group to wake up for Fajr together:',
+        shareApkTitle: 'Download Fajr Awake App',
+        shareApkText: 'Download Fajr Awake Android App (Direct APK link):',
+        toastRoomCopied: 'Room link copied to clipboard!',
+        toastApkCopied: 'APK link copied to clipboard!',
         savedRoomsHeader: 'AVAILABLE SERVERS',
         searchRoomsPlaceholder: 'Search group by name...',
         profileHeader: 'PROFILE & GEO-LOCATION',
@@ -2470,8 +2459,8 @@ function setLanguage(lang) {
     document.getElementById('txtWakeAll').innerText = dict.wakeAll;
     document.getElementById('txtMembersTitle').innerText = dict.members;
     document.getElementById('txtRoomTtlLabel').innerText = dict.roomTtlLabel;
-    document.getElementById('txtShareTopBtn').innerText = dict.shareBtn;
-    document.getElementById('txtShareModalBtn').innerText = dict.shareModalBtn;
+    document.getElementById('txtShareRoomBtn').innerText = dict.shareRoomBtn;
+    document.getElementById('txtShareApkBtn').innerText = dict.shareApkBtn;
 
     document.getElementById('txtWakeModalTitle').innerText = dict.wakeModalTitle;
     document.getElementById('txtWakeModalDesc').innerText = dict.wakeModalDesc;
@@ -2633,42 +2622,48 @@ document.getElementById('btnWakeAll').addEventListener('click', () => {
 });
 
 /**
- * ФУНКЦИЯ «ПОДЕЛИТЬСЯ ПРОГРАММОЙ И ССЫЛКОЙ НА APK»
+ * РАЗДЕЛЬНЫЕ ФУНКЦИИ ОТПРАВКИ: КОМНАТА / APK
  */
-function shareApplication() {
-    const dict = DICTIONARY[currentLang];
+function getBaseAppUrl() {
     const baseUrl = `${location.origin}${location.pathname}`;
-    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
-    
-    // Прямая ссылка на APK, лежащий рядом с index.html
-    const apkUrl = `${cleanBaseUrl}fajr-awake.apk`;
-    // Ссылка на автоматическое подключение к текущей комнате
+    return baseUrl.endsWith('/') ? baseUrl : baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
+}
+
+function shareRoomLink() {
+    const dict = DICTIONARY[currentLang];
+    const cleanBaseUrl = getBaseAppUrl();
     const webRoomUrl = `${cleanBaseUrl}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
-
-    const fullMessage = 
-`${dict.shareTitle}
-${dict.shareText}
-
-📲 ${dict.shareDownloadApkText}
-${apkUrl}
-
-🌐 ${dict.shareWebText}
-${webRoomUrl}`;
+    const msg = `${dict.shareRoomTitle}\n${dict.shareRoomText}\n${webRoomUrl}`;
 
     if (navigator.share) {
         navigator.share({
-            title: dict.shareTitle,
-            text: fullMessage,
-            url: apkUrl
-        }).catch(() => {
-            copyTextFallback(fullMessage);
-        });
+            title: dict.shareRoomTitle,
+            text: msg,
+            url: webRoomUrl
+        }).catch(() => copyTextFallback(msg, dict.toastRoomCopied));
     } else {
-        copyTextFallback(fullMessage);
+        copyTextFallback(msg, dict.toastRoomCopied);
     }
 }
 
-function copyTextFallback(text) {
+function shareApkLink() {
+    const dict = DICTIONARY[currentLang];
+    const cleanBaseUrl = getBaseAppUrl();
+    const apkUrl = `${cleanBaseUrl}fajr-awake.apk`;
+    const msg = `${dict.shareApkTitle}\n${dict.shareApkText}\n${apkUrl}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: dict.shareApkTitle,
+            text: msg,
+            url: apkUrl
+        }).catch(() => copyTextFallback(msg, dict.toastApkCopied));
+    } else {
+        copyTextFallback(msg, dict.toastApkCopied);
+    }
+}
+
+function copyTextFallback(text, successToast) {
     const el = document.createElement('textarea');
     el.value = text;
     el.setAttribute('readonly', '');
@@ -2678,15 +2673,18 @@ function copyTextFallback(text) {
     el.select();
     try {
         document.execCommand('copy');
-        showToast(DICTIONARY[currentLang].toastShareCopied);
+        showToast(successToast || 'Скопировано в буфер обмена!');
     } catch (err) {
-        prompt('Скопируйте текст приглашения:', text);
+        prompt('Скопируйте текст:', text);
     }
     document.body.removeChild(el);
 }
 
-document.getElementById('btnShareAppTop').addEventListener('click', shareApplication);
-document.getElementById('btnShareModalAction').addEventListener('click', shareApplication);
+const btnShareRoom = document.getElementById('btnShareRoomQr');
+if (btnShareRoom) btnShareRoom.addEventListener('click', shareRoomLink);
+
+const btnShareApk = document.getElementById('btnShareApkLink');
+if (btnShareApk) btnShareApk.addEventListener('click', shareApkLink);
 
 /**
  * 11. QR, GPS И СОХРАНЕНИЯ
@@ -2697,9 +2695,6 @@ function generateQR() {
     if (!wrap) return;
     wrap.innerHTML = '';
     
-    // Умная универсальная ссылка: если сканирует обычная камера телефона,
-    // открывается веб-страница с приглашением в эту группу И сразу баннером скачивания APK!
-    // А если сканирует сканер внутри приложения, он мгновенно парсит room и pass!
     const shareUrl = `${location.origin}${location.pathname}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
     
     try {
@@ -2712,22 +2707,6 @@ function generateQR() {
             correctLevel: QRCode.CorrectLevel.M
         });
     } catch (e) {}
-}
-
-// Безопасное подключение слушателей кнопки «Поделиться»
-const btnShareTop = document.getElementById('btnShareAppTop');
-if (btnShareTop) {
-    btnShareTop.addEventListener('click', shareApplication);
-}
-
-const btnShareModal = document.getElementById('btnShareModalAction');
-if (btnShareModal) {
-    btnShareModal.addEventListener('click', shareApplication);
-}
-
-const btnShareLegacy = document.getElementById('btnShareApp');
-if (btnShareLegacy) {
-    btnShareLegacy.addEventListener('click', shareApplication);
 }
 
 document.getElementById('btnOpenRoom').addEventListener('click', () => {
