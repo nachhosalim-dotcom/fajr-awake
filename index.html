@@ -447,6 +447,35 @@
         }
         .btn-nudge:active { transform: scale(0.92); }
 
+        .btn-kick-ghost {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--text-secondary);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-kick-ghost:hover {
+            background: rgba(231, 29, 54, 0.25);
+            color: #ff6b81;
+            border-color: rgba(231, 29, 54, 0.5);
+        }
+
+        .u-online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .u-online-dot.on { background: #2ed573; box-shadow: 0 0 6px #2ed573; }
+        .u-online-dot.off { background: #747d8c; }
+
         /* Modals Common */
         .modal-overlay {
             position: fixed;
@@ -1069,7 +1098,10 @@
     <div class="members-card">
         <div class="members-head">
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ СЕТИ / КОМНАТЫ</span>
-            <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="purgeGhostAccounts()" style="background: rgba(231,29,54,0.18); border: 1px solid rgba(231,29,54,0.4); color: #ff6b81; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;" title="Очистить старые и фантомные аккаунты">🧹 Очистить фантомов</button>
+                <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
+            </div>
         </div>
         <div class="room-ttl-banner" id="roomTtlBanner">
             <span id="txtRoomTtlLabel">Автоочистка пустых комнат (30 дн.):</span>
@@ -1231,7 +1263,8 @@ const DICTIONARY = {
         changeStatus: 'нажмите чтобы сменить',
         wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
         members: 'УЧАСТНИКИ СЕТИ / КОМНАТЫ',
-        peopleUnit: 'серверов',
+        peopleUnit: 'чел.',
+        roomsUnit: 'групп',
         youBadge: '(Вы)',
         nudgeBtn: 'РАЗБУДИТЬ',
         roomTtlLabel: 'Автоочистка пустых комнат (30 дн.):',
@@ -1304,7 +1337,8 @@ const DICTIONARY = {
         changeStatus: 'اضغط لتغيير الحالة',
         wakeAll: 'إيقاظ جميع النائمين في المجموعة',
         members: 'أعضاء الشبكة / الغرفة',
-        peopleUnit: 'سيرفرات',
+        peopleUnit: 'أشخاص',
+        roomsUnit: 'غرف',
         youBadge: '(أنت)',
         nudgeBtn: 'إيقاظ',
         roomTtlLabel: 'الحذف التلقائي للغرف غير النشطة (30 يوماً):',
@@ -1377,7 +1411,8 @@ const DICTIONARY = {
         changeStatus: 'değiştirmek için dokunun',
         wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
         members: 'AĞ / ODA KATILIMCILARI',
-        peopleUnit: 'sunucu',
+        peopleUnit: 'kişi',
+        roomsUnit: 'grup',
         youBadge: '(Siz)',
         nudgeBtn: 'UYANDIR',
         roomTtlLabel: 'Boş odaların otomatik silinmesi (30 gün):',
@@ -1450,7 +1485,8 @@ const DICTIONARY = {
         changeStatus: 'tap to toggle',
         wakeAll: 'WAKE ALL SLEEPING MEMBERS',
         members: 'NETWORK / ROOM MEMBERS',
-        peopleUnit: 'servers',
+        peopleUnit: 'members',
+        roomsUnit: 'rooms',
         youBadge: '(You)',
         nudgeBtn: 'WAKE UP',
         roomTtlLabel: 'Auto-cleanup of inactive rooms (30d):',
@@ -1529,7 +1565,14 @@ const DEFAULT_ROOM = 'Global-Zone';
 
 let currentLang = localStorage.getItem('fajr_lang') || 'ru';
 let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
-let myName = localStorage.getItem('fajr_user_name') || 'User_' + Math.floor(Math.random() * 899 + 100);
+
+// Убираем авто-генерацию мусорных User_XXX! Регистрация в БД происходит только если имя задано осознанно
+let savedUserName = localStorage.getItem('fajr_user_name') || '';
+if (savedUserName.startsWith('User_')) {
+    savedUserName = '';
+    localStorage.removeItem('fajr_user_name');
+}
+let myName = savedUserName;
 let userPass = localStorage.getItem('fajr_user_pass') || '';
 let currentRoom = localStorage.getItem('fajr_room_name') || DEFAULT_ROOM;
 let roomPass = localStorage.getItem('fajr_room_pass') || '';
@@ -1566,17 +1609,30 @@ async function initSupabase() {
         // 1. Запускаем очистку комнат старше 30 дней на сервере
         await supabaseClient.rpc('cleanup_expired_fajr_rooms').catch(() => {});
 
-        // 2. Гарантируем, что текущая комната существует в БД
+        // 2. Автоматически удаляем из БД старые фантомные записи User_XXX от прошлых тестов
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .like('user_name', 'User_%');
+
+        // 3. Гарантируем, что текущая комната существует в БД
         await ensureRoomExistsInDb(currentRoom, roomPass, false);
 
-        // 3. Загружаем все комнаты с сервера (чтобы все телефоны видели единый список!)
+        // 4. Загружаем все комнаты с сервера
         await fetchAllRoomsFromDb();
 
-        // 4. Регистрируем себя в текущей комнате и загружаем список участников
-        await upsertMyPresenceInDb();
+        // 5. Если у пользователя уже введено настоящее имя — регистрируем его в комнате, иначе открываем профиль для ввода имени
+        if (myName) {
+            await upsertMyPresenceInDb();
+        } else {
+            document.getElementById('roomModal').classList.add('open');
+            switchModalTab('profile');
+            showToast('Введите ваше настоящее имя в профиле для входа в группу');
+        }
+
         await fetchRoomMembersFromDb();
 
-        // 5. Подписываемся на мгновенные события Realtime
+        // 6. Подписываемся на мгновенные события Realtime
         subscribeToSupabaseRealtime();
 
         if (netInd) netInd.classList.add('online');
@@ -1584,6 +1640,39 @@ async function initSupabase() {
         if (netInd) netInd.classList.remove('online');
     }
 }
+
+window.purgeGhostAccounts = async function() {
+    if (!supabaseClient) return;
+    // Удаляем все старые фантомные записи User_XXX и тех, кто не выходил на связь более 12 часов (кроме себя)
+    await supabaseClient
+        .from('fajr_members')
+        .delete()
+        .like('user_name', 'User_%');
+
+    const cutoff = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    await supabaseClient
+        .from('fajr_members')
+        .delete()
+        .eq('room_name', currentRoom)
+        .neq('user_name', myName || '')
+        .lt('last_seen', cutoff);
+
+    await fetchRoomMembersFromDb();
+    showToast('🧹 Все фантомные и неактивные аккаунты очищены!');
+};
+
+window.removeMemberFromRoom = async function(targetUserName) {
+    if (!supabaseClient || !targetUserName) return;
+    await supabaseClient
+        .from('fajr_members')
+        .delete()
+        .eq('room_name', currentRoom)
+        .eq('user_name', targetUserName);
+
+    delete networkUsers[targetUserName];
+    renderMembers();
+    showToast(`Участник ${targetUserName} удален из списка`);
+};
 
 async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
     if (!supabaseClient || !rName) return;
@@ -1665,6 +1754,11 @@ async function fetchRoomMembersFromDb() {
 
 let isSyncingPresence = false;
 async function upsertMyPresenceInDb(extraFields = {}) {
+    if (!myName) {
+        renderUI();
+        return;
+    }
+
     networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
     renderUI();
 
@@ -1870,7 +1964,7 @@ function renderSavedRoomsList() {
     const now = Date.now();
     const keys = Object.keys(roomsCache);
 
-    document.getElementById('lblRoomsTotalCount').innerText = `${keys.length} ${dict.peopleUnit}`;
+    document.getElementById('lblRoomsTotalCount').innerText = `${keys.length} ${dict.roomsUnit || dict.peopleUnit}`;
     const filtered = keys.filter(k => k.toLowerCase().includes(roomSearchFilter.toLowerCase()));
 
     if (filtered.length === 0) {
@@ -2376,6 +2470,7 @@ function renderMembers() {
         const u = networkUsers[username];
         const callInfo = userCallStates[username];
         const row = document.createElement('div');
+        const isOnline = (Date.now() - (u.lastSeen || 0)) < 60000;
 
         let extraRowClass = '';
         let callStatusHtml = '';
@@ -2401,16 +2496,22 @@ function renderMembers() {
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
 
         const actionBtnHtml = (u.name !== myName)
-            ? `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">
-                ${callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing') ? '<span class="ring-icon">🔔</span>' : '🔔'} ${dict.nudgeBtn}
-               </button>`
+            ? `<div style="display:flex; align-items:center; gap:6px;">
+                <button class="btn-nudge" onclick="wakeIndividual('${u.name}')">
+                    ${callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing') ? '<span class="ring-icon">🔔</span>' : '🔔'} ${dict.nudgeBtn}
+                </button>
+                <button class="btn-kick-ghost" title="Удалить из списка" onclick="removeMemberFromRoom('${u.name}')">✕</button>
+               </div>`
             : '';
 
         row.innerHTML = `
             <div class="u-left">
                 <div class="u-avatar">${u.name.substring(0, 1).toUpperCase()}</div>
                 <div>
-                    <div class="u-name">${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}</div>
+                    <div class="u-name">
+                        <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
+                        ${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}
+                    </div>
                     <span class="u-badge ${badgeClass}">${badgeTxt}</span>
                     ${callStatusHtml}
                 </div>
@@ -2591,23 +2692,27 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     const n = document.getElementById('inpMyName').value.trim();
     const up = document.getElementById('inpUserPass').value.trim();
 
-    if (n && n !== oldName) {
-        if (supabaseClient) {
-            await supabaseClient
-                .from('fajr_members')
-                .delete()
-                .eq('room_name', currentRoom)
-                .eq('user_name', oldName);
-        }
-        myName = n;
-        localStorage.setItem('fajr_user_name', n);
+    if (!n) {
+        showToast('Пожалуйста, введите ваше имя!');
+        return;
     }
+
+    if (oldName && n !== oldName && supabaseClient) {
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .eq('room_name', currentRoom)
+            .eq('user_name', oldName);
+    }
+    myName = n;
+    localStorage.setItem('fajr_user_name', n);
     userPass = up;
     localStorage.setItem('fajr_user_pass', up);
 
     await upsertMyPresenceInDb();
     await fetchRoomMembersFromDb();
-    showToast('Профиль успешно сохранен в базе!');
+    document.getElementById('roomModal').classList.remove('open');
+    showToast(`Профиль "${myName}" сохранен!`);
 });
 
 /**
