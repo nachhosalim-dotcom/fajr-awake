@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
         :root {
             --bg-main: #020705;
@@ -346,10 +347,82 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 11px 10px;
+            margin-bottom: 6px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
         }
-        .user-item:last-child { border-bottom: none; }
+        .user-item:last-child { margin-bottom: 0; }
+
+        /* Анимация когда участника прямо сейчас будят */
+        .user-item.ringing {
+            background: linear-gradient(90deg, rgba(231, 29, 54, 0.28), rgba(80, 5, 18, 0.4));
+            border-color: #ff6b81;
+            animation: rowRingPulse 0.9s infinite alternate;
+        }
+
+        /* Анимация когда участник успешно ответил словом */
+        .user-item.replied {
+            background: linear-gradient(90deg, rgba(46, 213, 115, 0.25), rgba(6, 45, 28, 0.4));
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 18px rgba(46, 213, 115, 0.25);
+        }
+
+        @keyframes rowRingPulse {
+            0% { box-shadow: 0 0 6px rgba(231, 29, 54, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 20px rgba(231, 29, 54, 0.75); transform: scale(1.01); }
+        }
+
+        @keyframes bellShake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(16deg); }
+            75% { transform: rotate(-16deg); }
+        }
+
+        .ring-icon {
+            display: inline-block;
+            animation: bellShake 0.4s infinite;
+        }
+
+        .u-call-status {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .u-call-status.calling { color: #ffccd5; }
+        .u-call-status.ack { color: #7bed9f; }
+
+        .sim-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(46, 213, 115, 0.3);
+            padding: 7px 10px;
+            border-radius: 11px;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+
+        .btn-sim-toggle {
+            background: rgba(46, 213, 115, 0.18);
+            border: 1px solid rgba(46, 213, 115, 0.45);
+            color: #7bed9f;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-sim-toggle.active {
+            background: var(--emerald-accent);
+            color: #020705;
+        }
 
         .u-left {
             display: flex;
@@ -786,6 +859,10 @@
             <span id="txtRoomTtlLabel">Автоочистка пустых комнат (30 дн.):</span>
             <b style="color: var(--emerald-accent);" id="lblCurrentRoomTtl">30 дн.</b>
         </div>
+        <div class="sim-bar">
+            <span id="txtSimHint" style="color: var(--text-secondary);">Для проверки анимаций и вызовов:</span>
+            <button class="btn-sim-toggle" id="btnToggleSimBots">👥 + ТЕСТ-ГРУППА</button>
+        </div>
         <div id="usersListContainer"></div>
     </div>
 
@@ -905,6 +982,12 @@ const DICTIONARY = {
         toastGeoFail: 'Не удалось получить доступ к GPS',
         toastWrongWord: 'Неверное слово! Введите точно как на экране.',
         toastAudioReady: 'Звуковой сигнал проверен и активен!',
+        simHint: 'Для проверки вызовов и анимации:',
+        simBtnOff: '👥 + ТЕСТ-ГРУППА',
+        simBtnOn: '✓ ТЕСТ-ГРУППА АКТИВНА',
+        callSending: 'Отправка сигнала...',
+        callRinging: 'Звенит сирена! Ждем слово:',
+        callReplied: 'Проснулся! Ответил:',
         words: ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан']
     },
     ar: {
@@ -952,6 +1035,12 @@ const DICTIONARY = {
         toastGeoFail: 'تعذر الوصول إلى موقع GPS',
         toastWrongWord: 'الكلمة غير صحيحة! اكتبها كما تظهر.',
         toastAudioReady: 'تم فحص الصوت والمنبه جاهز!',
+        simHint: 'لتجربة التنبيهات والحركة:',
+        simBtnOff: '👥 + مجموعة تجريبية',
+        simBtnOn: '✓ المجموعة التجريبية نشطة',
+        callSending: 'جاري إرسال الرنين...',
+        callRinging: 'يرن المنبه الآن! بانتظار الكلمة:',
+        callReplied: 'استيقظ! رد بالكلمة:',
         words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
     },
     tr: {
@@ -999,6 +1088,12 @@ const DICTIONARY = {
         toastGeoFail: 'GPS konumuna erişilemedi',
         toastWrongWord: 'Yanlış kelime! Ekrandaki kelimeyi doğru yazın.',
         toastAudioReady: 'Ses sinyali test edildi ve aktif!',
+        simHint: 'Çağrı ve animasyonları test et:',
+        simBtnOff: '👥 + TEST GRUBU',
+        simBtnOn: '✓ TEST GRUBU AKTİF',
+        callSending: 'Sinyal gönderiliyor...',
+        callRinging: 'Alarm çalıyor! Beklenen kelime:',
+        callReplied: 'Uyandı! Cevabı:',
         words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
     },
     en: {
@@ -1046,6 +1141,12 @@ const DICTIONARY = {
         toastGeoFail: 'Could not access GPS location',
         toastWrongWord: 'Incorrect word! Type the exact word shown.',
         toastAudioReady: 'Alarm sound tested and active!',
+        simHint: 'Test wake animations & replies:',
+        simBtnOff: '👥 + DEMO GROUP',
+        simBtnOn: '✓ DEMO GROUP ACTIVE',
+        callSending: 'Sending signal...',
+        callRinging: 'Siren ringing! Waiting word:',
+        callReplied: 'Woke up! Replied:',
         words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
     }
 };
@@ -1071,6 +1172,8 @@ let audioCtx = null;
 
 let mqttClient = null;
 let isMqttConnected = false;
+let simBotsEnabled = false;
+let userCallStates = {}; // Хранит состояние звонка/ответа для каждого участника: { state: 'calling'|'ringing'|'replied', word: '...', ts: 0 }
 
 /**
  * 2. УПРАВЛЕНИЕ РЕЕСТРОМ КОМНАТ: РУЧНОЕ УДАЛЕНИЕ И АВТООЧИСТКА ЧЕРЕЗ 30 ДНЕЙ
@@ -1392,6 +1495,45 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', () => {
         target: pendingWakeTarget,
         word: wordToSend
     };
+
+    // Отмечаем визуальный статус вызова у участников в списке
+    const targets = pendingWakeTarget === 'ALL'
+        ? Object.keys(networkUsers).filter(u => u !== myName && networkUsers[u].status === 'sleep')
+        : [pendingWakeTarget];
+
+    targets.forEach(tName => {
+        userCallStates[tName] = {
+            state: 'calling',
+            word: wordToSend.toUpperCase(),
+            ts: Date.now()
+        };
+
+        // Если это тестовый бот — симулируем получение вызова и осознанный ответ словом
+        if (networkUsers[tName] && networkUsers[tName].isBot) {
+            setTimeout(() => {
+                if (userCallStates[tName]) {
+                    userCallStates[tName].state = 'ringing';
+                    renderMembers();
+                }
+            }, 600);
+
+            const replyDelay = 3200 + Math.floor(Math.random() * 2500);
+            setTimeout(() => {
+                if (networkUsers[tName]) {
+                    networkUsers[tName].status = 'awake';
+                    userCallStates[tName] = {
+                        state: 'replied',
+                        word: wordToSend.toUpperCase(),
+                        ts: Date.now()
+                    };
+                    showToast(`✓ ${tName} ${DICTIONARY[currentLang].toastReplyReceived} "${wordToSend.toUpperCase()}"`);
+                    renderMembers();
+                }
+            }, replyDelay);
+        }
+    });
+
+    renderMembers();
     sendNetworkMessage(payload);
     touchRoomActivity(currentRoom, roomPass);
     showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend.toUpperCase()}"`);
@@ -1409,6 +1551,14 @@ function triggerAlarm(senderName, incomingWord) {
 
     document.getElementById('alarmOverlay').classList.add('active');
     playAlarmChime();
+
+    // Сообщаем отправителю, что наш телефон реально получил сигнал и сирена зазвенела!
+    sendNetworkMessage({
+        type: 'WAKE_RINGING',
+        sender: myName,
+        initiator: senderName,
+        word: targetCaptchaWord.toUpperCase()
+    });
 }
 
 document.getElementById('btnVerifyAwake').addEventListener('click', verifyCaptchaAndStop);
@@ -1443,12 +1593,52 @@ function verifyCaptchaAndStop() {
 let broadcast = null;
 let networkUsers = {};
 
+function injectSimBotsIfActive() {
+    if (!simBotsEnabled) return;
+    const bots = [
+        { name: 'Ahmad (Idlib)', status: 'sleep', isBot: true },
+        { name: 'Umar (Istanbul)', status: 'sleep', isBot: true },
+        { name: 'Khalid (Mecca)', status: 'done', isBot: true }
+    ];
+    bots.forEach(b => {
+        if (!networkUsers[b.name]) {
+            networkUsers[b.name] = { name: b.name, status: b.status, lastSeen: Date.now(), isBot: true };
+        } else {
+            networkUsers[b.name].lastSeen = Date.now();
+        }
+    });
+}
+
+document.getElementById('btnToggleSimBots').addEventListener('click', () => {
+    simBotsEnabled = !simBotsEnabled;
+    const btn = document.getElementById('btnToggleSimBots');
+    const dict = DICTIONARY[currentLang];
+    if (simBotsEnabled) {
+        btn.classList.add('active');
+        btn.innerText = dict.simBtnOn;
+        injectSimBotsIfActive();
+    } else {
+        btn.classList.remove('active');
+        btn.innerText = dict.simBtnOff;
+        Object.keys(networkUsers).forEach(k => {
+            if (networkUsers[k].isBot) delete networkUsers[k];
+        });
+    }
+    renderMembers();
+});
+
 function handleIncomingMessage(msg) {
     if (!msg || !msg.sender) return;
     touchRoomActivity(currentRoom, roomPass);
 
     if (msg.type === 'HEARTBEAT') {
-        networkUsers[msg.sender] = { name: msg.sender, status: msg.status, lastSeen: Date.now() };
+        const prev = networkUsers[msg.sender];
+        networkUsers[msg.sender] = {
+            name: msg.sender,
+            status: msg.status,
+            lastSeen: Date.now(),
+            isBot: prev ? prev.isBot : false
+        };
         renderMembers();
     } else if (msg.type === 'WAKE_CALL') {
         if (msg.target === 'ALL' || msg.target === myName) {
@@ -1456,7 +1646,25 @@ function handleIncomingMessage(msg) {
                 triggerAlarm(msg.sender, msg.word);
             }
         }
+    } else if (msg.type === 'WAKE_RINGING') {
+        // Устройство получателя подтвердило, что сирена реально включилась
+        userCallStates[msg.sender] = {
+            state: 'ringing',
+            word: msg.word || '',
+            ts: Date.now()
+        };
+        renderMembers();
     } else if (msg.type === 'WAKE_ACK') {
+        // Получатель ввел проверочное слово и проснулся
+        if (networkUsers[msg.sender]) {
+            networkUsers[msg.sender].status = 'awake';
+        }
+        userCallStates[msg.sender] = {
+            state: 'replied',
+            word: msg.word || '',
+            ts: Date.now()
+        };
+        renderMembers();
         showToast(`✓ ${msg.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${msg.word}"`);
     }
 }
@@ -1582,9 +1790,10 @@ function syncUserState() {
 
 setInterval(() => {
     syncUserState();
+    injectSimBotsIfActive();
     const now = Date.now();
     for (let u in networkUsers) {
-        if (u !== myName && now - networkUsers[u].lastSeen > 12000) {
+        if (u !== myName && !networkUsers[u].isBot && now - networkUsers[u].lastSeen > 12000) {
             delete networkUsers[u];
         }
     }
@@ -1644,6 +1853,9 @@ function setLanguage(lang) {
 
     document.getElementById('txtGeoBtn').innerText = dict.geoBtn;
     document.getElementById('txtSaveBtn').innerText = dict.saveBtn;
+    document.getElementById('txtSimHint').innerText = dict.simHint;
+    const simBtn = document.getElementById('btnToggleSimBots');
+    if (simBtn) simBtn.innerText = simBotsEnabled ? dict.simBtnOn : dict.simBtnOff;
 
     updatePrayerCycle();
     updateRoomTtlBanner();
@@ -1689,13 +1901,37 @@ function renderMembers() {
 
     keys.forEach(username => {
         const u = networkUsers[username];
+        const callInfo = userCallStates[username];
         const row = document.createElement('div');
-        row.className = 'user-item';
+
+        let extraRowClass = '';
+        let callStatusHtml = '';
+
+        if (callInfo) {
+            if (callInfo.state === 'calling') {
+                extraRowClass = 'ringing';
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">📡</span> ${dict.callSending} [${callInfo.word}]</div>`;
+            } else if (callInfo.state === 'ringing') {
+                extraRowClass = 'ringing';
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">🔔</span> ${dict.callRinging} <b>"${callInfo.word}"</b></div>`;
+            } else if (callInfo.state === 'replied') {
+                extraRowClass = 'replied';
+                callStatusHtml = `<div class="u-call-status ack">✓ ${dict.callReplied} <b>"${callInfo.word}"</b></div>`;
+            }
+        }
+
+        row.className = `user-item ${extraRowClass}`;
 
         let badgeClass = 'b-sleep';
         let badgeTxt = dict.stateSleep;
         if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
+
+        const actionBtnHtml = (u.name !== myName)
+            ? `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">
+                ${callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing') ? '<span class="ring-icon">🔔</span>' : '🔔'} ${dict.nudgeBtn}
+               </button>`
+            : '';
 
         row.innerHTML = `
             <div class="u-left">
@@ -1703,9 +1939,10 @@ function renderMembers() {
                 <div>
                     <div class="u-name">${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}</div>
                     <span class="u-badge ${badgeClass}">${badgeTxt}</span>
+                    ${callStatusHtml}
                 </div>
             </div>
-            ${u.name !== myName ? `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">🔔 ${dict.nudgeBtn}</button>` : ''}
+            ${actionBtnHtml}
         `;
         container.appendChild(row);
     });
