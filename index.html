@@ -522,7 +522,7 @@
             left: 16px;
         }
 
-        /* --- НОВЫЙ ДИЗАЙН: ТАБЫ В МОДАЛЬНОМ ОКНЕ --- */
+        /* Tabs */
         .modal-tabs-header {
             display: flex;
             background: rgba(0, 0, 0, 0.45);
@@ -566,7 +566,6 @@
             display: flex;
         }
 
-        /* Поле поиска комнат */
         .search-room-wrapper {
             position: relative;
             width: 100%;
@@ -597,7 +596,6 @@
             pointer-events: none;
         }
 
-        /* Карточки комнат в списке (Крупные, четкие, не сплющенные) */
         .rooms-scroll-container {
             display: flex;
             flex-direction: column;
@@ -671,67 +669,6 @@
             gap: 6px;
         }
 
-        /* --- СТИЛИ ДЛЯ БАННЕРА СКАЧИВАНИЯ И ПОДЕЛИТЬСЯ --- */
-        .app-download-card {
-            background: linear-gradient(135deg, rgba(46, 213, 115, 0.15), rgba(6, 40, 24, 0.6));
-            border: 1px solid var(--emerald-accent);
-            border-radius: 14px;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .app-download-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .btn-apk-dl {
-            background: linear-gradient(135deg, #2ed573, #10ac84);
-            color: #020705;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 9px 13px;
-            border-radius: 9px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            box-shadow: 0 4px 14px rgba(46, 213, 115, 0.35);
-        }
-        .btn-apk-dl:active { transform: scale(0.95); }
-
-        .btn-share-card {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(6, 43, 26, 0.7));
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            color: var(--gold-accent);
-            border-radius: 10px;
-            padding: 11px 12px;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-            margin-top: 4px;
-        }
-        .btn-share-card:active { transform: scale(0.97); }
-
-        .qr-caption-box {
-            text-align: center;
-            font-size: 11px;
-            color: #dcdde1;
-            line-height: 1.4;
-            padding: 0 8px;
-        }
-
         .btn-enter-room {
             background: linear-gradient(135deg, #2ed573, #10ac84);
             border: none;
@@ -760,7 +697,6 @@
         }
         .btn-trash-room:hover { background: rgba(231, 29, 54, 0.35); }
 
-        /* Вкладка QR и создание */
         .qr-card-container {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -855,7 +791,6 @@
             text-transform: uppercase;
         }
 
-        /* QR Scanner Overlay */
         .scanner-view-container {
             position: relative;
             width: 100%;
@@ -879,7 +814,6 @@
             object-fit: cover;
         }
 
-        /* Word Selector Chips */
         .words-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -906,7 +840,6 @@
             box-shadow: 0 0 14px rgba(231, 29, 54, 0.4);
         }
 
-        /* Fullscreen Alarm Screen */
         .alarm-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -992,7 +925,6 @@
             text-transform: uppercase;
         }
 
-        /* Custom Non-blocking Toast Banner */
         .toast-banner {
             position: fixed;
             bottom: 20px;
@@ -1019,8 +951,6 @@
 <body>
 
 <div class="app-shell">
-
-    <!-- Top Navigation: 4 Languages + Room Manager + Sound Check -->
     <div class="top-bar">
         <div class="lang-switch">
             <button class="btn-lang" onclick="setLanguage('tr')">TR</button>
@@ -1037,7 +967,6 @@
         </div>
     </div>
 
-    <!-- Main Upcoming Prayer Hero -->
     <div class="prayer-hero">
         <div class="prayer-hero-tag" id="lblHeroSub">СЛЕДУЮЩИЙ НАМАЗ</div>
         <div class="prayer-hero-title" id="lblHeroName">ФАДЖР</div>
@@ -1048,7 +977,6 @@
         </div>
     </div>
 
-    <!-- 5 Prayers + True Sunrise Astronomical Timeline -->
     <div class="timeline-grid">
         <div class="tl-box" id="box-fajr">
             <div class="tl-name" id="tl-txt-fajr">Фаджр</div>
@@ -1076,7 +1004,6 @@
         </div>
     </div>
 
-    <!-- User Action Buttons -->
     <div class="action-grid">
         <button class="btn-act btn-done-prayer" id="btnToggleDone">
             <span id="txtDoneTitle">ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН</span>
@@ -1094,7 +1021,6 @@
         </button>
     </div>
 
-    <!-- Active Jamaat & Network Members -->
     <div class="members-card">
         <div class="members-head">
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ СЕТИ / КОМНАТЫ</span>
@@ -1109,10 +1035,8 @@
         </div>
         <div id="usersListContainer"></div>
     </div>
-
 </div>
 
-<!-- 1. MODAL: SEND WAKE CHALLENGE WORD TO SLEEPING USER -->
 <div class="modal-overlay" id="wakeWordModal">
     <div class="modal-body">
         <button class="modal-close" id="btnCloseWakeModal">✕</button>
@@ -1129,19 +1053,16 @@
     </div>
 </div>
 
-<!-- 2. НОВОЕ ОРГАНИЗОВАННОЕ ОКНО: ТАБЫ (КАТАЛОГ ГРУПП / СОЗДАТЬ И QR / МОЙ ПРОФИЛЬ) -->
 <div class="modal-overlay" id="roomModal">
     <div class="modal-body">
         <button class="modal-close" id="btnCloseModal">✕</button>
         
-        <!-- Вкладки навигации -->
         <div class="modal-tabs-header">
             <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">КАТАЛОГ ГРУПП</button>
             <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">+ СОЗДАТЬ / QR</button>
             <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">ПРОФИЛЬ</button>
         </div>
 
-        <!-- 1-я вкладка: КАТАЛОГ ГРУПП (Четкий список без сплющивания) -->
         <div class="tab-content-panel active" id="panelTabRooms">
             <div class="search-room-wrapper">
                 <span class="search-room-icon">🔍</span>
@@ -1156,7 +1077,6 @@
             <div class="rooms-scroll-container" id="savedRoomsList"></div>
         </div>
 
-        <!-- 2-я вкладка: СОЗДАТЬ СЕРВЕР / QR КОД И СКАНЕР -->
         <div class="tab-content-panel" id="panelTabCreate">
             <div class="qr-card-container">
                 <div class="qr-wrap" id="qrContainer"></div>
@@ -1190,7 +1110,6 @@
             </button>
         </div>
 
-        <!-- 3-я вкладка: ПРОФИЛЬ И GPS -->
         <div class="tab-content-panel" id="panelTabProfile">
             <div class="m-label" id="lblProfileHeader">УЧЕТНЫЕ ДАННЫЕ</div>
             <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
@@ -1203,11 +1122,9 @@
                 СОХРАНИТЬ ПРОФИЛЬ
             </button>
         </div>
-
     </div>
 </div>
 
-<!-- 3. MODAL: QR CAMERA SCANNER -->
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-body" style="max-width: 390px;">
         <button class="modal-close" id="btnCloseScannerModal">✕</button>
@@ -1227,7 +1144,6 @@
 </div>
 <div id="qrFileTempReader" style="display:none;"></div>
 
-<!-- 4. FULLSCREEN EMERGENCY ALARM OVERLAY WITH LEXICAL WORD CHALLENGE -->
 <div class="alarm-screen" id="alarmOverlay">
     <div class="alarm-title" id="txtAlarmHeader">ВСТАВАЙ НА НАМАЗ!</div>
     <div class="alarm-sender" id="txtAlarmSender">Вас будит участник группы!</div>
@@ -1243,13 +1159,9 @@
     </button>
 </div>
 
-<!-- Toast Notification -->
 <div class="toast-banner" id="toastBanner"></div>
 
 <script>
-/**
- * 1. ПОЛНЫЙ ЧЕТЫРЕХЪЯЗЫЧНЫЙ СЛОВАРЬ (RU, AR, TR, EN)
- */
 const DICTIONARY = {
     ru: {
         fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
@@ -1549,11 +1461,6 @@ const DICTIONARY = {
     }
 };
 
-/**
- * ============================================================================
- * ВШИТЫЕ КЛЮЧИ SUPABASE (ПОДКЛЮЧЕНИЕ АВТОМАТИЧЕСКОЕ ДЛЯ ВСЕХ УСТРОЙСТВ)
- * ============================================================================
- */
 const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
 
@@ -1566,7 +1473,6 @@ const DEFAULT_ROOM = 'Global-Zone';
 let currentLang = localStorage.getItem('fajr_lang') || 'ru';
 let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
 
-// Убираем авто-генерацию мусорных User_XXX! Регистрация в БД происходит только если имя задано осознанно
 let savedUserName = localStorage.getItem('fajr_user_name') || '';
 if (savedUserName.startsWith('User_')) {
     savedUserName = '';
@@ -1592,9 +1498,6 @@ let userCallStates = {};
 let roomSearchFilter = '';
 let html5QrScanner = null;
 
-/**
- * 2. ИНИЦИАЛИЗАЦИЯ И ПОДКЛЮЧЕНИЕ К SUPABASE REALTIME
- */
 async function initSupabase() {
     const netInd = document.getElementById('netIndicator');
 
@@ -1606,34 +1509,26 @@ async function initSupabase() {
     try {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 1. Запускаем очистку комнат старше 30 дней на сервере
         await supabaseClient.rpc('cleanup_expired_fajr_rooms').catch(() => {});
 
-        // 2. Автоматически удаляем из БД старые фантомные записи User_XXX от прошлых тестов
         await supabaseClient
             .from('fajr_members')
             .delete()
             .like('user_name', 'User_%');
 
-        // 3. Гарантируем, что текущая комната существует в БД
         await ensureRoomExistsInDb(currentRoom, roomPass, false);
-
-        // 4. Загружаем все комнаты с сервера
         await fetchAllRoomsFromDb();
 
-        // 5. Если у пользователя уже введено настоящее имя — регистрируем его в комнате, иначе открываем профиль для ввода имени
         if (myName) {
             await upsertMyPresenceInDb();
         } else {
             document.getElementById('roomModal').classList.add('open');
             switchModalTab('profile');
-            showToast('Введите ваше настоящее имя в профиле для входа в группу');
+            showToast('Введите ваше имя в профиле для входа в группу');
         }
 
         await fetchRoomMembersFromDb();
-
-        // 6. Подписываемся на мгновенные события Realtime
-        subscribeToSupabaseRealtime();
+        await subscribeToSupabaseRealtime();
 
         if (netInd) netInd.classList.add('online');
     } catch (err) {
@@ -1643,7 +1538,6 @@ async function initSupabase() {
 
 window.purgeGhostAccounts = async function() {
     if (!supabaseClient) return;
-    // Удаляем все старые фантомные записи User_XXX и тех, кто не выходил на связь более 12 часов (кроме себя)
     await supabaseClient
         .from('fajr_members')
         .delete()
@@ -1688,7 +1582,7 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
         await supabaseClient.from('fajr_rooms').insert([{
             name: rName,
             pass: rPass || '',
-            owner: isNewOwner ? myName : 'USER',
+            owner: isNewOwner ? (myName || 'USER') : 'USER',
             permanent: isPerm,
             last_active: new Date().toISOString()
         }]);
@@ -1767,6 +1661,8 @@ async function upsertMyPresenceInDb(extraFields = {}) {
 
     try {
         const updatePayload = {
+            room_name: currentRoom,
+            user_name: myName,
             user_pass: userPass || '',
             status: myStatus,
             lat: userCoords.lat,
@@ -1775,39 +1671,24 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             ...extraFields
         };
 
-        // Сначала пробуем обновить существующую запись участника в комнате (без 409 конфликта)
-        const { data: updatedRows, error: updateErr } = await supabaseClient
+        await supabaseClient
             .from('fajr_members')
-            .update(updatePayload)
-            .eq('room_name', currentRoom)
-            .eq('user_name', myName)
-            .select();
-
-        // Если такой записи еще нет — аккуратно вставляем новую
-        if (!updateErr && (!updatedRows || updatedRows.length === 0)) {
-            await supabaseClient
-                .from('fajr_members')
-                .insert([{
-                    room_name: currentRoom,
-                    user_name: myName,
-                    ...updatePayload
-                }]);
-        }
+            .upsert(updatePayload, { onConflict: 'room_name,user_name' });
     } catch (e) {
-        // Игнорируем случайные дубли при быстрой смене вкладок
     } finally {
         isSyncingPresence = false;
     }
 }
 
-function subscribeToSupabaseRealtime() {
+async function subscribeToSupabaseRealtime() {
     if (!supabaseClient) return;
     if (realtimeChannel) {
-        supabaseClient.removeChannel(realtimeChannel);
+        await supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
     }
 
     realtimeChannel = supabaseClient
-        .channel('fajr_global_channel')
+        .channel(`fajr_channel_${Date.now()}`)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_rooms' }, () => {
             fetchAllRoomsFromDb();
         })
@@ -1860,9 +1741,6 @@ async function sendSupabaseSignal(signalType, target, word) {
     }]);
 }
 
-/**
- * 3. УПРАВЛЕНИЕ ВКЛАДКАМИ И СПИСКОМ КОМНАТ В SUPABASE
- */
 window.switchModalTab = function(tabName) {
     document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
@@ -1917,8 +1795,7 @@ window.selectSavedRoom = async function(rName) {
 };
 
 async function switchActiveRoom(newRoomName, newRoomPass) {
-    // Удаляем себя из старой комнаты при переходе в другую
-    if (supabaseClient && currentRoom && currentRoom !== newRoomName) {
+    if (supabaseClient && currentRoom && currentRoom !== newRoomName && myName) {
         await supabaseClient
             .from('fajr_members')
             .delete()
@@ -1936,10 +1813,10 @@ async function switchActiveRoom(newRoomName, newRoomPass) {
 
     userCallStates = {};
     await ensureRoomExistsInDb(currentRoom, roomPass, false);
-    await upsertMyPresenceInDb({ call_state: '', call_word: '' });
+    await upsertMyPresenceInDb({ call_state: '', call_word: '', caller_name: '' });
     await fetchAllRoomsFromDb();
     await fetchRoomMembersFromDb();
-    subscribeToSupabaseRealtime();
+    await subscribeToSupabaseRealtime();
     generateQR();
     renderUI();
     showToast(`✓ Подключено к комнате: ${currentRoom}`);
@@ -2029,9 +1906,6 @@ function updateRoomTtlBanner() {
     }
 }
 
-/**
- * 4. НАДЕЖНЫЙ СКАНЕР QR-КОДА (HTML5-QRCODE: КАМЕРА И ГАЛЕРЕЯ)
- */
 async function applyParsedRoomPayload(rawText) {
     if (!rawText) return false;
     let rName = '';
@@ -2112,7 +1986,6 @@ document.getElementById('btnOpenScanner').addEventListener('click', startCameraS
 document.getElementById('btnCloseScannerModal').addEventListener('click', stopCameraScanner);
 document.getElementById('btnStopScanner').addEventListener('click', stopCameraScanner);
 
-// Чтение QR-кода из галереи через Html5Qrcode.scanFile
 document.getElementById('inpQrGallery').addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -2131,9 +2004,6 @@ document.getElementById('inpQrGallery').addEventListener('change', async (e) => 
     e.target.value = '';
 });
 
-/**
- * 5. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ИСТИННОГО ВОСХОДА, ЗАКАТА И НАМАЗОВ
- */
 function toRad(d) { return d * Math.PI / 180.0; }
 function toDeg(r) { return r * 180.0 / Math.PI; }
 
@@ -2190,9 +2060,6 @@ function fmt(decHours) {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
-/**
- * 6. WEB AUDIO API СИНТЕЗАТОР БУДИЛЬНИКА
- */
 function ensureAudioContext() {
     if (!audioCtx) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -2238,13 +2105,11 @@ function stopAlarmAudio() {
 }
 
 document.getElementById('btnTestAudio').addEventListener('click', () => {
+    ensureAudioContext();
     playSingleTone();
     showToast(DICTIONARY[currentLang].toastAudioReady);
 });
 
-/**
- * 7. ВЫЗОВ ПО СЛОВУ
- */
 function openWakeWordSelector(targetUser) {
     pendingWakeTarget = targetUser;
     const dict = DICTIONARY[currentLang];
@@ -2309,6 +2174,7 @@ async function triggerAlarm(senderName, incomingWord) {
     document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${senderName}`;
 
     document.getElementById('alarmOverlay').classList.add('active');
+    ensureAudioContext();
     playAlarmChime();
 
     await upsertMyPresenceInDb({
@@ -2334,7 +2200,8 @@ async function verifyCaptchaAndStop() {
         await upsertMyPresenceInDb({
             status: 'awake',
             call_state: 'replied',
-            call_word: targetCaptchaWord.toUpperCase()
+            call_word: targetCaptchaWord.toUpperCase(),
+            caller_name: ''
         });
         await sendSupabaseSignal('WAKE_ACK', lastAlarmInitiator || 'ALL', targetCaptchaWord.toUpperCase());
     } else {
@@ -2344,9 +2211,6 @@ async function verifyCaptchaAndStop() {
     }
 }
 
-/**
- * 8. ПЕРИОДИЧЕСКИЙ ПУЛЬС (HEARTBEAT) В SUPABASE
- */
 function syncUserState() {
     upsertMyPresenceInDb();
 }
@@ -2358,9 +2222,6 @@ setInterval(() => {
     }
 }, 8000);
 
-/**
- * 9. ЛОКАЛИЗАЦИЯ
- */
 function setLanguage(lang) {
     if (!DICTIONARY[lang]) lang = 'ru';
     currentLang = lang;
@@ -2526,9 +2387,6 @@ window.wakeIndividual = function(name) {
     openWakeWordSelector(name);
 };
 
-/**
- * 10. КНОПКИ И УВЕДОМЛЕНИЯ
- */
 function showToast(text) {
     const banner = document.getElementById('toastBanner');
     banner.innerText = text;
@@ -2554,9 +2412,6 @@ document.getElementById('btnWakeAll').addEventListener('click', () => {
     openWakeWordSelector('ALL');
 });
 
-/**
- * РАЗДЕЛЬНЫЕ ФУНКЦИИ ОТПРАВКИ: КОМНАТА / APK
- */
 function getBaseAppUrl() {
     const baseUrl = `${location.origin}${location.pathname}`;
     return baseUrl.endsWith('/') ? baseUrl : baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
@@ -2619,9 +2474,6 @@ if (btnShareRoom) btnShareRoom.addEventListener('click', shareRoomLink);
 const btnShareApk = document.getElementById('btnShareApkLink');
 if (btnShareApk) btnShareApk.addEventListener('click', shareApkLink);
 
-/**
- * 11. QR, GPS И СОХРАНЕНИЯ
- */
 let qrObj = null;
 function generateQR() {
     const wrap = document.getElementById('qrContainer');
@@ -2675,7 +2527,7 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
         showToast(dict.toastGeoFail);
     }
 });
-// Кнопка сохранения новой созданной группы в Supabase
+
 document.getElementById('btnSaveRoomOnly').addEventListener('click', async () => {
     const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
     const rp = document.getElementById('inpRoomPass').value.trim() || '';
@@ -2686,7 +2538,6 @@ document.getElementById('btnSaveRoomOnly').addEventListener('click', async () =>
     showToast(`Группа "${r}" создана в базе и доступна на всех устройствах!`);
 });
 
-// Кнопка сохранения профиля
 document.getElementById('btnSaveProfileOnly').addEventListener('click', async () => {
     const oldName = myName;
     const n = document.getElementById('inpMyName').value.trim();
@@ -2715,9 +2566,6 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     showToast(`Профиль "${myName}" сохранен!`);
 });
 
-/**
- * 12. ТАЙМЕРЫ НАМАЗОВ
- */
 let lastTriggeredPrayerMinute = '';
 
 function updatePrayerCycle() {
@@ -2792,12 +2640,10 @@ if (urlParams.has('room')) {
     localStorage.setItem('fajr_room_pass', roomPass);
 }
 
-// Старт приложения
 setLanguage(currentLang);
 updatePrayerCycle();
 setInterval(updatePrayerCycle, 1000);
 initSupabase();
 </script>
-
 </body>
 </html>
