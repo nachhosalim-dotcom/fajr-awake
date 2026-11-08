@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #020705;
@@ -395,33 +395,6 @@
         }
         .u-call-status.calling { color: #ffccd5; }
         .u-call-status.ack { color: #7bed9f; }
-
-        .sim-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px dashed rgba(46, 213, 115, 0.3);
-            padding: 7px 10px;
-            border-radius: 11px;
-            margin-bottom: 10px;
-            font-size: 11px;
-        }
-
-        .btn-sim-toggle {
-            background: rgba(46, 213, 115, 0.18);
-            border: 1px solid rgba(46, 213, 115, 0.45);
-            color: #7bed9f;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 5px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .btn-sim-toggle.active {
-            background: var(--emerald-accent);
-            color: #020705;
-        }
 
         .u-left {
             display: flex;
@@ -856,7 +829,7 @@
         .scanner-view-container {
             position: relative;
             width: 100%;
-            height: 230px;
+            min-height: 250px;
             background: #000000;
             border-radius: 16px;
             overflow: hidden;
@@ -866,36 +839,14 @@
             border: 1px solid rgba(46, 213, 115, 0.4);
         }
 
-        #scannerVideo {
+        #qrReaderBox {
             width: 100%;
-            height: 100%;
+            border: none !important;
+        }
+        #qrReaderBox video {
+            width: 100% !important;
+            border-radius: 14px;
             object-fit: cover;
-        }
-
-        .scanner-frame {
-            position: absolute;
-            width: 160px;
-            height: 160px;
-            border: 2px solid var(--emerald-accent);
-            border-radius: 16px;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .scanner-laser {
-            width: 90%;
-            height: 2px;
-            background: var(--emerald-accent);
-            box-shadow: 0 0 10px var(--emerald-accent);
-            animation: laserScan 1.6s infinite alternate ease-in-out;
-        }
-
-        @keyframes laserScan {
-            0% { transform: translateY(-65px); }
-            100% { transform: translateY(65px); }
         }
 
         /* Word Selector Chips */
@@ -1123,10 +1074,6 @@
             <span id="txtRoomTtlLabel">Автоочистка пустых комнат (30 дн.):</span>
             <b style="color: var(--emerald-accent);" id="lblCurrentRoomTtl">30 дн.</b>
         </div>
-        <div class="sim-bar">
-            <span id="txtSimHint" style="color: var(--text-secondary);">Для проверки анимаций и вызовов:</span>
-            <button class="btn-sim-toggle" id="btnToggleSimBots">👥 + ТЕСТ-ГРУППА</button>
-        </div>
         <div id="usersListContainer"></div>
     </div>
 
@@ -1229,7 +1176,7 @@
 
 <!-- 3. MODAL: QR CAMERA SCANNER -->
 <div class="modal-overlay" id="scannerModal">
-    <div class="modal-body" style="max-width: 380px;">
+    <div class="modal-body" style="max-width: 390px;">
         <button class="modal-close" id="btnCloseScannerModal">✕</button>
         <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
         <p style="font-size: 11px; color: var(--text-secondary); text-align: center;" id="txtScannerModalDesc">
@@ -1237,10 +1184,7 @@
         </p>
 
         <div class="scanner-view-container">
-            <video id="scannerVideo" playsinline></video>
-            <div class="scanner-frame">
-                <div class="scanner-laser"></div>
-            </div>
+            <div id="qrReaderBox"></div>
         </div>
 
         <button class="btn-primary" id="btnStopScanner" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);">
@@ -1248,6 +1192,7 @@
         </button>
     </div>
 </div>
+<div id="qrFileTempReader" style="display:none;"></div>
 
 <!-- 4. FULLSCREEN EMERGENCY ALARM OVERLAY WITH LEXICAL WORD CHALLENGE -->
 <div class="alarm-screen" id="alarmOverlay">
@@ -1341,17 +1286,6 @@ const DICTIONARY = {
         toastQrScannedSuccess: 'Успешно! Подключено к группе:',
         toastQrScanFailed: 'Не удалось найти QR-код на изображении',
         toastCamError: 'Ошибка доступа к камере смартфона',
-        toastShareCopied: 'Текст с описанием и ссылкой скопирован!',
-        apkBannerDesc: 'Будильник поверх экрана с автокэшем',
-        dlApkBtn: 'СКАЧАТЬ APK',
-        qrAppTitle: 'AL-FAJR AWAKE — Призыв на Фаджр',
-        qrCaptionText: 'Камерой: скачивание APK и веб-версия. В программе: моментальный вход в группу.',
-        shareInviteBtn: 'ПОДЕЛИТЬСЯ ПРИГЛАШЕНИЕМ И QR',
-        shareSubject: 'Приложение для пробуждения на утренний Фаджр',
-        shareTextBody: 'Брат, присоединяйся к группе взаимного пробуждения на Фаджр намаз (Al-Fajr Awake)!\n\nГруппа: ',
-        simHint: 'Для проверки вызовов и анимации:',
-        simBtnOff: '👥 + ТЕСТ-ГРУППА',
-        simBtnOn: '✓ ТЕСТ-ГРУППА АКТИВНА',
         callSending: 'Отправка сигнала...',
         callRinging: 'Звенит сирена! Ждем слово:',
         callReplied: 'Проснулся! Ответил:',
@@ -1425,17 +1359,6 @@ const DICTIONARY = {
         toastQrScannedSuccess: 'تم بنجاح! تم الانضمام إلى:',
         toastQrScanFailed: 'لم يتم العثور على رمز QR في الصورة',
         toastCamError: 'خطأ في تشغيل الكاميرا',
-        toastShareCopied: 'تم نسخ نص الدعوة والرابط بنجاح!',
-        apkBannerDesc: 'تطبيق أندرويد بمنبه فوري وتخزين دون إنترنت',
-        dlApkBtn: 'تحميل APK',
-        qrAppTitle: 'AL-FAJR AWAKE — شبكة الاستيقاظ للفجر',
-        qrCaptionText: 'بكاميرا الهاتف: تحميل التطبيق. داخل البرنامج: انضمام فوري للمجموعة.',
-        shareInviteBtn: 'مشاركة الدعوة ورمز QR',
-        shareSubject: 'تطبيق الاستيقاظ لصلاة الفجر',
-        shareTextBody: 'انضم إلينا في شبكة الاستيقاظ لصلاة الفجر معاً!\n\nالغرفة: ',
-        simHint: 'لتجربة التنبيهات والحركة:',
-        simBtnOff: '👥 + مجموعة تجريبية',
-        simBtnOn: '✓ المجموعة التجريبية نشطة',
         callSending: 'جاري إرسال الرنين...',
         callRinging: 'يرن المنبه الآن! بانتظار الكلمة:',
         callReplied: 'استيقظ! رد بالكلمة:',
@@ -1509,17 +1432,6 @@ const DICTIONARY = {
         toastQrScannedSuccess: 'Başarılı! Gruba bağlanıldı:',
         toastQrScanFailed: 'Görselde QR kod bulunamadı',
         toastCamError: 'Kamera erişim hatası',
-        toastShareCopied: 'Davet metni ve bağlantı kopyalandı!',
-        apkBannerDesc: 'Ekran üstü alarm ve çevrimdışı önbellek',
-        dlApkBtn: 'APK İNDİR',
-        qrAppTitle: 'AL-FAJR AWAKE — Sabah Namazı Çağrısı',
-        qrCaptionText: 'Normal kamerayla: APK indirme ve web. Program içinden: odaya hızlı giriş.',
-        shareInviteBtn: 'DAVET VE QR PAYLAŞ',
-        shareSubject: 'Sabah Namazına Uyandırma Uygulaması',
-        shareTextBody: 'Sabah namazına birbirimizi uyandırmak için grubumuza katıl!\n\nGrup: ',
-        simHint: 'Çağrı ve animasyonları test et:',
-        simBtnOff: '👥 + TEST GRUBU',
-        simBtnOn: '✓ TEST GRUBU AKTİF',
         callSending: 'Sinyal gönderiliyor...',
         callRinging: 'Alarm çalıyor! Beklenen kelime:',
         callReplied: 'Uyandı! Cevabı:',
@@ -1593,23 +1505,23 @@ const DICTIONARY = {
         toastQrScannedSuccess: 'Success! Connected to room:',
         toastQrScanFailed: 'No QR code found in selected image',
         toastCamError: 'Camera permission or hardware error',
-        toastShareCopied: 'Invitation text and link copied to clipboard!',
-        apkBannerDesc: 'Heads-up alarm & offline auto-cache',
-        dlApkBtn: 'DOWNLOAD APK',
-        qrAppTitle: 'AL-FAJR AWAKE — Global Network',
-        qrCaptionText: 'Standard camera: download APK or open web. In-app: auto-joins group.',
-        shareInviteBtn: 'SHARE INVITE & QR',
-        shareSubject: 'Fajr Awake Prayer Network',
-        shareTextBody: 'Join our mutual Fajr prayer wake-up circle!\n\nRoom: ',
-        simHint: 'Test wake animations & replies:',
-        simBtnOff: '👥 + DEMO GROUP',
-        simBtnOn: '✓ DEMO GROUP ACTIVE',
         callSending: 'Sending signal...',
         callRinging: 'Siren ringing! Waiting word:',
         callReplied: 'Woke up! Replied:',
         words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
     }
 };
+
+/**
+ * ============================================================================
+ * ВШИТЫЕ КЛЮЧИ SUPABASE (ПОДКЛЮЧЕНИЕ АВТОМАТИЧЕСКОЕ ДЛЯ ВСЕХ УСТРОЙСТВ)
+ * ============================================================================
+ */
+const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
+
+let supabaseClient = null;
+let realtimeChannel = null;
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const DEFAULT_ROOM = 'Global-Zone';
@@ -1630,17 +1542,209 @@ let selectedChallengeWord = '';
 let alarmInterval = null;
 let audioCtx = null;
 
-let mqttClient = null;
-let isMqttConnected = false;
-let simBotsEnabled = false;
+let roomsCache = {};
+let networkUsers = {};
 let userCallStates = {};
-
-let cameraStream = null;
-let scannerAnimFrame = null;
 let roomSearchFilter = '';
+let html5QrScanner = null;
 
 /**
- * 2. УПРАВЛЕНИЕ ВКЛАДКАМИ МОДАЛЬНОГО ОКНА
+ * 2. ИНИЦИАЛИЗАЦИЯ И ПОДКЛЮЧЕНИЕ К SUPABASE REALTIME
+ */
+async function initSupabase() {
+    const netInd = document.getElementById('netIndicator');
+
+    if (typeof supabase === 'undefined') {
+        if (netInd) netInd.classList.remove('online');
+        return;
+    }
+
+    try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 1. Запускаем очистку комнат старше 30 дней на сервере
+        await supabaseClient.rpc('cleanup_expired_fajr_rooms').catch(() => {});
+
+        // 2. Гарантируем, что текущая комната существует в БД
+        await ensureRoomExistsInDb(currentRoom, roomPass, false);
+
+        // 3. Загружаем все комнаты с сервера (чтобы все телефоны видели единый список!)
+        await fetchAllRoomsFromDb();
+
+        // 4. Регистрируем себя в текущей комнате и загружаем список участников
+        await upsertMyPresenceInDb();
+        await fetchRoomMembersFromDb();
+
+        // 5. Подписываемся на мгновенные события Realtime
+        subscribeToSupabaseRealtime();
+
+        if (netInd) netInd.classList.add('online');
+    } catch (err) {
+        if (netInd) netInd.classList.remove('online');
+    }
+}
+
+async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
+    if (!supabaseClient || !rName) return;
+    const isPerm = rName === DEFAULT_ROOM;
+
+    const { data: existing } = await supabaseClient
+        .from('fajr_rooms')
+        .select('*')
+        .eq('name', rName)
+        .maybeSingle();
+
+    if (!existing) {
+        await supabaseClient.from('fajr_rooms').insert([{
+            name: rName,
+            pass: rPass || '',
+            owner: isNewOwner ? myName : 'USER',
+            permanent: isPerm,
+            last_active: new Date().toISOString()
+        }]);
+    } else {
+        await supabaseClient
+            .from('fajr_rooms')
+            .update({ last_active: new Date().toISOString() })
+            .eq('name', rName);
+    }
+}
+
+async function fetchAllRoomsFromDb() {
+    if (!supabaseClient) return;
+    const { data, error } = await supabaseClient
+        .from('fajr_rooms')
+        .select('*')
+        .order('permanent', { ascending: false })
+        .order('last_active', { ascending: false });
+
+    if (!error && data) {
+        roomsCache = {};
+        data.forEach(row => {
+            roomsCache[row.name] = {
+                name: row.name,
+                pass: row.pass || '',
+                owner: row.owner || '',
+                permanent: row.permanent || row.name === DEFAULT_ROOM,
+                lastActive: new Date(row.last_active).getTime()
+            };
+        });
+        renderSavedRoomsList();
+        updateRoomTtlBanner();
+    }
+}
+
+async function fetchRoomMembersFromDb() {
+    if (!supabaseClient) return;
+    const { data, error } = await supabaseClient
+        .from('fajr_members')
+        .select('*')
+        .eq('room_name', currentRoom);
+
+    if (!error && data) {
+        networkUsers = {};
+        data.forEach(m => {
+            networkUsers[m.user_name] = {
+                name: m.user_name,
+                status: m.status || 'sleep',
+                lastSeen: new Date(m.last_seen).getTime()
+            };
+            if (m.call_state) {
+                userCallStates[m.user_name] = {
+                    state: m.call_state,
+                    word: m.call_word || ''
+                };
+            } else {
+                delete userCallStates[m.user_name];
+            }
+        });
+        renderMembers();
+    }
+}
+
+async function upsertMyPresenceInDb(extraFields = {}) {
+    networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
+    renderUI();
+
+    if (!supabaseClient) return;
+    const row = {
+        room_name: currentRoom,
+        user_name: myName,
+        user_pass: userPass || '',
+        status: myStatus,
+        lat: userCoords.lat,
+        lng: userCoords.lng,
+        last_seen: new Date().toISOString(),
+        ...extraFields
+    };
+
+    await supabaseClient
+        .from('fajr_members')
+        .upsert(row, { onConflict: 'room_name,user_name' });
+}
+
+function subscribeToSupabaseRealtime() {
+    if (!supabaseClient) return;
+    if (realtimeChannel) {
+        supabaseClient.removeChannel(realtimeChannel);
+    }
+
+    realtimeChannel = supabaseClient
+        .channel('fajr_global_channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_rooms' }, () => {
+            fetchAllRoomsFromDb();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_members', filter: `room_name=eq.${currentRoom}` }, () => {
+            fetchRoomMembersFromDb();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fajr_signals', filter: `room_name=eq.${currentRoom}` }, (payload) => {
+            handleIncomingSignal(payload.new);
+        })
+        .subscribe();
+}
+
+async function handleIncomingSignal(sig) {
+    if (!sig || sig.sender === myName) return;
+
+    if (sig.signal_type === 'WAKE_CALL') {
+        if (sig.target === 'ALL' || sig.target === myName) {
+            if (myStatus !== 'done') {
+                triggerAlarm(sig.sender, sig.word);
+            }
+        }
+    } else if (sig.signal_type === 'WAKE_RINGING') {
+        userCallStates[sig.sender] = {
+            state: 'ringing',
+            word: sig.word || ''
+        };
+        renderMembers();
+    } else if (sig.signal_type === 'WAKE_ACK') {
+        if (networkUsers[sig.sender]) {
+            networkUsers[sig.sender].status = 'awake';
+        }
+        userCallStates[sig.sender] = {
+            state: 'replied',
+            word: sig.word || ''
+        };
+        renderMembers();
+        showToast(`✓ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
+    }
+}
+
+async function sendSupabaseSignal(signalType, target, word) {
+    if (!supabaseClient) return;
+
+    await supabaseClient.from('fajr_signals').insert([{
+        room_name: currentRoom,
+        sender: myName,
+        target: target,
+        signal_type: signalType,
+        word: word
+    }]);
+}
+
+/**
+ * 3. УПРАВЛЕНИЕ ВКЛАДКАМИ И СПИСКОМ КОМНАТ В SUPABASE
  */
 window.switchModalTab = function(tabName) {
     document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1649,6 +1753,7 @@ window.switchModalTab = function(tabName) {
     if (tabName === 'rooms') {
         document.getElementById('tabBtnRooms').classList.add('active');
         document.getElementById('panelTabRooms').classList.add('active');
+        fetchAllRoomsFromDb();
         renderSavedRoomsList();
     } else if (tabName === 'create') {
         document.getElementById('tabBtnCreate').classList.add('active');
@@ -1660,143 +1765,98 @@ window.switchModalTab = function(tabName) {
     }
 };
 
-/**
- * 3. УПРАВЛЕНИЕ РЕЕСТРОМ КОМНАТ: КАТАЛОГ С ПОИСКОМ И АВТООЧИСТКОЙ 30 ДНЕЙ
- */
-function getRoomsRegistry() {
-    let reg = {};
-    try {
-        reg = JSON.parse(localStorage.getItem('fajr_rooms_registry')) || {};
-    } catch (e) { reg = {}; }
-
-    if (!reg[DEFAULT_ROOM]) {
-        reg[DEFAULT_ROOM] = {
-            name: DEFAULT_ROOM,
-            pass: '',
-            owner: 'SYSTEM',
-            lastActive: Date.now(),
-            permanent: true
-        };
-    }
-    return reg;
-}
-
-function saveRoomsRegistry(reg) {
-    localStorage.setItem('fajr_rooms_registry', JSON.stringify(reg));
-}
-
-function touchRoomActivity(roomName, pass = '', isOwner = false) {
-    if (!roomName) return;
-    const reg = getRoomsRegistry();
-    if (!reg[roomName]) {
-        reg[roomName] = {
-            name: roomName,
-            pass: pass,
-            owner: isOwner ? myName : '',
-            lastActive: Date.now(),
-            permanent: roomName === DEFAULT_ROOM
-        };
-    } else {
-        reg[roomName].lastActive = Date.now();
-        if (pass) reg[roomName].pass = pass;
-    }
-    saveRoomsRegistry(reg);
-}
-
-function cleanupExpiredRooms() {
-    const reg = getRoomsRegistry();
-    const now = Date.now();
-    let removedCount = 0;
-
-    Object.keys(reg).forEach(rName => {
-        const room = reg[rName];
-        if (!room.permanent && rName !== DEFAULT_ROOM) {
-            if (now - (room.lastActive || 0) > THIRTY_DAYS_MS) {
-                delete reg[rName];
-                removedCount++;
-                if (currentRoom === rName) {
-                    currentRoom = DEFAULT_ROOM;
-                    roomPass = '';
-                    localStorage.setItem('fajr_room_name', currentRoom);
-                    localStorage.setItem('fajr_room_pass', '');
-                }
-            }
-        }
-    });
-
-    if (removedCount > 0) {
-        saveRoomsRegistry(reg);
-        showToast(`${DICTIONARY[currentLang].toastExpiredCleaned} ${removedCount}`);
-    }
-    updateRoomTtlBanner();
-}
-
-window.deleteRoomByName = function(rName, event) {
+window.deleteRoomByName = async function(rName, event) {
     if (event) event.stopPropagation();
     if (rName === DEFAULT_ROOM) return;
 
-    const reg = getRoomsRegistry();
-    delete reg[rName];
-    saveRoomsRegistry(reg);
+    if (supabaseClient) {
+        await supabaseClient.from('fajr_rooms').delete().eq('name', rName);
+    }
+    delete roomsCache[rName];
 
     if (currentRoom === rName) {
-        currentRoom = DEFAULT_ROOM;
-        roomPass = '';
-        localStorage.setItem('fajr_room_name', currentRoom);
-        localStorage.setItem('fajr_room_pass', '');
-        document.getElementById('inpRoomName').value = currentRoom;
-        document.getElementById('inpRoomPass').value = '';
-        setupNetwork();
+        await switchActiveRoom(DEFAULT_ROOM, '');
+    } else {
+        await fetchAllRoomsFromDb();
     }
-
-    renderSavedRoomsList();
-    renderUI();
-    generateQR();
     showToast(`${DICTIONARY[currentLang].toastRoomDeleted}: ${rName}`);
 };
 
-window.selectSavedRoom = function(rName) {
-    const reg = getRoomsRegistry();
-    const room = reg[rName];
+window.selectSavedRoom = async function(rName) {
+    const room = roomsCache[rName];
     if (!room) return;
 
-    currentRoom = room.name;
-    roomPass = room.pass || '';
+    if (room.pass && room.name !== currentRoom) {
+        const entered = prompt(`Группа "${rName}" защищена паролем. Введите пароль:`);
+        if (entered === null) return;
+        if (entered.trim() !== room.pass) {
+            showToast('❌ Неверный пароль группы!');
+            return;
+        }
+    }
+
+    await switchActiveRoom(room.name, room.pass || '');
+    document.getElementById('roomModal').classList.remove('open');
+};
+
+async function switchActiveRoom(newRoomName, newRoomPass) {
+    // Удаляем себя из старой комнаты при переходе в другую
+    if (supabaseClient && currentRoom && currentRoom !== newRoomName) {
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .eq('room_name', currentRoom)
+            .eq('user_name', myName);
+    }
+
+    currentRoom = newRoomName || DEFAULT_ROOM;
+    roomPass = newRoomPass || '';
     localStorage.setItem('fajr_room_name', currentRoom);
     localStorage.setItem('fajr_room_pass', roomPass);
 
     document.getElementById('inpRoomName').value = currentRoom;
     document.getElementById('inpRoomPass').value = roomPass;
 
-    touchRoomActivity(currentRoom, roomPass);
-    setupNetwork();
-    renderSavedRoomsList();
+    userCallStates = {};
+    await ensureRoomExistsInDb(currentRoom, roomPass, false);
+    await upsertMyPresenceInDb({ call_state: '', call_word: '' });
+    await fetchAllRoomsFromDb();
+    await fetchRoomMembersFromDb();
+    subscribeToSupabaseRealtime();
     generateQR();
     renderUI();
-    showToast(`Подключено к: ${currentRoom}`);
-};
+    showToast(`✓ Подключено к комнате: ${currentRoom}`);
+}
 
 function renderSavedRoomsList() {
     const container = document.getElementById('savedRoomsList');
     if (!container) return;
     container.innerHTML = '';
 
-    const reg = getRoomsRegistry();
+    if (!roomsCache[DEFAULT_ROOM]) {
+        roomsCache[DEFAULT_ROOM] = {
+            name: DEFAULT_ROOM,
+            pass: '',
+            owner: 'SYSTEM',
+            permanent: true,
+            lastActive: Date.now()
+        };
+    }
+
     const dict = DICTIONARY[currentLang];
     const now = Date.now();
+    const keys = Object.keys(roomsCache);
 
-    const keys = Object.keys(reg);
     document.getElementById('lblRoomsTotalCount').innerText = `${keys.length} ${dict.peopleUnit}`;
-
     const filtered = keys.filter(k => k.toLowerCase().includes(roomSearchFilter.toLowerCase()));
 
     if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">Ничего не найдено</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">Группы не найдены</div>`;
         return;
     }
 
     filtered.forEach(rName => {
-        const r = reg[rName];
+        const r = roomsCache[rName];
         const isCurrent = rName === currentRoom;
         const elapsed = now - (r.lastActive || now);
         const daysLeft = Math.max(1, Math.ceil((THIRTY_DAYS_MS - elapsed) / (24 * 60 * 60 * 1000)));
@@ -1839,9 +1899,8 @@ document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
 });
 
 function updateRoomTtlBanner() {
-    const reg = getRoomsRegistry();
     const dict = DICTIONARY[currentLang];
-    const r = reg[currentRoom];
+    const r = roomsCache[currentRoom];
     const lbl = document.getElementById('lblCurrentRoomTtl');
     if (!lbl) return;
 
@@ -1854,9 +1913,10 @@ function updateRoomTtlBanner() {
 }
 
 /**
- * 4. QR-СКАНЕР (КАМЕРА + ГАЛЕРЕЯ)
+ * 4. НАДЕЖНЫЙ СКАНЕР QR-КОДА (HTML5-QRCODE: КАМЕРА И ГАЛЕРЕЯ)
  */
-function applyParsedRoomPayload(rawText) {
+async function applyParsedRoomPayload(rawText) {
+    if (!rawText) return false;
     let rName = '';
     let rPass = '';
 
@@ -1865,126 +1925,92 @@ function applyParsedRoomPayload(rawText) {
             const url = new URL(rawText.startsWith('http') ? rawText : 'https://fake.url/' + rawText);
             rName = url.searchParams.get('room') || '';
             rPass = url.searchParams.get('pass') || '';
-        } else {
+        } else if (rawText.trim().startsWith('{')) {
             const parsed = JSON.parse(rawText);
             if (parsed.room) {
                 rName = parsed.room;
                 rPass = parsed.pass || '';
             }
+        } else {
+            rName = rawText.trim();
         }
     } catch (e) {
         rName = rawText.trim();
     }
 
     if (rName) {
-        currentRoom = rName;
-        roomPass = rPass;
-        localStorage.setItem('fajr_room_name', currentRoom);
-        localStorage.setItem('fajr_room_pass', roomPass);
-
-        document.getElementById('inpRoomName').value = currentRoom;
-        document.getElementById('inpRoomPass').value = roomPass;
-
-        touchRoomActivity(currentRoom, roomPass);
-        setupNetwork();
-        renderSavedRoomsList();
-        generateQR();
-        renderUI();
-        showToast(`${DICTIONARY[currentLang].toastQrScannedSuccess} ${currentRoom}`);
+        await ensureRoomExistsInDb(rName, rPass, false);
+        await switchActiveRoom(rName, rPass);
+        document.getElementById('roomModal').classList.remove('open');
+        showToast(`${DICTIONARY[currentLang].toastQrScannedSuccess} ${rName}`);
         return true;
     }
     return false;
 }
 
 async function startCameraScanner() {
-    const video = document.getElementById('scannerVideo');
     const modal = document.getElementById('scannerModal');
+    modal.classList.add('open');
 
     try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' }
-        });
-        video.srcObject = cameraStream;
-        video.setAttribute('playsinline', true);
-        await video.play();
+        if (html5QrScanner) {
+            try { await html5QrScanner.stop(); } catch (e) {}
+            html5QrScanner = null;
+        }
 
-        modal.classList.add('open');
-        scanCameraFrame();
+        html5QrScanner = new Html5Qrcode("qrReaderBox");
+        await html5QrScanner.start(
+            { facingMode: "environment" },
+            {
+                fps: 12,
+                qrbox: { width: 210, height: 210 },
+                aspectRatio: 1.0
+            },
+            async (decodedText) => {
+                if (decodedText) {
+                    await stopCameraScanner();
+                    await applyParsedRoomPayload(decodedText);
+                }
+            },
+            () => {}
+        );
     } catch (err) {
         showToast(DICTIONARY[currentLang].toastCamError);
+        modal.classList.remove('open');
     }
 }
 
-function stopCameraScanner() {
-    if (scannerAnimFrame) {
-        cancelAnimationFrame(scannerAnimFrame);
-        scannerAnimFrame = null;
-    }
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(t => t.stop());
-        cameraStream = null;
+async function stopCameraScanner() {
+    if (html5QrScanner) {
+        try {
+            await html5QrScanner.stop();
+            await html5QrScanner.clear();
+        } catch (e) {}
+        html5QrScanner = null;
     }
     document.getElementById('scannerModal').classList.remove('open');
-}
-
-function scanCameraFrame() {
-    const video = document.getElementById('scannerVideo');
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        if (typeof jsQR !== 'undefined') {
-            const code = jsQR(imgData.data, imgData.width, imgData.height, {
-                inversionAttempts: 'dontInvert'
-            });
-
-            if (code && code.data) {
-                if (applyParsedRoomPayload(code.data)) {
-                    stopCameraScanner();
-                    return;
-                }
-            }
-        }
-    }
-    scannerAnimFrame = requestAnimationFrame(scanCameraFrame);
 }
 
 document.getElementById('btnOpenScanner').addEventListener('click', startCameraScanner);
 document.getElementById('btnCloseScannerModal').addEventListener('click', stopCameraScanner);
 document.getElementById('btnStopScanner').addEventListener('click', stopCameraScanner);
 
-document.getElementById('inpQrGallery').addEventListener('change', (e) => {
+// Чтение QR-кода из галереи через Html5Qrcode.scanFile
+document.getElementById('inpQrGallery').addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, img.width, img.height);
-
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            if (typeof jsQR !== 'undefined') {
-                const code = jsQR(imgData.data, imgData.width, imgData.height);
-                if (code && code.data) {
-                    if (applyParsedRoomPayload(code.data)) {
-                        return;
-                    }
-                }
-            }
+    try {
+        const fileScanner = new Html5Qrcode("qrFileTempReader");
+        const decodedText = await fileScanner.scanFile(file, true);
+        if (decodedText) {
+            await applyParsedRoomPayload(decodedText);
+        } else {
             showToast(DICTIONARY[currentLang].toastQrScanFailed);
-        };
-        img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+        }
+    } catch (err) {
+        showToast(DICTIONARY[currentLang].toastQrScanFailed);
+    }
     e.target.value = '';
 });
 
@@ -2129,58 +2155,34 @@ document.getElementById('btnCloseWakeModal').addEventListener('click', () => {
     document.getElementById('wakeWordModal').classList.remove('open');
 });
 
-document.getElementById('btnConfirmSendWake').addEventListener('click', () => {
-    const wordToSend = selectedChallengeWord || DICTIONARY[currentLang].words[0];
-    const payload = {
-        type: 'WAKE_CALL',
-        sender: myName,
-        target: pendingWakeTarget,
-        word: wordToSend
-    };
+document.getElementById('btnConfirmSendWake').addEventListener('click', async () => {
+    const wordToSend = (selectedChallengeWord || DICTIONARY[currentLang].words[0]).toUpperCase();
 
     const targets = pendingWakeTarget === 'ALL'
         ? Object.keys(networkUsers).filter(u => u !== myName && networkUsers[u].status === 'sleep')
         : [pendingWakeTarget];
 
-    targets.forEach(tName => {
+    for (const tName of targets) {
         userCallStates[tName] = {
             state: 'calling',
-            word: wordToSend.toUpperCase(),
-            ts: Date.now()
+            word: wordToSend
         };
-
-        if (networkUsers[tName] && networkUsers[tName].isBot) {
-            setTimeout(() => {
-                if (userCallStates[tName]) {
-                    userCallStates[tName].state = 'ringing';
-                    renderMembers();
-                }
-            }, 600);
-
-            const replyDelay = 3200 + Math.floor(Math.random() * 2500);
-            setTimeout(() => {
-                if (networkUsers[tName]) {
-                    networkUsers[tName].status = 'awake';
-                    userCallStates[tName] = {
-                        state: 'replied',
-                        word: wordToSend.toUpperCase(),
-                        ts: Date.now()
-                    };
-                    showToast(`✓ ${tName} ${DICTIONARY[currentLang].toastReplyReceived} "${wordToSend.toUpperCase()}"`);
-                    renderMembers();
-                }
-            }, replyDelay);
+        if (supabaseClient) {
+            await supabaseClient
+                .from('fajr_members')
+                .update({ call_state: 'calling', call_word: wordToSend, caller_name: myName })
+                .eq('room_name', currentRoom)
+                .eq('user_name', tName);
         }
-    });
+    }
 
     renderMembers();
-    sendNetworkMessage(payload);
-    touchRoomActivity(currentRoom, roomPass);
-    showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend.toUpperCase()}"`);
+    await sendSupabaseSignal('WAKE_CALL', pendingWakeTarget, wordToSend);
+    showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend}"`);
     document.getElementById('wakeWordModal').classList.remove('open');
 });
 
-function triggerAlarm(senderName, incomingWord) {
+async function triggerAlarm(senderName, incomingWord) {
     const dict = DICTIONARY[currentLang];
     lastAlarmInitiator = senderName;
     targetCaptchaWord = incomingWord || dict.words[Math.floor(Math.random() * dict.words.length)];
@@ -2192,12 +2194,12 @@ function triggerAlarm(senderName, incomingWord) {
     document.getElementById('alarmOverlay').classList.add('active');
     playAlarmChime();
 
-    sendNetworkMessage({
-        type: 'WAKE_RINGING',
-        sender: myName,
-        initiator: senderName,
-        word: targetCaptchaWord.toUpperCase()
+    await upsertMyPresenceInDb({
+        call_state: 'ringing',
+        call_word: targetCaptchaWord.toUpperCase(),
+        caller_name: senderName
     });
+    await sendSupabaseSignal('WAKE_RINGING', senderName, targetCaptchaWord.toUpperCase());
 }
 
 document.getElementById('btnVerifyAwake').addEventListener('click', verifyCaptchaAndStop);
@@ -2205,19 +2207,19 @@ document.getElementById('inpCaptchaAnswer').addEventListener('keyup', (e) => {
     if (e.key === 'Enter') verifyCaptchaAndStop();
 });
 
-function verifyCaptchaAndStop() {
+async function verifyCaptchaAndStop() {
     const input = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
     if (input === targetCaptchaWord.trim().toLowerCase()) {
         stopAlarmAudio();
         document.getElementById('alarmOverlay').classList.remove('active');
         myStatus = 'awake';
-        syncUserState();
 
-        sendNetworkMessage({
-            type: 'WAKE_ACK',
-            sender: myName,
-            word: targetCaptchaWord.toUpperCase()
+        await upsertMyPresenceInDb({
+            status: 'awake',
+            call_state: 'replied',
+            call_word: targetCaptchaWord.toUpperCase()
         });
+        await sendSupabaseSignal('WAKE_ACK', lastAlarmInitiator || 'ALL', targetCaptchaWord.toUpperCase());
     } else {
         document.getElementById('inpCaptchaAnswer').style.borderColor = '#e71d36';
         showToast(DICTIONARY[currentLang].toastWrongWord);
@@ -2226,207 +2228,18 @@ function verifyCaptchaAndStop() {
 }
 
 /**
- * 8. СЕТЕВАЯ ШИНА И СИНХРОНИЗАЦИЯ
+ * 8. ПЕРИОДИЧЕСКИЙ ПУЛЬС (HEARTBEAT) В SUPABASE
  */
-let broadcast = null;
-let networkUsers = {};
-
-function injectSimBotsIfActive() {
-    if (!simBotsEnabled) return;
-    const bots = [
-        { name: 'Ahmad (Idlib)', status: 'sleep', isBot: true },
-        { name: 'Umar (Istanbul)', status: 'sleep', isBot: true },
-        { name: 'Khalid (Mecca)', status: 'done', isBot: true }
-    ];
-    bots.forEach(b => {
-        if (!networkUsers[b.name]) {
-            networkUsers[b.name] = { name: b.name, status: b.status, lastSeen: Date.now(), isBot: true };
-        } else {
-            networkUsers[b.name].lastSeen = Date.now();
-        }
-    });
-}
-
-document.getElementById('btnToggleSimBots').addEventListener('click', () => {
-    simBotsEnabled = !simBotsEnabled;
-    const btn = document.getElementById('btnToggleSimBots');
-    const dict = DICTIONARY[currentLang];
-    if (simBotsEnabled) {
-        btn.classList.add('active');
-        btn.innerText = dict.simBtnOn;
-        injectSimBotsIfActive();
-    } else {
-        btn.classList.remove('active');
-        btn.innerText = dict.simBtnOff;
-        Object.keys(networkUsers).forEach(k => {
-            if (networkUsers[k].isBot) delete networkUsers[k];
-        });
-    }
-    renderMembers();
-});
-
-function handleIncomingMessage(msg) {
-    if (!msg || !msg.sender) return;
-    touchRoomActivity(currentRoom, roomPass);
-
-    if (msg.type === 'HEARTBEAT') {
-        const prev = networkUsers[msg.sender];
-        networkUsers[msg.sender] = {
-            name: msg.sender,
-            status: msg.status,
-            lastSeen: Date.now(),
-            isBot: prev ? prev.isBot : false
-        };
-        renderMembers();
-    } else if (msg.type === 'WAKE_CALL') {
-        if (msg.target === 'ALL' || msg.target === myName) {
-            if (myStatus !== 'done') {
-                triggerAlarm(msg.sender, msg.word);
-            }
-        }
-    } else if (msg.type === 'WAKE_RINGING') {
-        userCallStates[msg.sender] = {
-            state: 'ringing',
-            word: msg.word || '',
-            ts: Date.now()
-        };
-        renderMembers();
-    } else if (msg.type === 'WAKE_ACK') {
-        if (networkUsers[msg.sender]) {
-            networkUsers[msg.sender].status = 'awake';
-        }
-        userCallStates[msg.sender] = {
-            state: 'replied',
-            word: msg.word || '',
-            ts: Date.now()
-        };
-        renderMembers();
-        showToast(`✓ ${msg.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${msg.word}"`);
-    }
-}
-
-function sendNetworkMessage(obj) {
-    try {
-        if (broadcast) broadcast.postMessage(obj);
-    } catch (e) {}
-
-    try {
-        const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
-        const payload = { ...obj, _ts: Date.now(), _nonce: Math.random() };
-        localStorage.setItem(busKey, JSON.stringify(payload));
-    } catch (e) {}
-
-    if (mqttClient && isMqttConnected) {
-        try {
-            const topic = 'fajrwake/' + encodeURIComponent(currentRoom) + '/' + encodeURIComponent(roomPass || 'open');
-            const message = new Paho.MQTT.Message(JSON.stringify(obj));
-            message.destinationName = topic;
-            mqttClient.send(message);
-        } catch (e) {}
-    }
-}
-
-function setupNetwork() {
-    if (broadcast) {
-        try { broadcast.close(); } catch (e) {}
-    }
-
-    const channelKey = 'fajr_net_' + currentRoom + '_' + (roomPass || 'open');
-    try {
-        broadcast = new BroadcastChannel(channelKey);
-        broadcast.onmessage = (e) => {
-            handleIncomingMessage(e.data);
-        };
-    } catch (e) {}
-
-    window.addEventListener('storage', (e) => {
-        const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
-        if (e.key === busKey && e.newValue) {
-            try {
-                const parsed = JSON.parse(e.newValue);
-                if (parsed.sender !== myName) {
-                    handleIncomingMessage(parsed);
-                }
-            } catch (err) {}
-        }
-    });
-
-    networkUsers = {};
-    networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
-
-    initGlobalMqttSafely();
-    syncUserState();
-}
-
-function initGlobalMqttSafely() {
-    const netInd = document.getElementById('netIndicator');
-
-    try {
-        if (typeof Paho === 'undefined' || typeof WebSocket === 'undefined') {
-            if (netInd) netInd.classList.add('online');
-            return;
-        }
-
-        if (mqttClient) {
-            try { mqttClient.disconnect(); } catch (e) {}
-        }
-
-        const clientId = 'fajr_' + Math.random().toString(16).substr(2, 8);
-        mqttClient = new Paho.MQTT.Client('broker.emqx.io', 8084, clientId);
-
-        mqttClient.onConnectionLost = () => {
-            isMqttConnected = false;
-            if (netInd) netInd.classList.remove('online');
-        };
-
-        mqttClient.onMessageArrived = (message) => {
-            try {
-                const data = JSON.parse(message.payloadString);
-                if (data.sender !== myName) {
-                    handleIncomingMessage(data);
-                }
-            } catch (e) {}
-        };
-
-        const topic = 'fajrwake/' + encodeURIComponent(currentRoom) + '/' + encodeURIComponent(roomPass || 'open');
-
-        mqttClient.connect({
-            useSSL: true,
-            timeout: 4,
-            onSuccess: () => {
-                isMqttConnected = true;
-                if (netInd) netInd.classList.add('online');
-                mqttClient.subscribe(topic);
-                sendNetworkMessage({ type: 'HEARTBEAT', sender: myName, status: myStatus });
-            },
-            onFailure: () => {
-                isMqttConnected = false;
-                if (netInd) netInd.classList.add('online');
-            }
-        });
-    } catch (err) {
-        isMqttConnected = false;
-        if (netInd) netInd.classList.add('online');
-    }
-}
-
 function syncUserState() {
-    networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
-    sendNetworkMessage({ type: 'HEARTBEAT', sender: myName, status: myStatus });
-    renderUI();
+    upsertMyPresenceInDb();
 }
 
 setInterval(() => {
-    syncUserState();
-    injectSimBotsIfActive();
-    const now = Date.now();
-    for (let u in networkUsers) {
-        if (u !== myName && !networkUsers[u].isBot && now - networkUsers[u].lastSeen > 12000) {
-            delete networkUsers[u];
-        }
+    if (supabaseClient) {
+        upsertMyPresenceInDb();
+        fetchRoomMembersFromDb();
     }
-    renderMembers();
-}, 3000);
+}, 8000);
 
 /**
  * 9. ЛОКАЛИЗАЦИЯ
@@ -2492,10 +2305,6 @@ function setLanguage(lang) {
 
     document.getElementById('txtGeoBtn').innerText = dict.geoBtn;
     document.getElementById('txtSaveBtn').innerText = dict.saveBtn;
-    document.getElementById('txtSimHint').innerText = dict.simHint;
-
-    const simBtn = document.getElementById('btnToggleSimBots');
-    if (simBtn) simBtn.innerText = simBotsEnabled ? dict.simBtnOn : dict.simBtnOff;
 
     updatePrayerCycle();
     updateRoomTtlBanner();
@@ -2714,7 +2523,7 @@ document.getElementById('btnOpenRoom').addEventListener('click', () => {
     document.getElementById('inpUserPass').value = userPass;
     document.getElementById('inpRoomName').value = currentRoom;
     document.getElementById('inpRoomPass').value = roomPass;
-    cleanupExpiredRooms();
+    fetchAllRoomsFromDb();
     switchModalTab('rooms');
     document.getElementById('roomModal').classList.add('open');
 });
@@ -2742,40 +2551,40 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
         showToast(dict.toastGeoFail);
     }
 });
+// Кнопка сохранения новой созданной группы в Supabase
+document.getElementById('btnSaveRoomOnly').addEventListener('click', async () => {
+    const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
+    const rp = document.getElementById('inpRoomPass').value.trim() || '';
 
-// Кнопка сохранения новой созданной группы
-document.getElementById('btnSaveRoomOnly').addEventListener('click', () => {
-    const r = document.getElementById('inpRoomName').value.trim();
-    const rp = document.getElementById('inpRoomPass').value.trim();
-
-    currentRoom = r || DEFAULT_ROOM;
-    roomPass = rp || '';
-    localStorage.setItem('fajr_room_name', currentRoom);
-    localStorage.setItem('fajr_room_pass', roomPass);
-
-    touchRoomActivity(currentRoom, roomPass, true);
-    setupNetwork();
-    updateRoomTtlBanner();
-    generateQR();
-    renderUI();
+    await ensureRoomExistsInDb(r, rp, true);
+    await switchActiveRoom(r, rp);
     switchModalTab('rooms');
-    showToast(`Группа "${currentRoom}" создана и активна!`);
+    showToast(`Группа "${r}" создана в базе и доступна на всех устройствах!`);
 });
 
 // Кнопка сохранения профиля
-document.getElementById('btnSaveProfileOnly').addEventListener('click', () => {
+document.getElementById('btnSaveProfileOnly').addEventListener('click', async () => {
+    const oldName = myName;
     const n = document.getElementById('inpMyName').value.trim();
     const up = document.getElementById('inpUserPass').value.trim();
 
-    if (n) {
+    if (n && n !== oldName) {
+        if (supabaseClient) {
+            await supabaseClient
+                .from('fajr_members')
+                .delete()
+                .eq('room_name', currentRoom)
+                .eq('user_name', oldName);
+        }
         myName = n;
         localStorage.setItem('fajr_user_name', n);
     }
     userPass = up;
     localStorage.setItem('fajr_user_pass', up);
 
-    syncUserState();
-    showToast('Профиль успешно обновлен!');
+    await upsertMyPresenceInDb();
+    await fetchRoomMembersFromDb();
+    showToast('Профиль успешно сохранен в базе!');
 });
 
 /**
@@ -2855,13 +2664,11 @@ if (urlParams.has('room')) {
     localStorage.setItem('fajr_room_pass', roomPass);
 }
 
-// Старт
-touchRoomActivity(currentRoom, roomPass);
-cleanupExpiredRooms();
-setupNetwork();
+// Старт приложения
 setLanguage(currentLang);
 updatePrayerCycle();
 setInterval(updatePrayerCycle, 1000);
+initSupabase();
 </script>
 
 </body>
