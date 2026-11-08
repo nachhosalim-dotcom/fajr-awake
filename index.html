@@ -14,8 +14,8 @@
     <style>
         :root {
             --bg-main: #020705;
-            --emerald-card: rgba(6, 32, 21, 0.85);
-            --emerald-border: rgba(46, 213, 115, 0.28);
+            --emerald-card: rgba(6, 32, 21, 0.88);
+            --emerald-border: rgba(46, 213, 115, 0.3);
             --emerald-accent: #2ed573;
             --gold-accent: #d4af37;
             --ruby-danger: #e71d36;
@@ -58,6 +58,76 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
+        }
+
+        /* 1. БЛОКИРОВЩИК ЭКРАНА ПРИ ОТСУТСТВИИ ИНТЕРНЕТА */
+        .offline-blocker {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, #3d030a 0%, #070102 100%);
+            z-index: 200000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+            text-align: center;
+            backdrop-filter: blur(25px);
+        }
+        .offline-blocker.active {
+            display: flex;
+        }
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: pulseWarn 1.2s infinite alternate;
+        }
+        @keyframes pulseWarn {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            100% { transform: scale(1.08); opacity: 1; }
+        }
+        .offline-title {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #ff6b81;
+            margin-bottom: 10px;
+        }
+        .offline-desc {
+            font-size: 13px;
+            color: #dcdde1;
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        /* 2. ПЛАШКА ОТА-ОБНОВЛЕНИЯ (БЕЗ СКАЧИВАНИЯ APK) */
+        .ota-update-banner {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: #020705;
+            padding: 12px 14px;
+            border-radius: 16px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
+        }
+        .ota-update-banner.show {
+            display: flex;
+        }
+        .btn-ota-apply {
+            background: #020705;
+            color: #2ed573;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
         /* Top Bar */
@@ -460,11 +530,6 @@
             align-items: center;
             justify-content: center;
         }
-        .btn-kick-ghost:hover {
-            background: rgba(231, 29, 54, 0.25);
-            color: #ff6b81;
-            border-color: rgba(231, 29, 54, 0.5);
-        }
 
         .u-online-dot {
             width: 7px;
@@ -493,7 +558,7 @@
         .modal-body {
             width: 100%;
             max-width: 440px;
-            max-height: 90vh;
+            max-height: 92vh;
             background: linear-gradient(160deg, #072517 0%, #03130b 100%);
             border: 1px solid var(--emerald-border);
             border-radius: 24px;
@@ -522,30 +587,32 @@
             left: 16px;
         }
 
-        /* Tabs */
+        /* Tabs (4 tabs) */
         .modal-tabs-header {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             background: rgba(0, 0, 0, 0.45);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 3px;
-            gap: 4px;
+            gap: 3px;
             margin-top: 24px;
         }
 
         .modal-tab-btn {
-            flex: 1;
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 9px 4px;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 9px 2px;
             border-radius: 9px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .modal-tab-btn.active {
@@ -557,9 +624,9 @@
         .tab-content-panel {
             display: none;
             flex-direction: column;
-            gap: 12px;
+            gap: 11px;
             overflow-y: auto;
-            max-height: 58vh;
+            max-height: 62vh;
             padding-right: 2px;
         }
         .tab-content-panel.active {
@@ -581,10 +648,6 @@
             font-size: 13px;
             outline: none;
             font-family: inherit;
-        }
-        .search-room-input:focus {
-            border-color: var(--emerald-accent);
-            box-shadow: 0 0 12px rgba(46, 213, 115, 0.2);
         }
         .search-room-icon {
             position: absolute;
@@ -613,13 +676,11 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            transition: all 0.2s ease;
         }
 
         .room-card-box.active-room {
             border-color: var(--emerald-accent);
             background: linear-gradient(135deg, rgba(46, 213, 115, 0.18), rgba(6, 40, 24, 0.5));
-            box-shadow: 0 0 16px rgba(46, 213, 115, 0.2);
         }
 
         .room-info-cell {
@@ -658,9 +719,6 @@
         .room-sub-meta {
             font-size: 11px;
             color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .room-actions-cell {
@@ -679,7 +737,6 @@
             font-weight: 800;
             cursor: pointer;
         }
-        .btn-enter-room:active { transform: scale(0.92); }
 
         .btn-trash-room {
             background: rgba(231, 29, 54, 0.15);
@@ -693,9 +750,7 @@
             justify-content: center;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .btn-trash-room:hover { background: rgba(231, 29, 54, 0.35); }
 
         .qr-card-container {
             background: rgba(0, 0, 0, 0.4);
@@ -739,9 +794,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: all 0.2s;
         }
-        .btn-qr-action:active { transform: scale(0.97); }
 
         .m-label {
             font-size: 11px;
@@ -753,10 +806,10 @@
             align-items: center;
         }
 
-        .m-input {
+        .m-input, .m-select {
             width: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 12px;
             padding: 12px 14px;
             color: #ffffff;
@@ -764,7 +817,20 @@
             outline: none;
             font-family: inherit;
         }
-        .m-input:focus { border-color: var(--emerald-accent); }
+        .m-select option {
+            background: #041b11;
+            color: #fff;
+        }
+
+        .sound-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
         .btn-geo {
             background: rgba(46, 213, 115, 0.12);
@@ -782,7 +848,7 @@
             background: linear-gradient(135deg, #2ed573, #10ac84);
             color: #020705;
             font-weight: 800;
-            padding: 14px;
+            padding: 13px;
             border-radius: 12px;
             border: none;
             cursor: pointer;
@@ -804,15 +870,8 @@
             border: 1px solid rgba(46, 213, 115, 0.4);
         }
 
-        #qrReaderBox {
-            width: 100%;
-            border: none !important;
-        }
-        #qrReaderBox video {
-            width: 100% !important;
-            border-radius: 14px;
-            object-fit: cover;
-        }
+        #qrReaderBox { width: 100%; border: none !important; }
+        #qrReaderBox video { width: 100% !important; border-radius: 14px; object-fit: cover; }
 
         .words-grid {
             display: grid;
@@ -831,7 +890,6 @@
             font-weight: 700;
             color: #ffffff;
             cursor: pointer;
-            transition: all 0.15s;
         }
         .word-chip.selected {
             background: rgba(231, 29, 54, 0.3);
@@ -909,7 +967,6 @@
             text-align: center;
             outline: none;
         }
-        .captcha-input:focus { border-color: var(--emerald-accent); }
 
         .btn-confirm-awake {
             background: #ffffff;
@@ -924,6 +981,27 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
+
+        /* Оверлей Азана */
+        .adhan-banner {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #093624, #03170e);
+            border: 2px solid var(--gold-accent);
+            border-radius: 18px;
+            padding: 14px 18px;
+            z-index: 95000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.85);
+            width: 92%;
+            max-width: 420px;
+            justify-content: space-between;
+        }
+        .adhan-banner.active { display: flex; }
 
         .toast-banner {
             position: fixed;
@@ -950,19 +1028,41 @@
 </head>
 <body>
 
-<!-- 0. ОБЯЗАТЕЛЬНОЕ ОКНО РЕГИСТРАЦИИ ПРИ ВХОДЕ (НЕ ЗАКРЫВАЕТСЯ ПОКА НЕ ВВЕДЕШЬ ИМЯ И ПАРОЛЬ) -->
+<!-- БЛОКИРОВЩИК ЭКРАНА НА ВЕСЬ ЭКРАН КОГДА НЕТ ИНТЕРНЕТА -->
+<div class="offline-blocker" id="offlineBlocker">
+    <div class="offline-icon">📡</div>
+    <div class="offline-title" id="txtOfflineTitle">НЕТ ПОДКЛЮЧЕНИЯ К ИНТЕРНЕТУ</div>
+    <div class="offline-desc" id="txtOfflineDesc">
+        Для работы сети будильника AL-FAJR требуется интернет. Пожалуйста, включите Wi-Fi или мобильные данные — экран разблокируется автоматически.
+    </div>
+    <button class="btn-primary" onclick="checkInternetAndReconnect()">ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС</button>
+</div>
+
+<!-- ВСПЛЫВАЮЩИЙ ПЛЕЕР АЗАНА (ОТДЕЛЬНО ОТ БУДИЛЬНИКА) -->
+<div class="adhan-banner" id="adhanOverlay">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:26px;">🕌</span>
+        <div>
+            <div style="font-size:13px; font-weight:800; color:var(--gold-accent);" id="adhanTitleText">ВРЕМЯ НАМАЗА (АЗАН)</div>
+            <div style="font-size:11px; color:#dcdde1;">Звучит призыв на молитву</div>
+        </div>
+    </div>
+    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" onclick="stopAdhanPlayback()">СТОП</button>
+</div>
+
+<!-- 0. ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ ПРИ ПЕРВОМ ВХОДЕ -->
 <div class="modal-overlay" id="mandatoryAuthModal" style="z-index: 50000;">
     <div class="modal-body">
         <h3 style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--emerald-accent); text-align: center;">РЕГИСТРАЦИЯ / ВХОД</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center; line-height: 1.4;">
-            Для входа в программу укажите ваше имя (логин) и пароль. Так каждый участник будет отображаться под своим настоящим именем на всех телефонах.
+            Укажите ваше имя (логин) и пароль. Каждый участник отображается под своим настоящим именем. Разрешения сохраняются один раз навсегда.
         </p>
 
         <div class="m-label">ВАШЕ ИМЯ / ЛОГИН</div>
-        <input type="text" class="m-input" id="regUserName" placeholder="Например: Салим или Salim">
+        <input type="text" class="m-input" id="regUserName" placeholder="Например: Салим">
 
         <div class="m-label">ПАРОЛЬ АККАУНТА</div>
-        <input type="password" class="m-input" id="regUserPass" placeholder="Придумайте или введите ваш пароль">
+        <input type="password" class="m-input" id="regUserPass" placeholder="Придумайте или введите пароль">
 
         <div class="m-label">ГРУППА ДЛЯ ВХОДА</div>
         <input type="text" class="m-input" id="regRoomName" value="Idlib-Jamaat" placeholder="Название группы">
@@ -974,7 +1074,13 @@
 </div>
 
 <div class="app-shell">
-    <!-- Верхняя панель: 4 языка + Звук + Кнопка групп/QR -->
+    <!-- БАННЕР АВТО-ОБНОВЛЕНИЯ ИНДЕКС-ФАЙЛА С GITHUB (БЕЗ СКАЧИВАНИЯ APK) -->
+    <div class="ota-update-banner" id="otaUpdateBanner">
+        <span>⚡ Вышло обновление кода программы!</span>
+        <button class="btn-ota-apply" onclick="applyOtaUpdateNow()">ОБНОВИТЬ И ПЕРЕЗАПУСТИТЬ</button>
+    </div>
+
+    <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="lang-switch">
             <button class="btn-lang" onclick="setLanguage('tr')">TR</button>
@@ -983,7 +1089,7 @@
             <button class="btn-lang active" onclick="setLanguage('ru')">RU</button>
         </div>
         <div class="top-actions">
-            <button class="btn-icon-top" id="btnTestAudio" title="Test Sound">🔔</button>
+            <button class="btn-icon-top" id="btnOpenSoundsQuick" title="Настройки звуков и Азана">🔊</button>
             <button class="btn-room-badge" id="btnOpenRoom">
                 <span class="network-indicator" id="netIndicator"></span>
                 <span class="truncate" id="lblRoomBadge">IDLIB-JAMAAT</span>
@@ -1052,7 +1158,7 @@
     <!-- Участники текущей комнаты -->
     <div class="members-card">
         <div class="members-head">
-            <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ СЕТИ / КОМНАТЫ</span>
+            <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
                 <button onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
@@ -1072,7 +1178,7 @@
         <button class="modal-close" id="btnCloseWakeModal">✕</button>
         <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center;" id="txtWakeModalDesc">
-            Выберите контрольное слово. У адресата зазвенит будильник, и он не выключится, пока человек не напишет это же слово в ответ:
+            Выберите контрольное слово. У адресата зазвенит будильник (без лишнего звука уведомлений), пока он не напишет это слово:
         </p>
 
         <div class="words-grid" id="wakeWordsGrid"></div>
@@ -1083,14 +1189,15 @@
     </div>
 </div>
 
-<!-- 2. МОДАЛЬНОЕ ОКНО: КАТАЛОГ ГРУПП / СОЗДАТЬ + QR + ПОДЕЛИТЬСЯ / ПРОФИЛЬ -->
+<!-- 2. ГЛАВНОЕ МОДАЛЬНОЕ ОКНО: ГРУППЫ / QR / ЗВУКИ И АЗАН / ПРОФИЛЬ -->
 <div class="modal-overlay" id="roomModal">
     <div class="modal-body">
         <button class="modal-close" id="btnCloseModal">✕</button>
         
         <div class="modal-tabs-header">
-            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">КАТАЛОГ ГРУПП</button>
-            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">+ СОЗДАТЬ / QR</button>
+            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">ГРУППЫ</button>
+            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">QR / ССЫЛКА</button>
+            <button class="modal-tab-btn" id="tabBtnSounds" onclick="switchModalTab('sounds')">🔊 ЗВУКИ</button>
             <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">ПРОФИЛЬ</button>
         </div>
 
@@ -1102,14 +1209,14 @@
             </div>
             
             <div class="m-label" style="margin-top: 2px;">
-                <span id="lblSavedRoomsHeader">ДОСТУПНЫЕ СЕРВЕРЫ</span>
+                <span id="lblSavedRoomsHeader">ДОСТУПНЫЕ ГРУППЫ</span>
                 <span style="font-size: 11px; color: var(--text-secondary);" id="lblRoomsTotalCount">0 групп</span>
             </div>
 
             <div class="rooms-scroll-container" id="savedRoomsList"></div>
         </div>
 
-        <!-- Вкладка 2: QR-код, Сканер, Поделиться программой и создание комнаты -->
+        <!-- Вкладка 2: QR-код (чисто картинка) + Поделиться программой (ссылка) -->
         <div class="tab-content-panel" id="panelTabCreate">
             <div class="qr-card-container">
                 <div class="qr-wrap" id="qrContainer"></div>
@@ -1126,33 +1233,87 @@
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
                     <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(46, 213, 115, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #7bed9f; padding: 11px;">
-                        🔗 <span id="txtShareRoomBtn">ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)</span>
+                        🖼️ <span id="txtShareRoomBtn">ОТПРАВИТЬ ЧИСТО КАРТИНКУ QR</span>
                     </button>
                     <button class="btn-primary" id="btnShareApkLink" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(80, 60, 10, 0.5)); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 11px;">
-                        📲 <span id="txtShareApkBtn">ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)</span>
+                        📲 <span id="txtShareApkBtn">ПОДЕЛИТЬСЯ ПРОГРАММОЙ (ССЫЛКА APK)</span>
                     </button>
                 </div>
             </div>
 
-            <div class="m-label" id="lblCreateRoomHeader">ПАРАМЕТРЫ НОВОЙ ГРУППЫ</div>
+            <div class="m-label" id="lblCreateRoomHeader">СОЗДАТЬ НОВУЮ ГРУППУ</div>
             <input type="text" class="m-input" id="inpRoomName" placeholder="Имя группы (например: Семья-Нашхо)">
-            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно, для закрытых)">
+            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно)">
 
             <button class="btn-primary" id="btnSaveRoomOnly">
                 <span id="txtSaveBtn">СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ</span>
             </button>
         </div>
 
-        <!-- Вкладка 3: Профиль и смена аккаунта -->
+        <!-- Вкладка 3: НАСТРОЙКА ЗВУКА БУДИЛЬНИКА И АЗАНА -->
+        <div class="tab-content-panel" id="panelTabSounds">
+            <!-- Блок 1: Мелодия Будильника при пробуждении -->
+            <div class="sound-card">
+                <div class="m-label">
+                    <span>🚨 МЕЛОДИЯ БУДИЛЬНИКА (ПОБУДКА)</span>
+                </div>
+                <select class="m-select" id="selAlarmSoundType" onchange="saveSoundPreferences()">
+                    <option value="siren_fast">Встроенная: Мощная сирена Фаджр</option>
+                    <option value="beep_radar">Встроенная: Радар (Короткие импульсы)</option>
+                    <option value="bell_chime">Встроенная: Мягкий перезвон</option>
+                    <option value="custom_alarm">🎵 Мой аудиофайл с телефона (MP3/WAV)</option>
+                </select>
+
+                <label class="btn-qr-action" style="cursor: pointer; width: 100%;">
+                    <span>📂 Выбрать свой MP3 для будильника</span>
+                    <input type="file" id="inpCustomAlarmFile" accept="audio/*" style="display: none;">
+                </label>
+                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAlarmStatus">Свой файл: не выбран</div>
+
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-primary" style="flex:1; padding:9px;" onclick="testSelectedAlarmSound()">▶️ ПРОСЛУШАТЬ</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
+                </div>
+            </div>
+
+            <!-- Блок 2: Азан на время намаза -->
+            <div class="sound-card">
+                <div class="m-label">
+                    <span>🕌 АЗАН ПРИ НАСТУПЛЕНИИ НАМАЗА</span>
+                    <input type="checkbox" id="chkEnableAdhan" onchange="saveSoundPreferences()" checked style="width:18px; height:18px; accent-color:var(--emerald-accent);">
+                </div>
+                <select class="m-select" id="selAdhanSoundType" onchange="saveSoundPreferences()">
+                    <option value="makkah_synth">Встроенный: Мелодичный сигнал Азана</option>
+                    <option value="custom_adhan">🎵 Мой файл Азана с телефона (MP3)</option>
+                </select>
+
+                <label class="btn-qr-action" style="cursor: pointer; width: 100%;">
+                    <span>📂 Загрузить свой MP3 Азана с телефона</span>
+                    <input type="file" id="inpCustomAdhanFile" accept="audio/*" style="display: none;">
+                </label>
+                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAdhanStatus">Свой файл Азана: не выбран</div>
+
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-primary" style="flex:1; padding:9px; background:var(--gold-accent);" onclick="testSelectedAdhanSound()">▶️ ПРОВЕРИТЬ АЗАН</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка 4: Профиль и проверка обновлений с GitHub -->
         <div class="tab-content-panel" id="panelTabProfile">
             <div class="m-label" id="lblProfileHeader">УЧЕТНЫЕ ДАННЫЕ</div>
             <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
             <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
 
-            <div class="m-label">ГЕОЛОКАЦИЯ ДЛЯ ВРЕМЕНИ НАМАЗА</div>
-            <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты автоматически</span></button>
+            <div class="m-label">ГЕОЛОКАЦИЯ И ОБНОВЛЕНИЯ</div>
+            <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты (сохраняются в кэш)</span></button>
+            
+            <button class="btn-geo" style="border-color: var(--gold-accent); color: var(--gold-accent);" onclick="checkForGithubIndexUpdate(true)">
+                🔄 Проверить обновление кода с GitHub (без скачивания APK)
+            </button>
 
-            <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 6px;">
+            <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 4px;">
                 СОХРАНИТЬ ПРОФИЛЬ
             </button>
             <button class="btn-primary" id="btnLogoutProfile" style="background: rgba(231,29,54,0.2); color: #ff6b81; border: 1px solid rgba(231,29,54,0.4);">
@@ -1201,6 +1362,16 @@
 <div class="toast-banner" id="toastBanner"></div>
 
 <script>
+/**
+ * КОНФИГУРАЦИЯ GITHUB OTA (ПРОВЕРКА ТОЛЬКО INDEX.HTML БЕЗ СКАЧИВАНИЯ APK)
+ */
+const GITHUB_APP_BASE_URL = 'https://nachhosalim-dotcom.github.io/fajr-awake/';
+const GITHUB_INDEX_URL = GITHUB_APP_BASE_URL + 'index.html';
+const GITHUB_APK_URL = GITHUB_APP_BASE_URL + 'fajr-awake.apk';
+
+const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
+
 const DICTIONARY = {
     ru: {
         fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
@@ -1219,31 +1390,27 @@ const DICTIONARY = {
         youBadge: '(Вы)',
         nudgeBtn: 'РАЗБУДИТЬ',
         roomTtlLabel: 'Текущая группа:',
-        daysShort: 'дн.',
         permanentRoom: 'Основная группа',
         wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
-        wakeModalDesc: 'Выберите проверочное слово. У человека включится сирена, и он должен будет написать это же слово в ответ:',
+        wakeModalDesc: 'Выберите проверочное слово. У человека включится только будильник (без звука уведомления), пока он не напишет это слово:',
         sendWakeBtn: 'ОТПРАВИТЬ ВЫЗОВ',
         wakeHeader: 'ВСТАВАЙ НА НАМАЗ!',
         wakeSenderPrefix: 'Вас будит:',
         wakePrompt: 'Чтобы выключить сирену, введите присланное слово:',
         inputWordPlaceholder: 'Введите слово сюда',
         verifyBtn: 'ПОДТВЕРДИТЬ ПРОБУЖДЕНИЕ',
-        tabRooms: 'КАТАЛОГ ГРУПП',
-        tabCreate: '+ СОЗДАТЬ / QR',
+        tabRooms: 'ГРУППЫ',
+        tabCreate: 'QR / ССЫЛКА',
         tabProfile: 'ПРОФИЛЬ',
-        shareRoomBtn: 'ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)',
-        shareApkBtn: 'ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)',
-        shareRoomTitle: 'Приглашение в группу Fajr Awake',
-        shareRoomText: 'Подключайся к нашей группе для совместного пробуждения на Фаджр:',
-        shareApkTitle: 'Скачать приложение Fajr Awake',
-        shareApkText: 'Скачай Android-приложение Fajr Awake (прямая ссылка на APK):',
-        toastRoomCopied: 'Ссылка на комнату скопирована!',
-        toastApkCopied: 'Ссылка на скачивание APK скопирована!',
+        shareRoomBtn: 'ОТПРАВИТЬ ЧИСТО КАРТИНКУ QR',
+        shareApkBtn: 'ПОДЕЛИТЬСЯ ПРОГРАММОЙ (ССЫЛКА APK)',
+        shareApkTitle: 'Скачать приложение AL-FAJR AWAKE',
+        shareApkText: 'Установи приложение AL-FAJR AWAKE по прямой ссылке:',
+        toastApkCopied: 'Ссылка на программу скопирована!',
         savedRoomsHeader: 'ДОСТУПНЫЕ ГРУППЫ',
         searchRoomsPlaceholder: 'Поиск группы по названию...',
         profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
-        createRoomHeader: 'СОЗДАТЬ ИЛИ ПЕРЕЙТИ В ГРУППУ',
+        createRoomHeader: 'СОЗДАТЬ НОВУЮ ГРУППУ',
         placeholderName: 'Ваше имя / логин',
         placeholderUserPass: 'Пароль профиля',
         placeholderRoomName: 'Название группы (напр. Семья)',
@@ -1260,13 +1427,13 @@ const DICTIONARY = {
         activeRoomBadge: 'Активна',
         lockBadge: 'Закрытая',
         openBadge: 'Открытая',
-        toastWakeSent: 'Сигнал тревоги со словом отправлен:',
+        toastWakeSent: 'Сигнал будильника со словом отправлен:',
         toastReplyReceived: 'подтвердил пробуждение словом:',
         toastRoomDeleted: 'Группа удалена из списка',
-        toastGeoSuccess: 'GPS координаты успешно обновлены!',
+        toastGeoSuccess: 'GPS координаты сохранены в постоянный кэш!',
         toastGeoFail: 'Не удалось получить доступ к GPS',
         toastWrongWord: 'Неверное слово! Введите точно как на экране.',
-        toastAudioReady: 'Звуковой сигнал проверен и активен!',
+        toastAudioReady: 'Звук проверен и активен!',
         toastQrScannedSuccess: 'Успешно! Подключено к группе:',
         toastQrScanFailed: 'Не удалось найти QR-код на изображении',
         toastCamError: 'Ошибка доступа к камере смартфона',
@@ -1292,31 +1459,27 @@ const DICTIONARY = {
         youBadge: '(أنت)',
         nudgeBtn: 'إيقاظ',
         roomTtlLabel: 'المجموعة الحالية:',
-        daysShort: 'يوم',
         permanentRoom: 'الغرفة العامة',
         wakeModalTitle: 'إرسال كلمة الاستيقاظ',
-        wakeModalDesc: 'اختر كلمة التحقق. سيرن المنبه لدى الشخص ولن يتوقف حتى يكتب نفس الكلمة:',
+        wakeModalDesc: 'اختر كلمة التحقق. سيرن المنبه فقط لدى الشخص حتى يكتب نفس الكلمة:',
         sendWakeBtn: 'إرسال التنبيه الآن',
         wakeHeader: 'الصلاة خير من النوم!',
         wakeSenderPrefix: 'يوقظك الآن:',
         wakePrompt: 'لإيقاف المنبه، اكتب الكلمة المرسلة بدقة:',
         inputWordPlaceholder: 'اكتب الكلمة هنا',
         verifyBtn: 'تأكيد الاستيقاظ والرد',
-        tabRooms: 'دليل المجموعات',
-        tabCreate: '+ إنشاء / QR',
-        tabProfile: 'الملف الشخصي',
-        shareRoomBtn: 'مشاركة هذه الغرفة (QR)',
-        shareApkBtn: 'إرسال رابط التطبيق (APK)',
-        shareRoomTitle: 'دعوة للانضمام إلى مجموعة Fajr Awake',
-        shareRoomText: 'انضم إلى مجموعتنا للاستيقاظ على صلاة الفجر معاً:',
+        tabRooms: 'المجموعات',
+        tabCreate: 'QR / مشاركة',
+        tabProfile: 'حسابي',
+        shareRoomBtn: 'مشاركة صورة رمز QR فقط',
+        shareApkBtn: 'مشاركة رابط تحميل البرنامج (APK)',
         shareApkTitle: 'تحميل تطبيق Fajr Awake',
-        shareApkText: 'حمّل تطبيق أندرويد مباشرة (رابط APK):',
-        toastRoomCopied: 'تم نسخ رابط الغرفة!',
+        shareApkText: 'حمّل تطبيق أندرويد مباشرة:',
         toastApkCopied: 'تم نسخ رابط تحميل التطبيق!',
         savedRoomsHeader: 'المجموعات المتاحة',
         searchRoomsPlaceholder: 'بحث عن مجموعة بالاسم...',
         profileHeader: 'الملف الشخصي والموقع الجغرافي',
-        createRoomHeader: 'إنشاء أو دخول غرفة',
+        createRoomHeader: 'إنشاء غرفة جديدة',
         placeholderName: 'الاسم / اسم المستخدم',
         placeholderUserPass: 'كلمة مرور الحساب',
         placeholderRoomName: 'اسم الغرفة',
@@ -1336,15 +1499,15 @@ const DICTIONARY = {
         toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
         toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
         toastRoomDeleted: 'تم حذف الغرفة بنجاح',
-        toastGeoSuccess: 'تم تحديث إحداثيات GPS بنجاح!',
+        toastGeoSuccess: 'تم حفظ إحداثيات GPS!',
         toastGeoFail: 'تعذر الوصول إلى موقع GPS',
-        toastWrongWord: 'الكلمة غير صحيحة! اكتبها كما تظهر.',
-        toastAudioReady: 'تم فحص الصوت والمنبه جاهز!',
-        toastQrScannedSuccess: 'تم بنجاح! تم الانضمام إلى:',
-        toastQrScanFailed: 'لم يتم العثور على رمز QR في الصورة',
-        toastCamError: 'خطأ في تشغيل الكاميرا',
+        toastWrongWord: 'الكلمة غير صحيحة!',
+        toastAudioReady: 'تم فحص الصوت!',
+        toastQrScannedSuccess: 'تم الانضمام إلى:',
+        toastQrScanFailed: 'لم يتم العثور على رمز QR',
+        toastCamError: 'خطأ في الكاميرا',
         callSending: 'جاري إرسال الرنين...',
-        callRinging: 'يرن المنبه الآن! بانتظار الكلمة:',
+        callRinging: 'يرن المنبه الآن! الكلمة:',
         callReplied: 'استيقظ! رد بالكلمة:',
         words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
     },
@@ -1365,59 +1528,55 @@ const DICTIONARY = {
         youBadge: '(Siz)',
         nudgeBtn: 'UYANDIR',
         roomTtlLabel: 'Aktif Grup:',
-        daysShort: 'gün',
         permanentRoom: 'Ana Grup',
         wakeModalTitle: 'UYANDIRMA KELİMESİ GÖNDER',
-        wakeModalDesc: 'Bir kontrol kelimesi seçin. Karşı tarafın alarmı çalacak ve aynı kelimeyi yazana kadar kapanmayacaktır:',
+        wakeModalDesc: 'Bir kontrol kelimesi seçin. Karşı tarafın alarmı aynı kelimeyi yazana kadar çalacaktır:',
         sendWakeBtn: 'ÇAĞRIYI GÖNDER',
         wakeHeader: 'NAMAZA KALK!',
         wakeSenderPrefix: 'Sizi uyandıran:',
         wakePrompt: 'Alarmı kapatmak için gönderilen kelimeyi yazın:',
         inputWordPlaceholder: 'Kelimeyi buraya yazın',
         verifyBtn: 'UYANDIĞIMI ONAYLA',
-        tabRooms: 'GRUP KATALOĞU',
-        tabCreate: '+ OLUŞTUR / QR',
+        tabRooms: 'GRUPLAR',
+        tabCreate: 'QR / PAYLAŞ',
         tabProfile: 'PROFİL',
-        shareRoomBtn: 'BU ODAYI PAYLAŞ (QR)',
-        shareApkBtn: 'UYGULAMA BAĞLANTISINI GÖNDER (APK)',
-        shareRoomTitle: 'Fajr Awake Grup Daveti',
-        shareRoomText: 'Sabah namazına birlikte uyanmak için grubumuza katıl:',
+        shareRoomBtn: 'SADECE QR RESMİNİ PAYLAŞ',
+        shareApkBtn: 'UYGULAMA LİNKİNİ PAYLAŞ (APK)',
         shareApkTitle: 'Fajr Awake Uygulamasını İndir',
-        shareApkText: 'Fajr Awake Android uygulamasını doğrudan indir (APK):',
-        toastRoomCopied: 'Oda bağlantısı kopyalandı!',
-        toastApkCopied: 'APK indirme bağlantısı kopyalandı!',
+        shareApkText: 'Fajr Awake Android uygulamasını indir:',
+        toastApkCopied: 'APK bağlantısı kopyalandı!',
         savedRoomsHeader: 'MEVCUT GRUPLAR',
         searchRoomsPlaceholder: 'Grup adına göre ara...',
         profileHeader: 'PROFİL VE KONUM',
-        createRoomHeader: 'ODA OLUŞTUR VEYA KATIL',
+        createRoomHeader: 'ODA OLUŞTUR',
         placeholderName: 'Adınız / Kullanıcı adınız',
         placeholderUserPass: 'Hesap şifresi',
         placeholderRoomName: 'Oda adı',
-        placeholderRoomPass: 'Oda şifresi (Özel için)',
+        placeholderRoomPass: 'Oda şifresi',
         geoBtn: 'GPS Konumunu Otomatik Belirle',
         saveBtn: 'KAYDET VE BAĞLAN',
         deleteBtn: 'Sil',
         scanCamBtn: 'QR Tara',
         scanGalleryBtn: 'Galeriden Seç',
         scannerModalTitle: 'QR KOD TARAMA',
-        scannerModalDesc: 'Odaya hemen bağlanmak için kamerayı QR koda tutun',
+        scannerModalDesc: 'Kamerayı QR koda tutun',
         cancelScannerBtn: 'KAPAT',
         enterRoomBtn: 'Giriş',
         activeRoomBadge: 'Aktif',
         lockBadge: 'Kilitli',
         openBadge: 'Açık',
-        toastWakeSent: 'Uyandırma sinyali gönderildi, kelime:',
-        toastReplyReceived: 'kelimeyi yazarak uyandığını onayladı:',
-        toastRoomDeleted: 'Oda listeden silindi',
-        toastGeoSuccess: 'GPS koordinatları güncellendi!',
-        toastGeoFail: 'GPS konumuna erişilemedi',
-        toastWrongWord: 'Yanlış kelime! Ekrandaki kelimeyi doğru yazın.',
-        toastAudioReady: 'Ses sinyali test edildi ve aktif!',
-        toastQrScannedSuccess: 'Başarılı! Gruba bağlanıldı:',
-        toastQrScanFailed: 'Görselde QR kod bulunamadı',
-        toastCamError: 'Kamera erişim hatası',
+        toastWakeSent: 'Uyandırma sinyali gönderildi:',
+        toastReplyReceived: 'uyandığını onayladı:',
+        toastRoomDeleted: 'Oda silindi',
+        toastGeoSuccess: 'GPS koordinatları kaydedildi!',
+        toastGeoFail: 'GPS erişilemedi',
+        toastWrongWord: 'Yanlış kelime!',
+        toastAudioReady: 'Ses aktif!',
+        toastQrScannedSuccess: 'Gruba bağlanıldı:',
+        toastQrScanFailed: 'QR kod bulunamadı',
+        toastCamError: 'Kamera hatası',
         callSending: 'Sinyal gönderiliyor...',
-        callRinging: 'Alarm çalıyor! Beklenen kelime:',
+        callRinging: 'Alarm çalıyor! Kelime:',
         callReplied: 'Uyandı! Cevabı:',
         words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
     },
@@ -1438,7 +1597,6 @@ const DICTIONARY = {
         youBadge: '(You)',
         nudgeBtn: 'WAKE UP',
         roomTtlLabel: 'Active Group:',
-        daysShort: 'd.',
         permanentRoom: 'Main Group',
         wakeModalTitle: 'SEND WAKE-UP WORD CHALLENGE',
         wakeModalDesc: 'Select a verification word. The recipient alarm will ring until they type this exact word back:',
@@ -1448,21 +1606,18 @@ const DICTIONARY = {
         wakePrompt: 'Type the challenge word below to stop the alarm:',
         inputWordPlaceholder: 'Type challenge word here',
         verifyBtn: 'CONFIRM & REPLY',
-        tabRooms: 'GROUPS DIRECTORY',
-        tabCreate: '+ CREATE / QR',
+        tabRooms: 'GROUPS',
+        tabCreate: 'QR / SHARE',
         tabProfile: 'PROFILE',
-        shareRoomBtn: 'SHARE THIS ROOM (QR)',
-        shareApkBtn: 'SEND APP DOWNLOAD LINK (APK)',
-        shareRoomTitle: 'Fajr Awake Group Invitation',
-        shareRoomText: 'Join our group to wake up for Fajr together:',
+        shareRoomBtn: 'SHARE PURE QR IMAGE ONLY',
+        shareApkBtn: 'SHARE APP LINK (APK)',
         shareApkTitle: 'Download Fajr Awake App',
-        shareApkText: 'Download Fajr Awake Android App (Direct APK link):',
-        toastRoomCopied: 'Room link copied to clipboard!',
-        toastApkCopied: 'APK link copied to clipboard!',
+        shareApkText: 'Download Fajr Awake Android App:',
+        toastApkCopied: 'APK link copied!',
         savedRoomsHeader: 'AVAILABLE GROUPS',
         searchRoomsPlaceholder: 'Search group by name...',
         profileHeader: 'PROFILE & GEO-LOCATION',
-        createRoomHeader: 'CREATE OR JOIN ROOM',
+        createRoomHeader: 'CREATE ROOM',
         placeholderName: 'Your Name / Username',
         placeholderUserPass: 'Account Password',
         placeholderRoomName: 'Room Name',
@@ -1473,41 +1628,36 @@ const DICTIONARY = {
         scanCamBtn: 'Scan QR',
         scanGalleryBtn: 'From Gallery',
         scannerModalTitle: 'QR CODE SCANNER',
-        scannerModalDesc: 'Point camera at group QR code to connect instantly',
+        scannerModalDesc: 'Point camera at group QR code',
         cancelScannerBtn: 'CLOSE',
         enterRoomBtn: 'Join',
         activeRoomBadge: 'Active',
         lockBadge: 'Private',
         openBadge: 'Public',
-        toastWakeSent: 'Wake challenge sent with word:',
-        toastReplyReceived: 'confirmed waking up with word:',
-        toastRoomDeleted: 'Room deleted from list',
-        toastGeoSuccess: 'GPS coordinates updated!',
-        toastGeoFail: 'Could not access GPS location',
-        toastWrongWord: 'Incorrect word! Type the exact word shown.',
-        toastAudioReady: 'Alarm sound tested and active!',
-        toastQrScannedSuccess: 'Success! Connected to room:',
-        toastQrScanFailed: 'No QR code found in selected image',
-        toastCamError: 'Camera permission or hardware error',
+        toastWakeSent: 'Wake challenge sent:',
+        toastReplyReceived: 'confirmed waking up:',
+        toastRoomDeleted: 'Room deleted',
+        toastGeoSuccess: 'GPS coordinates saved!',
+        toastGeoFail: 'Could not access GPS',
+        toastWrongWord: 'Incorrect word!',
+        toastAudioReady: 'Alarm sound active!',
+        toastQrScannedSuccess: 'Connected to room:',
+        toastQrScanFailed: 'No QR code found',
+        toastCamError: 'Camera error',
         callSending: 'Sending signal...',
-        callRinging: 'Siren ringing! Waiting word:',
+        callRinging: 'Siren ringing! Word:',
         callReplied: 'Woke up! Replied:',
         words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
     }
 };
 
-const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
-
 let supabaseClient = null;
 let realtimeChannel = null;
-
 const DEFAULT_ROOM = 'Idlib-Jamaat';
 
 let currentLang = localStorage.getItem('fajr_lang') || 'ru';
 let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
 
-// Загружаем сохраненное имя (никаких авто-ботов User_XXX)
 let savedName = (localStorage.getItem('fajr_user_name') || '').trim();
 if (savedName.toLowerCase().startsWith('user_')) {
     savedName = '';
@@ -1525,12 +1675,21 @@ let pendingWakeTarget = 'ALL';
 let selectedChallengeWord = '';
 let alarmInterval = null;
 let audioCtx = null;
+let activeHtmlAudio = null;
+
+// Настройки звуков и Азана
+let alarmSoundType = localStorage.getItem('fajr_alarm_sound_type') || 'siren_fast';
+let adhanSoundType = localStorage.getItem('fajr_adhan_sound_type') || 'makkah_synth';
+let adhanEnabled = localStorage.getItem('fajr_adhan_enabled') !== 'false';
+let customAlarmDataUrl = null;
+let customAdhanDataUrl = null;
 
 let roomsCache = {};
 let networkUsers = {};
 let userCallStates = {};
 let roomSearchFilter = '';
 let html5QrScanner = null;
+let pendingOtaHtmlContent = null;
 
 // Проверка ссылки приглашения ?room=...
 const urlParams = new URLSearchParams(window.location.search);
@@ -1542,18 +1701,350 @@ if (urlParams.has('room')) {
 }
 
 /**
- * 1. ИНИЦИАЛИЗАЦИЯ И ПРОВЕРКА РЕГИСТРАЦИИ ПРИ СТАРТЕ
+ * ============================================================================
+ * 1. КОНТРОЛЬ ИНТЕРНЕТА (БЛОКИРОВКА ЭКРАНА НА ВЕСЬ ЭКРАН ЕСЛИ НЕТ СЕТИ)
+ * ============================================================================
+ */
+function updateOfflineBlockerState(isOnline) {
+    const blocker = document.getElementById('offlineBlocker');
+    const netInd = document.getElementById('netIndicator');
+    if (!isOnline) {
+        blocker.classList.add('active');
+        if (netInd) netInd.classList.remove('online');
+    } else {
+        blocker.classList.remove('active');
+        if (netInd) netInd.classList.add('online');
+    }
+}
+
+window.addEventListener('offline', () => updateOfflineBlockerState(false));
+window.addEventListener('online', () => {
+    updateOfflineBlockerState(true);
+    if (myName) startOnlineSession();
+});
+
+window.checkInternetAndReconnect = async function() {
+    if (!navigator.onLine) {
+        updateOfflineBlockerState(false);
+        showToast('Интернет всё ещё отключен!');
+        return;
+    }
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+            method: 'HEAD',
+            headers: { 'apikey': SUPABASE_ANON_KEY },
+            cache: 'no-store'
+        });
+        if (res.ok || res.status === 404 || res.status === 200) {
+            updateOfflineBlockerState(true);
+            if (myName) await startOnlineSession();
+            showToast('✓ Соединение восстановлено!');
+        } else {
+            updateOfflineBlockerState(false);
+        }
+    } catch (e) {
+        updateOfflineBlockerState(false);
+        showToast('Сервер недоступен. Проверьте интернет!');
+    }
+};
+
+/**
+ * ============================================================================
+ * 2. OTA ОБНОВЛЕНИЕ ИНДЕКС-ФАЙЛА С GITHUB (БЕЗ СКАЧИВАНИЯ APK И БЕЗ СБРОСА РАЗРЕШЕНИЙ)
+ * ============================================================================
+ */
+async function checkForGithubIndexUpdate(manualNotify = false) {
+    if (!navigator.onLine) return;
+    try {
+        const resp = await fetch(`${GITHUB_INDEX_URL}?t=${Date.now()}`, { cache: 'no-store' });
+        if (!resp.ok) {
+            if (manualNotify) showToast('Не удалось связаться с GitHub');
+            return;
+        }
+        const remoteHtml = await resp.text();
+        // Вычисляем контрольную сумму длины/содержимого
+        const remoteHash = String(remoteHtml.length) + '_' + remoteHtml.slice(0, 120).length;
+        const savedHash = localStorage.getItem('fajr_ota_index_hash');
+
+        if (!savedHash) {
+            localStorage.setItem('fajr_ota_index_hash', remoteHash);
+            if (manualNotify) showToast('✓ У вас установлена самая свежая версия!');
+            return;
+        }
+
+        if (savedHash !== remoteHash) {
+            pendingOtaHtmlContent = { html: remoteHtml, hash: remoteHash };
+            document.getElementById('otaUpdateBanner').classList.add('show');
+            if (manualNotify) showToast('⚡ Найдено обновление! Нажмите желтую кнопку сверху.');
+        } else if (manualNotify) {
+            showToast('✓ Обновлений нет, у вас актуальная версия!');
+        }
+    } catch (e) {
+        if (manualNotify) showToast('Проверка обновлений сейчас недоступна');
+    }
+}
+
+window.applyOtaUpdateNow = function() {
+    if (pendingOtaHtmlContent) {
+        localStorage.setItem('fajr_ota_index_hash', pendingOtaHtmlContent.hash);
+    }
+    // Если мы находимся на веб-странице или в WebView — обновляем документ на месте с сохранением всех разрешений!
+    const targetUrl = new URL(GITHUB_INDEX_URL);
+    targetUrl.searchParams.set('room', currentRoom);
+    if (roomPass) targetUrl.searchParams.set('pass', roomPass);
+    targetUrl.searchParams.set('ota_reload', Date.now());
+    window.location.replace(targetUrl.toString());
+};
+
+/**
+ * ============================================================================
+ * 3. ХРАНИЛИЩЕ INDEXED-DB ДЛЯ ПОЛЬЗОВАТЕЛЬСКИХ MP3 ЗВУКОВ БУДИЛЬНИКА И АЗАНА
+ * ============================================================================
+ */
+function openAudioDb() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('FajrCustomSoundsDB', 1);
+        req.onupgradeneeded = (e) => {
+            e.target.result.createObjectStore('sounds');
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e);
+    });
+}
+
+async function saveCustomAudioToDb(key, dataUrl, fileName) {
+    try {
+        const db = await openAudioDb();
+        const tx = db.transaction('sounds', 'readwrite');
+        tx.objectStore('sounds').put({ dataUrl, fileName }, key);
+    } catch (e) {}
+}
+
+async function loadCustomAudiosFromDb() {
+    try {
+        const db = await openAudioDb();
+        const tx = db.transaction('sounds', 'readonly');
+        const store = tx.objectStore('sounds');
+
+        const reqAlarm = store.get('custom_alarm');
+        reqAlarm.onsuccess = () => {
+            if (reqAlarm.result) {
+                customAlarmDataUrl = reqAlarm.result.dataUrl;
+                document.getElementById('lblCustomAlarmStatus').innerText = `Свой файл: ${reqAlarm.result.fileName}`;
+            }
+        };
+
+        const reqAdhan = store.get('custom_adhan');
+        reqAdhan.onsuccess = () => {
+            if (reqAdhan.result) {
+                customAdhanDataUrl = reqAdhan.result.dataUrl;
+                document.getElementById('lblCustomAdhanStatus').innerText = `Свой файл Азана: ${reqAdhan.result.fileName}`;
+            }
+        };
+    } catch (e) {}
+}
+
+document.getElementById('inpCustomAlarmFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+        customAlarmDataUrl = ev.target.result;
+        alarmSoundType = 'custom_alarm';
+        document.getElementById('selAlarmSoundType').value = 'custom_alarm';
+        localStorage.setItem('fajr_alarm_sound_type', 'custom_alarm');
+        document.getElementById('lblCustomAlarmStatus').innerText = `Свой файл: ${file.name}`;
+        await saveCustomAudioToDb('custom_alarm', customAlarmDataUrl, file.name);
+        showToast(`✓ Мелодия будильника "${file.name}" сохранена!`);
+    };
+    reader.readAsDataURL(file);
+});
+
+document.getElementById('inpCustomAdhanFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+        customAdhanDataUrl = ev.target.result;
+        adhanSoundType = 'custom_adhan';
+        document.getElementById('selAdhanSoundType').value = 'custom_adhan';
+        localStorage.setItem('fajr_adhan_sound_type', 'custom_adhan');
+        document.getElementById('lblCustomAdhanStatus').innerText = `Свой файл Азана: ${file.name}`;
+        await saveCustomAudioToDb('custom_adhan', customAdhanDataUrl, file.name);
+        showToast(`✓ Азан "${file.name}" сохранен!`);
+    };
+    reader.readAsDataURL(file);
+});
+
+window.saveSoundPreferences = function() {
+    alarmSoundType = document.getElementById('selAlarmSoundType').value;
+    adhanSoundType = document.getElementById('selAdhanSoundType').value;
+    adhanEnabled = document.getElementById('chkEnableAdhan').checked;
+
+    localStorage.setItem('fajr_alarm_sound_type', alarmSoundType);
+    localStorage.setItem('fajr_adhan_sound_type', adhanSoundType);
+    localStorage.setItem('fajr_adhan_enabled', adhanEnabled ? 'true' : 'false');
+};
+
+/**
+ * ============================================================================
+ * 4. РАЗДЕЛЬНАЯ АУДИО-СИСТЕМА: БУДИЛЬНИК И АЗАН (БЕЗ ДВОЙНОГО ЗВУКА УВЕДОМЛЕНИЙ)
+ * ============================================================================
+ */
+function ensureAudioContext() {
+    if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+window.stopAllAudioPlayback = function() {
+    if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+    }
+    if (activeHtmlAudio) {
+        try {
+            activeHtmlAudio.pause();
+            activeHtmlAudio.currentTime = 0;
+        } catch (e) {}
+        activeHtmlAudio = null;
+    }
+};
+
+function playSynthPattern(type) {
+    try {
+        ensureAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        if (type === 'beep_radar') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(1046, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'bell_chime') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(528, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.35);
+            gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.38);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'makkah_synth') {
+            // Мягкий духовный аккорд для Азана
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.25);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.75, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.85);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.88);
+        } else {
+            // siren_fast по умолчанию
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.32);
+        }
+
+        if (navigator.vibrate) navigator.vibrate([240, 80, 240]);
+    } catch (e) {}
+}
+
+// Запуск ТОЛЬКО звука будильника (без системного пиликанья уведомлений)
+function startAlarmAudioLoop() {
+    stopAllAudioPlayback();
+
+    if (alarmSoundType === 'custom_alarm' && customAlarmDataUrl) {
+        activeHtmlAudio = new Audio(customAlarmDataUrl);
+        activeHtmlAudio.loop = true;
+        activeHtmlAudio.play().catch(() => {
+            playSynthPattern('siren_fast');
+            alarmInterval = setInterval(() => playSynthPattern('siren_fast'), 420);
+        });
+    } else {
+        playSynthPattern(alarmSoundType);
+        alarmInterval = setInterval(() => playSynthPattern(alarmSoundType), 450);
+    }
+}
+
+// Запуск ТОЛЬКО Азана при наступлении времени намаза
+function startAdhanAudioPlayback(prayerName) {
+    if (!adhanEnabled) return;
+    stopAllAudioPlayback();
+
+    document.getElementById('adhanTitleText').innerText = `ВРЕМЯ НАМАЗА: ${prayerName.toUpperCase()}`;
+    document.getElementById('adhanOverlay').classList.add('active');
+
+    if (adhanSoundType === 'custom_adhan' && customAdhanDataUrl) {
+        activeHtmlAudio = new Audio(customAdhanDataUrl);
+        activeHtmlAudio.loop = false;
+        activeHtmlAudio.onended = () => stopAdhanPlayback();
+        activeHtmlAudio.play().catch(() => {});
+    } else {
+        playSynthPattern('makkah_synth');
+        alarmInterval = setInterval(() => playSynthPattern('makkah_synth'), 950);
+        setTimeout(() => stopAdhanPlayback(), 25000);
+    }
+}
+
+window.stopAdhanPlayback = function() {
+    stopAllAudioPlayback();
+    document.getElementById('adhanOverlay').classList.remove('active');
+};
+
+window.testSelectedAlarmSound = function() {
+    startAlarmAudioLoop();
+    setTimeout(() => stopAllAudioPlayback(), 3500);
+};
+
+window.testSelectedAdhanSound = function() {
+    startAdhanAudioPlayback('ФАДЖР');
+};
+
+document.getElementById('btnOpenSoundsQuick').addEventListener('click', () => {
+    document.getElementById('roomModal').classList.add('open');
+    switchModalTab('sounds');
+});
+
+/**
+ * ============================================================================
+ * 5. ИНИЦИАЛИЗАЦИЯ SUPABASE И ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ
+ * ============================================================================
  */
 async function initSupabase() {
-    const netInd = document.getElementById('netIndicator');
+    updateOfflineBlockerState(navigator.onLine);
+    await loadCustomAudiosFromDb();
+
+    document.getElementById('selAlarmSoundType').value = alarmSoundType;
+    document.getElementById('selAdhanSoundType').value = adhanSoundType;
+    document.getElementById('chkEnableAdhan').checked = adhanEnabled;
+
     if (typeof supabase === 'undefined') {
-        if (netInd) netInd.classList.remove('online');
+        updateOfflineBlockerState(false);
         return;
     }
 
     supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Если человек еще не зарегистрирован — показываем обязательное окно регистрации
     if (!myName) {
         document.getElementById('regRoomName').value = currentRoom;
         document.getElementById('mandatoryAuthModal').classList.add('open');
@@ -1561,9 +2052,9 @@ async function initSupabase() {
     }
 
     await startOnlineSession();
+    checkForGithubIndexUpdate(false);
 }
 
-// Обработка кнопки обязательного входа/регистрации
 document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', async () => {
     const uName = document.getElementById('regUserName').value.trim();
     const uPass = document.getElementById('regUserPass').value.trim();
@@ -1588,7 +2079,10 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
 });
 
 async function startOnlineSession() {
-    const netInd = document.getElementById('netIndicator');
+    if (!navigator.onLine) {
+        updateOfflineBlockerState(false);
+        return;
+    }
     try {
         renderUI();
         await ensureRoomExistsInDb(currentRoom, roomPass, false);
@@ -1596,15 +2090,12 @@ async function startOnlineSession() {
         await fetchAllRoomsFromDb();
         await fetchRoomMembersFromDb();
         await subscribeToSupabaseRealtime();
-        if (netInd) netInd.classList.add('online');
+        updateOfflineBlockerState(true);
     } catch (err) {
-        if (netInd) netInd.classList.remove('online');
+        updateOfflineBlockerState(false);
     }
 }
 
-/**
- * 2. БЕЗОТКАЗНАЯ СИНХРОНИЗАЦИЯ УЧАСТНИКОВ И КОМНАТ (БЕЗ 409 CONFLICT)
- */
 async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
     if (!supabaseClient || !rName) return;
     const cleanRoom = rName.trim();
@@ -1634,7 +2125,7 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
 
 let isSyncingPresence = false;
 async function upsertMyPresenceInDb(extraFields = {}) {
-    if (!myName || !supabaseClient || isSyncingPresence) {
+    if (!myName || !supabaseClient || isSyncingPresence || !navigator.onLine) {
         renderUI();
         return;
     }
@@ -1655,7 +2146,6 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             ...extraFields
         };
 
-        // Проверяем, есть ли уже запись этого человека в этой комнате
         const { data: existingRow } = await supabaseClient
             .from('fajr_members')
             .select('user_name')
@@ -1681,7 +2171,7 @@ async function upsertMyPresenceInDb(extraFields = {}) {
 }
 
 async function fetchRoomMembersFromDb() {
-    if (!supabaseClient || !currentRoom) return;
+    if (!supabaseClient || !currentRoom || !navigator.onLine) return;
     const cleanRoom = currentRoom.trim();
 
     const { data, error } = await supabaseClient
@@ -1712,7 +2202,7 @@ async function fetchRoomMembersFromDb() {
 }
 
 async function fetchAllRoomsFromDb() {
-    if (!supabaseClient) return;
+    if (!supabaseClient || !navigator.onLine) return;
     const { data, error } = await supabaseClient
         .from('fajr_rooms')
         .select('*')
@@ -1736,7 +2226,9 @@ async function fetchAllRoomsFromDb() {
 }
 
 /**
- * 3. ПОДПИСКА REALTIME НА ИЗМЕНЕНИЯ В КОМНАТЕ И СИГНАЛЫ БУДИЛЬНИКА
+ * ============================================================================
+ * 6. REALTIME СИГНАЛЫ И ПРОБУЖДЕНИЕ (БЕЗ ЗВУКА СИСТЕМНЫХ УВЕДОМЛЕНИЙ)
+ * ============================================================================
  */
 async function subscribeToSupabaseRealtime() {
     if (!supabaseClient) return;
@@ -1767,6 +2259,7 @@ async function handleIncomingSignal(sig) {
     if (sig.signal_type === 'WAKE_CALL') {
         if (sig.target === 'ALL' || sig.target === myName) {
             if (myStatus !== 'done') {
+                // Запускаем ТОЛЬКО внутренний будильник программы (никаких Notification API со звуком!)
                 triggerAlarm(sig.sender, sig.word);
             }
         }
@@ -1814,7 +2307,132 @@ window.removeMemberFromRoom = async function(targetUserName) {
 };
 
 /**
- * 4. УПРАВЛЕНИЕ КОМНАТАМИ И ВКЛАДКАМИ
+ * ============================================================================
+ * 7. ПЕРЕДАЧА ЧИСТО КАРТИНКИ QR-КОДА (БЕЗ ССЫЛОК) И ОТДЕЛЬНО ССЫЛКИ НА ПРОГРАММУ
+ * ============================================================================
+ */
+async function sharePureQrImageOnly() {
+    const qrCanvas = document.querySelector('#qrContainer canvas');
+    const qrImg = document.querySelector('#qrContainer img');
+
+    // Рисуем красивую плотную карточку чисто с QR-кодом
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = 500;
+    outCanvas.height = 560;
+    const ctx = outCanvas.getContext('2d');
+
+    ctx.fillStyle = '#041f13';
+    ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+
+    ctx.strokeStyle = '#2ed573';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(14, 14, outCanvas.width - 28, outCanvas.height - 28);
+
+    ctx.fillStyle = '#2ed573';
+    ctx.font = 'bold 26px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AL-FAJR AWAKE', 250, 62);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(`ГРУППА: ${currentRoom}`, 250, 98);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(70, 125, 360, 360);
+
+    const drawSource = qrCanvas || qrImg;
+    if (drawSource) {
+        ctx.drawImage(drawSource, 90, 145, 320, 320);
+    }
+
+    ctx.fillStyle = '#a4b0be';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('Отсканируйте этот QR внутри приложения', 250, 520);
+
+    outCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], `fajr-qr-${currentRoom}.png`, { type: 'image/png' });
+
+        // Передаем ЧИСТО КАРТИНКУ (files: [file]), без поля url и без поля text!
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file]
+                });
+                return;
+            } catch (e) {}
+        }
+
+        // Если запускается на ПК или старом WebView — скачиваем чистую картинку PNG
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `fajr-qr-${currentRoom}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('🖼️ Чистая картинка QR-кода сохранена!');
+    }, 'image/png');
+}
+
+function shareApkLink() {
+    const dict = DICTIONARY[currentLang];
+    const msg = `${dict.shareApkTitle}\n${dict.shareApkText}\n${GITHUB_APK_URL}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: dict.shareApkTitle,
+            text: msg,
+            url: GITHUB_APK_URL
+        }).catch(() => copyTextFallback(GITHUB_APK_URL, dict.toastApkCopied));
+    } else {
+        copyTextFallback(GITHUB_APK_URL, dict.toastApkCopied);
+    }
+}
+
+function copyTextFallback(text, successToast) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    try {
+        document.execCommand('copy');
+        showToast(successToast || 'Скопировано!');
+    } catch (err) {
+        prompt('Скопируйте ссылку:', text);
+    }
+    document.body.removeChild(el);
+}
+
+document.getElementById('btnShareRoomQr').addEventListener('click', sharePureQrImageOnly);
+document.getElementById('btnShareApkLink').addEventListener('click', shareApkLink);
+
+function generateQR() {
+    const wrap = document.getElementById('qrContainer');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    
+    // Внутри самого QR зашиты только данные группы для сканера
+    const qrPayload = JSON.stringify({ room: currentRoom, pass: roomPass });
+    
+    try {
+        new QRCode(wrap, {
+            text: qrPayload,
+            width: 140,
+            height: 140,
+            colorDark: "#020705",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    } catch (e) {}
+}
+
+/**
+ * ============================================================================
+ * 8. МОДАЛЬНЫЕ ОКНА, СКАНЕР QR И СПИСОК КОМНАТ
+ * ============================================================================
  */
 window.switchModalTab = function(tabName) {
     document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1829,6 +2447,9 @@ window.switchModalTab = function(tabName) {
         document.getElementById('tabBtnCreate').classList.add('active');
         document.getElementById('panelTabCreate').classList.add('active');
         generateQR();
+    } else if (tabName === 'sounds') {
+        document.getElementById('tabBtnSounds').classList.add('active');
+        document.getElementById('panelTabSounds').classList.add('active');
     } else if (tabName === 'profile') {
         document.getElementById('tabBtnProfile').classList.add('active');
         document.getElementById('panelTabProfile').classList.add('active');
@@ -1965,25 +2586,22 @@ function updateRoomTtlBanner() {
     if (lbl) lbl.innerText = currentRoom;
 }
 
-/**
- * 5. СКАНЕР QR-КОДА (КАМЕРА + ГАЛЕРЕЯ) И ПОДЕЛИТЬСЯ
- */
 async function applyParsedRoomPayload(rawText) {
     if (!rawText) return false;
     let rName = '';
     let rPass = '';
 
     try {
-        if (rawText.includes('room=')) {
-            const url = new URL(rawText.startsWith('http') ? rawText : 'https://fake.url/' + rawText);
-            rName = url.searchParams.get('room') || '';
-            rPass = url.searchParams.get('pass') || '';
-        } else if (rawText.trim().startsWith('{')) {
+        if (rawText.trim().startsWith('{')) {
             const parsed = JSON.parse(rawText);
             if (parsed.room) {
                 rName = parsed.room;
                 rPass = parsed.pass || '';
             }
+        } else if (rawText.includes('room=')) {
+            const url = new URL(rawText.startsWith('http') ? rawText : 'https://fake.url/' + rawText);
+            rName = url.searchParams.get('room') || '';
+            rPass = url.searchParams.get('pass') || '';
         } else {
             rName = rawText.trim();
         }
@@ -2067,119 +2685,9 @@ document.getElementById('inpQrGallery').addEventListener('change', async (e) => 
 });
 
 /**
- * 6. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ВРЕМЕНИ НАМАЗОВ
- */
-function toRad(d) { return d * Math.PI / 180.0; }
-function toDeg(r) { return r * 180.0 / Math.PI; }
-
-function calculateSunTimes(date, lat, lng) {
-    const tz = -date.getTimezoneOffset() / 60;
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const JD = 367 * year - Math.floor((7 * (year + Math.floor((month + 9) / 12))) / 4) +
-               Math.floor((275 * month) / 9) + day + 1721013.5 - (lng / (15 * 24));
-    const D = JD - 2451545.0;
-
-    const g = (357.529 + 0.98560028 * D) % 360;
-    const q = (280.459 + 0.98564736 * D) % 360;
-    const L = (q + 1.915 * Math.sin(toRad(g)) + 0.020 * Math.sin(toRad(2 * g))) % 360;
-    const e = 23.439 - 0.00000036 * D;
-
-    const RA = toDeg(Math.atan2(Math.cos(toRad(e)) * Math.sin(toRad(L)), Math.cos(toRad(L)))) / 15.0;
-    const decl = toDeg(Math.asin(Math.sin(toRad(e)) * Math.sin(toRad(L))));
-
-    const EqT = (q / 15.0) - (RA < 0 ? RA + 24 : RA);
-    const noon = 12 + tz - (lng / 15.0) - EqT;
-
-    function sunAngleTime(angle) {
-        const val = (Math.sin(toRad(angle)) - Math.sin(toRad(lat)) * Math.sin(toRad(decl))) /
-                    (Math.cos(toRad(lat)) * Math.cos(toRad(decl)));
-        if (val > 1 || val < -1) return 1.5;
-        return toDeg(Math.acos(val)) / 15.0;
-    }
-
-    const sunriseAngle = sunAngleTime(-0.833);
-    const sunrise = noon - sunriseAngle;
-    const sunset = noon + sunriseAngle;
-
-    const fajr = noon - sunAngleTime(-18.0);
-    const dhuhr = noon + (2 / 60);
-
-    const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
-    const asrAngleVal = toDeg(Math.atan(1 / (1 + noonShadow)));
-    const asr = noon + sunAngleTime(asrAngleVal);
-
-    const maghrib = sunset + (2 / 60);
-    const isha = noon + sunAngleTime(-17.5);
-
-    return { fajr, sunrise, dhuhr, asr, maghrib, isha };
-}
-
-function fmt(decHours) {
-    if (decHours === null || isNaN(decHours)) return "--:--";
-    let norm = ((decHours % 24) + 24) % 24;
-    let h = Math.floor(norm);
-    let m = Math.floor((norm - h) * 60);
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
-/**
- * 7. ЗВУКОВАЯ СИРЕНА БУДИЛЬНИКА
- */
-function ensureAudioContext() {
-    if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContextClass();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-}
-
-function playSingleTone() {
-    try {
-        ensureAudioContext();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
-
-        gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.32);
-
-        if (navigator.vibrate) navigator.vibrate([260, 80, 260]);
-    } catch (e) {}
-}
-
-function playAlarmChime() {
-    if (alarmInterval) return;
-    playSingleTone();
-    alarmInterval = setInterval(playSingleTone, 420);
-}
-
-function stopAlarmAudio() {
-    if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-    }
-}
-
-document.getElementById('btnTestAudio').addEventListener('click', () => {
-    ensureAudioContext();
-    playSingleTone();
-    showToast(DICTIONARY[currentLang].toastAudioReady);
-});
-
-/**
- * 8. ВЫЗОВ ПО СЛОВУ И ПОДТВЕРЖДЕНИЕ ПРОБУЖДЕНИЯ
+ * ============================================================================
+ * 9. ВЫЗОВ ПО СЛОВУ И АСТРОНОМИЧЕСКИЙ ТАЙМЕР НАМАЗОВ
+ * ============================================================================
  */
 function openWakeWordSelector(targetUser) {
     pendingWakeTarget = targetUser;
@@ -2245,8 +2753,7 @@ async function triggerAlarm(senderName, incomingWord) {
     document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${senderName}`;
 
     document.getElementById('alarmOverlay').classList.add('active');
-    ensureAudioContext();
-    playAlarmChime();
+    startAlarmAudioLoop();
 
     await upsertMyPresenceInDb({
         call_state: 'ringing',
@@ -2264,7 +2771,7 @@ document.getElementById('inpCaptchaAnswer').addEventListener('keyup', (e) => {
 async function verifyCaptchaAndStop() {
     const input = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
     if (input === targetCaptchaWord.trim().toLowerCase()) {
-        stopAlarmAudio();
+        stopAllAudioPlayback();
         document.getElementById('alarmOverlay').classList.remove('active');
         myStatus = 'awake';
 
@@ -2282,17 +2789,20 @@ async function verifyCaptchaAndStop() {
     }
 }
 
-// Авто-пульс каждые 6 секунд, чтобы устройства всегда видели друг друга онлайн
+// Авто-пульс каждые 6 секунд + контроль связи
 setInterval(() => {
-    if (supabaseClient && myName) {
+    updateOfflineBlockerState(navigator.onLine);
+    if (supabaseClient && myName && navigator.onLine) {
         upsertMyPresenceInDb();
         fetchRoomMembersFromDb();
     }
 }, 6000);
 
-/**
- * 9. ОТРИСОВКА ИНТЕРФЕЙСА И ЯЗЫКОВ
- */
+// Проверка обновлений index.html на GitHub каждые 3 минуты
+setInterval(() => {
+    checkForGithubIndexUpdate(false);
+}, 180000);
+
 function setLanguage(lang) {
     if (!DICTIONARY[lang]) lang = 'ru';
     currentLang = lang;
@@ -2484,88 +2994,6 @@ document.getElementById('btnWakeAll').addEventListener('click', () => {
     openWakeWordSelector('ALL');
 });
 
-/**
- * 10. ФУНКЦИИ ПОДЕЛИТЬСЯ КОМНАТОЙ, APK И QR-КОД
- */
-function getBaseAppUrl() {
-    const baseUrl = `${location.origin}${location.pathname}`;
-    return baseUrl.endsWith('/') ? baseUrl : baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
-}
-
-function shareRoomLink() {
-    const dict = DICTIONARY[currentLang];
-    const cleanBaseUrl = getBaseAppUrl();
-    const webRoomUrl = `${cleanBaseUrl}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
-    const msg = `${dict.shareRoomTitle}\n${dict.shareRoomText}\n${webRoomUrl}`;
-
-    if (navigator.share) {
-        navigator.share({
-            title: dict.shareRoomTitle,
-            text: msg,
-            url: webRoomUrl
-        }).catch(() => copyTextFallback(msg, dict.toastRoomCopied));
-    } else {
-        copyTextFallback(msg, dict.toastRoomCopied);
-    }
-}
-
-function shareApkLink() {
-    const dict = DICTIONARY[currentLang];
-    const cleanBaseUrl = getBaseAppUrl();
-    const apkUrl = `${cleanBaseUrl}fajr-awake.apk`;
-    const msg = `${dict.shareApkTitle}\n${dict.shareApkText}\n${apkUrl}`;
-
-    if (navigator.share) {
-        navigator.share({
-            title: dict.shareApkTitle,
-            text: msg,
-            url: apkUrl
-        }).catch(() => copyTextFallback(msg, dict.toastApkCopied));
-    } else {
-        copyTextFallback(msg, dict.toastApkCopied);
-    }
-}
-
-function copyTextFallback(text, successToast) {
-    const el = document.createElement('textarea');
-    el.value = text;
-    el.setAttribute('readonly', '');
-    el.style.position = 'absolute';
-    el.style.left = '-9999px';
-    document.body.appendChild(el);
-    el.select();
-    try {
-        document.execCommand('copy');
-        showToast(successToast || 'Скопировано в буфер обмена!');
-    } catch (err) {
-        prompt('Скопируйте текст:', text);
-    }
-    document.body.removeChild(el);
-}
-
-document.getElementById('btnShareRoomQr').addEventListener('click', shareRoomLink);
-document.getElementById('btnShareApkLink').addEventListener('click', shareApkLink);
-
-let qrObj = null;
-function generateQR() {
-    const wrap = document.getElementById('qrContainer');
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    
-    const shareUrl = `${location.origin}${location.pathname}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
-    
-    try {
-        qrObj = new QRCode(wrap, {
-            text: shareUrl,
-            width: 140,
-            height: 140,
-            colorDark: "#020705",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-        });
-    } catch (e) {}
-}
-
 document.getElementById('btnOpenRoom').addEventListener('click', () => {
     document.getElementById('inpMyName').value = myName;
     document.getElementById('inpUserPass').value = userPass;
@@ -2593,7 +3021,8 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
                 updatePrayerCycle();
                 renderUI();
             },
-            () => showToast(dict.toastGeoFail)
+            () => showToast(dict.toastGeoFail),
+            { maximumAge: Infinity, timeout: 10000 }
         );
     } else {
         showToast(dict.toastGeoFail);
@@ -2654,9 +3083,62 @@ document.getElementById('btnLogoutProfile').addEventListener('click', async () =
     document.getElementById('mandatoryAuthModal').classList.add('open');
 });
 
-/**
- * 11. ТАЙМЕР ОБРАТНОГО ОТСЧЕТА ДО НАМАЗА
- */
+function toRad(d) { return d * Math.PI / 180.0; }
+function toDeg(r) { return r * 180.0 / Math.PI; }
+
+function calculateSunTimes(date, lat, lng) {
+    const tz = -date.getTimezoneOffset() / 60;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const JD = 367 * year - Math.floor((7 * (year + Math.floor((month + 9) / 12))) / 4) +
+               Math.floor((275 * month) / 9) + day + 1721013.5 - (lng / (15 * 24));
+    const D = JD - 2451545.0;
+
+    const g = (357.529 + 0.98560028 * D) % 360;
+    const q = (280.459 + 0.98564736 * D) % 360;
+    const L = (q + 1.915 * Math.sin(toRad(g)) + 0.020 * Math.sin(toRad(2 * g))) % 360;
+    const e = 23.439 - 0.00000036 * D;
+
+    const RA = toDeg(Math.atan2(Math.cos(toRad(e)) * Math.sin(toRad(L)), Math.cos(toRad(L)))) / 15.0;
+    const decl = toDeg(Math.asin(Math.sin(toRad(e)) * Math.sin(toRad(L))));
+
+    const EqT = (q / 15.0) - (RA < 0 ? RA + 24 : RA);
+    const noon = 12 + tz - (lng / 15.0) - EqT;
+
+    function sunAngleTime(angle) {
+        const val = (Math.sin(toRad(angle)) - Math.sin(toRad(lat)) * Math.sin(toRad(decl))) /
+                    (Math.cos(toRad(lat)) * Math.cos(toRad(decl)));
+        if (val > 1 || val < -1) return 1.5;
+        return toDeg(Math.acos(val)) / 15.0;
+    }
+
+    const sunriseAngle = sunAngleTime(-0.833);
+    const sunrise = noon - sunriseAngle;
+    const sunset = noon + sunriseAngle;
+
+    const fajr = noon - sunAngleTime(-18.0);
+    const dhuhr = noon + (2 / 60);
+
+    const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
+    const asrAngleVal = toDeg(Math.atan(1 / (1 + noonShadow)));
+    const asr = noon + sunAngleTime(asrAngleVal);
+
+    const maghrib = sunset + (2 / 60);
+    const isha = noon + sunAngleTime(-17.5);
+
+    return { fajr, sunrise, dhuhr, asr, maghrib, isha };
+}
+
+function fmt(decHours) {
+    if (decHours === null || isNaN(decHours)) return "--:--";
+    let norm = ((decHours % 24) + 24) % 24;
+    let h = Math.floor(norm);
+    let m = Math.floor((norm - h) * 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
 let lastTriggeredPrayerMinute = '';
 
 function updatePrayerCycle() {
@@ -2705,13 +3187,12 @@ function updatePrayerCycle() {
     const ss = String(totalSec % 60).padStart(2, '0');
     document.getElementById('lblCountdown').innerText = `${hh}:${mm}:${ss}`;
 
+    // Когда наступает время намаза — включается именно Азан (а не сирена со словом!)
     const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     prayers.forEach(p => {
         if (p.isSalah && fmt(p.time) === nowHHMM && lastTriggeredPrayerMinute !== `${p.id}_${nowHHMM}`) {
             lastTriggeredPrayerMinute = `${p.id}_${nowHHMM}`;
-            if (myStatus !== 'done') {
-                triggerAlarm(`АЗАН: ${p.name}`, dict.words[0]);
-            }
+            startAdhanAudioPlayback(p.name);
         }
     });
 }
