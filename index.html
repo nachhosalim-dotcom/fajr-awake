@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AL-FAJR AWAKE — Сеть совместного пробуждения</title>
+    <title>AL-FAJR AWAKE — Global Prayer Network</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #020705;
-            --emerald-card: rgba(6, 32, 21, 0.9);
-            --emerald-border: rgba(46, 213, 115, 0.35);
+            --emerald-card: rgba(6, 32, 21, 0.85);
+            --emerald-border: rgba(46, 213, 115, 0.28);
             --emerald-accent: #2ed573;
             --gold-accent: #d4af37;
             --ruby-danger: #e71d36;
+            --diamond-cyan: #70a1ff;
             --text-primary: #f1f2f6;
             --text-secondary: #a4b0be;
             --radius-card: 20px;
@@ -42,7 +45,11 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 14px 12px 60px;
+            padding: 14px 12px 70px;
+        }
+
+        body[dir="rtl"] {
+            font-family: 'Segoe UI', Tahoma, 'Plus Jakarta Sans', sans-serif;
         }
 
         .app-shell {
@@ -58,55 +65,44 @@
             background: var(--emerald-card);
             border: 1px solid var(--emerald-border);
             border-radius: var(--radius-card);
-            padding: 10px 14px;
+            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(16px);
             box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-        }
-
-        .top-user-info {
-            display: flex;
-            align-items: center;
             gap: 8px;
         }
 
-        .user-avatar-small {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(46, 213, 115, 0.2);
-            border: 1px solid var(--emerald-accent);
-            color: var(--emerald-accent);
-            font-weight: 800;
-            font-size: 13px;
+        .lang-switch {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 11px;
+            padding: 2px;
+            gap: 2px;
         }
 
-        .user-text-small {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .u-display-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1.2;
-        }
-
-        .u-login-tag {
-            font-size: 10px;
+        .btn-lang {
+            background: transparent;
+            border: none;
             color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-lang.active {
+            background: var(--emerald-accent);
+            color: #020705;
         }
 
         .top-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-room-badge {
@@ -115,22 +111,23 @@
             color: #ffffff;
             font-size: 11px;
             font-weight: 700;
-            padding: 7px 12px;
+            padding: 7px 11px;
             border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            max-width: 160px;
+            gap: 5px;
+            max-width: 155px;
         }
         .btn-room-badge span.truncate {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .btn-room-badge:active { transform: scale(0.96); }
 
         .btn-icon-top {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.14);
             color: var(--text-primary);
             width: 32px;
@@ -143,7 +140,21 @@
             font-size: 14px;
         }
 
-        /* Hero */
+        .network-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffa502;
+            box-shadow: 0 0 8px #ffa502;
+            display: inline-block;
+            margin-right: 2px;
+        }
+        .network-indicator.online {
+            background: var(--emerald-accent);
+            box-shadow: 0 0 8px var(--emerald-accent);
+        }
+
+        /* Main Prayer Hero Card */
         .prayer-hero {
             background: linear-gradient(160deg, rgba(9, 44, 30, 0.92) 0%, rgba(3, 18, 12, 0.96) 100%);
             border: 1px solid var(--emerald-border);
@@ -151,12 +162,12 @@
             padding: 20px 16px;
             text-align: center;
             position: relative;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(20px);
         }
 
         .prayer-hero-tag {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #7bed9f;
@@ -165,14 +176,15 @@
 
         .prayer-hero-title {
             font-family: 'Cinzel', serif;
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 800;
             color: #ffffff;
             margin: 4px 0 2px;
+            text-shadow: 0 2px 14px rgba(46, 213, 115, 0.35);
         }
 
         .prayer-hero-time {
-            font-size: 40px;
+            font-size: 38px;
             font-weight: 800;
             color: var(--gold-accent);
             font-variant-numeric: tabular-nums;
@@ -182,21 +194,25 @@
         .meta-strip {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .pill {
             background: rgba(0, 0, 0, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 14px;
             font-size: 11px;
             font-weight: 600;
             color: #dcdde1;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        .pill b { color: var(--emerald-accent); }
+        .pill b { color: var(--emerald-accent); font-weight: 700; }
 
-        /* Timeline */
+        /* 6-Box Astronomical Timeline */
         .timeline-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -209,6 +225,7 @@
             border-radius: 12px;
             padding: 8px 2px;
             text-align: center;
+            transition: all 0.2s ease;
         }
 
         .tl-box.active {
@@ -223,6 +240,9 @@
             text-transform: uppercase;
             color: var(--text-secondary);
             margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tl-box.active .tl-name { color: var(--emerald-accent); }
 
@@ -230,9 +250,10 @@
             font-size: 11px;
             font-weight: 700;
             color: #ffffff;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* Action Buttons */
+        /* Action Buttons Cluster */
         .action-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -240,11 +261,12 @@
         }
 
         .btn-act {
-            padding: 14px 10px;
+            padding: 13px 10px;
             border-radius: 14px;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
             border: none;
             cursor: pointer;
             display: flex;
@@ -252,6 +274,7 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
+            transition: all 0.2s ease;
             text-align: center;
         }
         .btn-act:active { transform: scale(0.97); }
@@ -259,6 +282,7 @@
         .btn-done-prayer {
             background: linear-gradient(135deg, #10ac84, #065e47);
             color: #ffffff;
+            box-shadow: 0 4px 18px rgba(16, 172, 132, 0.3);
         }
         .btn-done-prayer.done {
             background: linear-gradient(135deg, #2ed573, #1e90ff);
@@ -276,18 +300,18 @@
             color: #ffffff;
             box-shadow: 0 4px 18px rgba(231, 29, 54, 0.45);
             grid-column: span 2;
-            padding: 16px;
-            font-size: 13px;
+            padding: 15px;
+            font-size: 12px;
             flex-direction: row;
             gap: 8px;
         }
 
-        /* Members List */
+        /* Members Card */
         .members-card {
             background: var(--emerald-card);
             border: 1px solid var(--emerald-border);
             border-radius: var(--radius-card);
-            padding: 16px;
+            padding: 15px;
             backdrop-filter: blur(16px);
         }
 
@@ -295,40 +319,83 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             padding-bottom: 8px;
         }
 
         .members-title {
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--emerald-accent);
+        }
+
+        .room-ttl-banner {
+            font-size: 10px;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .user-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 11px 12px;
+            padding: 11px 10px;
             margin-bottom: 6px;
             border-radius: 14px;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.28);
             border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
         }
+        .user-item:last-child { margin-bottom: 0; }
 
         .user-item.ringing {
-            background: linear-gradient(90deg, rgba(231, 29, 54, 0.35), rgba(80, 5, 18, 0.5));
+            background: linear-gradient(90deg, rgba(231, 29, 54, 0.28), rgba(80, 5, 18, 0.4));
             border-color: #ff6b81;
-            animation: ringGlow 0.9s infinite alternate;
+            animation: rowRingPulse 0.9s infinite alternate;
         }
 
-        @keyframes ringGlow {
-            0% { box-shadow: 0 0 5px rgba(231, 29, 54, 0.4); }
-            100% { box-shadow: 0 0 20px rgba(231, 29, 54, 0.8); }
+        .user-item.replied {
+            background: linear-gradient(90deg, rgba(46, 213, 115, 0.25), rgba(6, 45, 28, 0.4));
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 18px rgba(46, 213, 115, 0.25);
         }
+
+        @keyframes rowRingPulse {
+            0% { box-shadow: 0 0 6px rgba(231, 29, 54, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 20px rgba(231, 29, 54, 0.75); transform: scale(1.01); }
+        }
+
+        @keyframes bellShake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(16deg); }
+            75% { transform: rotate(-16deg); }
+        }
+
+        .ring-icon {
+            display: inline-block;
+            animation: bellShake 0.4s infinite;
+        }
+
+        .u-call-status {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .u-call-status.calling { color: #ffccd5; }
+        .u-call-status.ack { color: #7bed9f; }
 
         .u-left {
             display: flex;
@@ -337,29 +404,29 @@
         }
 
         .u-avatar {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: rgba(46, 213, 115, 0.15);
             border: 1px solid rgba(46, 213, 115, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             color: var(--emerald-accent);
         }
 
         .u-name {
             font-size: 13px;
-            font-weight: 800;
+            font-weight: 700;
             color: #ffffff;
         }
 
         .u-badge {
             font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
+            font-weight: 600;
+            padding: 2px 7px;
             border-radius: 10px;
             display: inline-block;
             margin-top: 2px;
@@ -369,17 +436,47 @@
         .b-done { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); }
 
         .btn-nudge {
-            background: linear-gradient(135deg, rgba(231, 29, 54, 0.3), rgba(153, 0, 17, 0.5));
-            border: 1px solid rgba(231, 29, 54, 0.6);
+            background: linear-gradient(135deg, rgba(231, 29, 54, 0.25), rgba(153, 0, 17, 0.4));
+            border: 1px solid rgba(231, 29, 54, 0.55);
             color: #ffccd5;
-            padding: 8px 14px;
-            border-radius: 10px;
+            padding: 7px 12px;
+            border-radius: 9px;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
         }
+        .btn-nudge:active { transform: scale(0.92); }
 
-        /* Modal Base */
+        .btn-kick-ghost {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--text-secondary);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-kick-ghost:hover {
+            background: rgba(231, 29, 54, 0.25);
+            color: #ff6b81;
+            border-color: rgba(231, 29, 54, 0.5);
+        }
+
+        .u-online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .u-online-dot.on { background: #2ed573; box-shadow: 0 0 6px #2ed573; }
+        .u-online-dot.off { background: #747d8c; }
+
+        /* Modals Common */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -396,15 +493,17 @@
         .modal-body {
             width: 100%;
             max-width: 440px;
+            max-height: 90vh;
             background: linear-gradient(160deg, #072517 0%, #03130b 100%);
             border: 1px solid var(--emerald-border);
             border-radius: 24px;
-            padding: 22px 18px;
+            padding: 18px 16px 20px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             position: relative;
             box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+            overflow: hidden;
         }
 
         .modal-close {
@@ -414,22 +513,270 @@
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            font-size: 22px;
+            font-size: 20px;
             cursor: pointer;
+            z-index: 5;
+        }
+        body[dir="rtl"] .modal-close {
+            right: auto;
+            left: 16px;
+        }
+
+        /* Tabs */
+        .modal-tabs-header {
+            display: flex;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 4px;
+            margin-top: 24px;
+        }
+
+        .modal-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 9px 4px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .modal-tab-btn.active {
+            background: var(--emerald-accent);
+            color: #020705;
+            box-shadow: 0 2px 10px rgba(46, 213, 115, 0.3);
+        }
+
+        .tab-content-panel {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            max-height: 58vh;
+            padding-right: 2px;
+        }
+        .tab-content-panel.active {
+            display: flex;
+        }
+
+        .search-room-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-room-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 11px 14px 11px 36px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+        }
+        .search-room-input:focus {
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 12px rgba(46, 213, 115, 0.2);
+        }
+        .search-room-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .rooms-scroll-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            padding: 2px;
+        }
+
+        .room-card-box {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .room-card-box.active-room {
+            border-color: var(--emerald-accent);
+            background: linear-gradient(135deg, rgba(46, 213, 115, 0.18), rgba(6, 40, 24, 0.5));
+            box-shadow: 0 0 16px rgba(46, 213, 115, 0.2);
+        }
+
+        .room-info-cell {
+            flex: 1;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .room-header-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .room-title-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .room-badge-pill {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-active { background: var(--emerald-accent); color: #020705; }
+        .badge-lock { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid rgba(255, 165, 2, 0.4); }
+        .badge-open { background: rgba(112, 161, 255, 0.2); color: #70a1ff; border: 1px solid rgba(112, 161, 255, 0.4); }
+
+        .room-sub-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .room-actions-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-enter-room {
+            background: linear-gradient(135deg, #2ed573, #10ac84);
+            border: none;
+            color: #020705;
+            padding: 8px 14px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-enter-room:active { transform: scale(0.92); }
+
+        .btn-trash-room {
+            background: rgba(231, 29, 54, 0.15);
+            border: 1px solid rgba(231, 29, 54, 0.35);
+            color: #ff6b81;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-trash-room:hover { background: rgba(231, 29, 54, 0.35); }
+
+        .qr-card-container {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qr-wrap {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 14px;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-actions-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-qr-action {
+            flex: 1;
+            background: rgba(46, 213, 115, 0.15);
+            border: 1px solid rgba(46, 213, 115, 0.4);
+            color: #7bed9f;
+            border-radius: 10px;
+            padding: 10px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-qr-action:active { transform: scale(0.97); }
+
+        .m-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7bed9f;
+            margin-bottom: -4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .m-input {
             width: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 13px 14px;
+            padding: 12px 14px;
             color: #ffffff;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             font-family: inherit;
         }
         .m-input:focus { border-color: var(--emerald-accent); }
+
+        .btn-geo {
+            background: rgba(46, 213, 115, 0.12);
+            border: 1px dashed var(--emerald-accent);
+            color: #7bed9f;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, #2ed573, #10ac84);
@@ -439,12 +786,60 @@
             border-radius: 12px;
             border: none;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        /* Fullscreen Alarm Screen */
+        .scanner-view-container {
+            position: relative;
+            width: 100%;
+            min-height: 250px;
+            background: #000000;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(46, 213, 115, 0.4);
+        }
+
+        #qrReaderBox {
+            width: 100%;
+            border: none !important;
+        }
+        #qrReaderBox video {
+            width: 100% !important;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        .word-chip {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 11px;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .word-chip.selected {
+            background: rgba(231, 29, 54, 0.3);
+            border-color: #ff6b81;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(231, 29, 54, 0.4);
+        }
+
         .alarm-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -454,7 +849,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 24px;
+            padding: 22px;
             text-align: center;
             animation: rubyPulse 1.1s infinite alternate;
         }
@@ -467,21 +862,27 @@
 
         .alarm-title {
             font-family: 'Cinzel', serif;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-shadow: 0 0 20px #e71d36;
+        }
+
+        .alarm-sender {
+            font-size: 14px;
+            color: #ffccd5;
+            margin-bottom: 18px;
         }
 
         .captcha-box {
             background: rgba(0, 0, 0, 0.65);
             border: 1px solid rgba(255, 255, 255, 0.22);
             border-radius: 16px;
-            padding: 18px;
+            padding: 16px;
             width: 100%;
             max-width: 340px;
-            margin: 18px 0;
+            margin-bottom: 18px;
         }
 
         .captcha-challenge {
@@ -496,6 +897,20 @@
             border: 1px dashed rgba(212, 175, 55, 0.4);
         }
 
+        .captcha-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+        .captcha-input:focus { border-color: var(--emerald-accent); }
+
         .btn-confirm-awake {
             background: #ffffff;
             color: #990011;
@@ -504,18 +919,18 @@
             padding: 16px 28px;
             border-radius: 28px;
             border: none;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
             cursor: pointer;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        /* Toast */
         .toast-banner {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(8, 42, 27, 0.98);
+            background: rgba(8, 42, 27, 0.96);
             border: 1px solid var(--emerald-accent);
             color: #ffffff;
             padding: 12px 20px;
@@ -531,606 +946,1129 @@
         .toast-banner.show {
             transform: translateX(-50%) translateY(0);
         }
-
-        /* Rooms Catalog List in Modal */
-        .room-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 6px;
-        }
-        .room-row.current {
-            border-color: var(--emerald-accent);
-            background: rgba(46, 213, 115, 0.12);
-        }
     </style>
 </head>
 <body>
 
-<!-- Экран обязательной регистрации/входа -->
-<div class="modal-overlay" id="authModal">
+<!-- 0. ОБЯЗАТЕЛЬНОЕ ОКНО РЕГИСТРАЦИИ ПРИ ВХОДЕ (НЕ ЗАКРЫВАЕТСЯ ПОКА НЕ ВВЕДЕШЬ ИМЯ И ПАРОЛЬ) -->
+<div class="modal-overlay" id="mandatoryAuthModal" style="z-index: 50000;">
     <div class="modal-body">
-        <h2 style="font-family:'Cinzel', serif; color: var(--emerald-accent); text-align:center;">ВХОД В СЕТЬ AL-FAJR</h2>
-        <p style="font-size: 12px; color: var(--text-secondary); text-align:center;">
-            Каждый человек регистрируется под своим именем, чтобы братья и сестры видели, кого они будят.
+        <h3 style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--emerald-accent); text-align: center;">РЕГИСТРАЦИЯ / ВХОД</h3>
+        <p style="font-size: 12px; color: var(--text-secondary); text-align: center; line-height: 1.4;">
+            Для входа в программу укажите ваше имя (логин) и пароль. Так каждый участник будет отображаться под своим настоящим именем на всех телефонах.
         </p>
 
-        <input type="text" class="m-input" id="authUsername" placeholder="Логин (на латинице, напр. salim)">
-        <input type="text" class="m-input" id="authDisplayName" placeholder="Отображаемое имя (напр. Салим Нашхо)">
-        <input type="password" class="m-input" id="authPassword" placeholder="Пароль">
+        <div class="m-label">ВАШЕ ИМЯ / ЛОГИН</div>
+        <input type="text" class="m-input" id="regUserName" placeholder="Например: Салим или Salim">
 
-        <button class="btn-primary" onclick="handleAuthSubmit()">ВОЙТИ / ЗАРЕГИСТРИРОВАТЬСЯ</button>
+        <div class="m-label">ПАРОЛЬ АККАУНТА</div>
+        <input type="password" class="m-input" id="regUserPass" placeholder="Придумайте или введите ваш пароль">
+
+        <div class="m-label">ГРУППА ДЛЯ ВХОДА</div>
+        <input type="text" class="m-input" id="regRoomName" value="Idlib-Jamaat" placeholder="Название группы">
+
+        <button class="btn-primary" id="btnCompleteMandatoryAuth" style="margin-top: 6px;">
+            ВОЙТИ В ПРОГРАММУ
+        </button>
     </div>
 </div>
 
-<div class="app-shell" id="appShell" style="display: none;">
-    <!-- Верхняя панель: профиль + комната -->
+<div class="app-shell">
+    <!-- Верхняя панель: 4 языка + Звук + Кнопка групп/QR -->
     <div class="top-bar">
-        <div class="top-user-info" onclick="openProfileModal()" style="cursor: pointer;">
-            <div class="user-avatar-small" id="topAvatar">С</div>
-            <div class="user-text-small">
-                <span class="u-display-name" id="topDisplayName">Салим</span>
-                <span class="u-login-tag" id="topUsername">@salim</span>
-            </div>
+        <div class="lang-switch">
+            <button class="btn-lang" onclick="setLanguage('tr')">TR</button>
+            <button class="btn-lang" onclick="setLanguage('ar')">عربي</button>
+            <button class="btn-lang" onclick="setLanguage('en')">EN</button>
+            <button class="btn-lang active" onclick="setLanguage('ru')">RU</button>
         </div>
-
         <div class="top-actions">
-            <button class="btn-icon-top" id="btnTestAudio" title="Проверить звук">🔔</button>
-            <button class="btn-room-badge" onclick="openRoomsModal()">
-                <span class="network-indicator online"></span>
-                <span class="truncate" id="lblRoomBadge">Idlib-Jamaat</span>
+            <button class="btn-icon-top" id="btnTestAudio" title="Test Sound">🔔</button>
+            <button class="btn-room-badge" id="btnOpenRoom">
+                <span class="network-indicator" id="netIndicator"></span>
+                <span class="truncate" id="lblRoomBadge">IDLIB-JAMAAT</span>
             </button>
         </div>
     </div>
 
-    <!-- Главный баннер следующего намаза -->
+    <!-- Главная карточка следующего намаза -->
     <div class="prayer-hero">
-        <div class="prayer-hero-tag">СЛЕДУЮЩИЙ НАМАЗ</div>
+        <div class="prayer-hero-tag" id="lblHeroSub">СЛЕДУЮЩИЙ НАМАЗ</div>
         <div class="prayer-hero-title" id="lblHeroName">ФАДЖР</div>
-        <div class="prayer-hero-time" id="lblHeroTime">05:34</div>
+        <div class="prayer-hero-time" id="lblHeroTime">04:45</div>
         <div class="meta-strip">
+            <div class="pill">👤 <b id="lblMyNamePill">---</b></div>
             <div class="pill">📍 <b id="lblCityDisplay">35.93°, 36.63°</b></div>
-            <div class="pill">Осталось: <b id="lblCountdown">--:--:--</b></div>
+            <div class="pill"><span id="lblRemainingPrefix">Осталось:</span> <b id="lblCountdown">--:--:--</b></div>
         </div>
     </div>
 
-    <!-- Времена 5 намазов + восход -->
+    <!-- Расписание 5 намазов + восход -->
     <div class="timeline-grid">
         <div class="tl-box" id="box-fajr">
-            <div class="tl-name">Фаджр</div>
+            <div class="tl-name" id="tl-txt-fajr">Фаджр</div>
             <div class="tl-time" id="t-fajr">--:--</div>
         </div>
         <div class="tl-box" id="box-sunrise">
-            <div class="tl-name">Восход</div>
+            <div class="tl-name" id="tl-txt-sunrise">Восход</div>
             <div class="tl-time" id="t-sunrise">--:--</div>
         </div>
         <div class="tl-box" id="box-dhuhr">
-            <div class="tl-name">Зухр</div>
+            <div class="tl-name" id="tl-txt-dhuhr">Зухр</div>
             <div class="tl-time" id="t-dhuhr">--:--</div>
         </div>
         <div class="tl-box" id="box-asr">
-            <div class="tl-name">Аср</div>
+            <div class="tl-name" id="tl-txt-asr">Аср</div>
             <div class="tl-time" id="t-asr">--:--</div>
         </div>
         <div class="tl-box" id="box-maghrib">
-            <div class="tl-name">Магриб</div>
+            <div class="tl-name" id="tl-txt-maghrib">Магриб</div>
             <div class="tl-time" id="t-maghrib">--:--</div>
         </div>
         <div class="tl-box" id="box-isha">
-            <div class="tl-name">Иша</div>
+            <div class="tl-name" id="tl-txt-isha">Иша</div>
             <div class="tl-time" id="t-isha">--:--</div>
         </div>
     </div>
 
-    <!-- Управление своим статусом -->
+    <!-- Кнопки смены статуса и общего вызова -->
     <div class="action-grid">
-        <button class="btn-act btn-done-prayer" id="btnToggleDone" onclick="togglePrayerDone()">
+        <button class="btn-act btn-done-prayer" id="btnToggleDone">
             <span id="txtDoneTitle">ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН</span>
-            <small style="font-size: 9px; opacity: 0.8;">нажмите для фиксации</small>
+            <small style="font-size: 9px; opacity: 0.8;" id="txtDoneSub">нажмите для фиксации</small>
         </button>
 
-        <button class="btn-act btn-my-state" id="btnToggleState" onclick="toggleSleepState()">
-            <span>СТАТУС: <b id="lblMyState" style="color:#e71d36;">СПЛЮ</b></span>
-            <small style="font-size: 9px; opacity: 0.7;">нажмите чтобы сменить</small>
+        <button class="btn-act btn-my-state" id="btnToggleState">
+            <span><span id="txtStatusPrefix">СТАТУС:</span> <b id="lblMyState" style="color:#ffa502;">СПЛЮ</b></span>
+            <small style="font-size: 9px; opacity: 0.7;" id="txtStateSub">нажмите чтобы сменить</small>
         </button>
 
-        <button class="btn-act btn-wake-jamaat" onclick="wakeAllInGroup()">
+        <button class="btn-act btn-wake-jamaat" id="btnWakeAll">
             <span>🚨</span>
-            <span>РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ</span>
+            <span id="txtWakeAll">РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ</span>
         </button>
     </div>
 
-    <!-- Список людей онлайн в этой комнате -->
+    <!-- Участники текущей комнаты -->
     <div class="members-card">
         <div class="members-head">
-            <span class="members-title">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
-            <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0 чел.</span>
+            <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ СЕТИ / КОМНАТЫ</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
+            </div>
+        </div>
+        <div class="room-ttl-banner" id="roomTtlBanner">
+            <span id="txtRoomTtlLabel">Активная группа:</span>
+            <b style="color: var(--emerald-accent);" id="lblCurrentRoomTtl">Idlib-Jamaat</b>
         </div>
         <div id="usersListContainer"></div>
     </div>
 </div>
 
-<!-- Модальное окно комнат / групп -->
-<div class="modal-overlay" id="roomsModal">
-    <div class="modal-body">
-        <button class="modal-close" onclick="closeRoomsModal()">✕</button>
-        <h3 style="font-family:'Cinzel', serif; color: var(--emerald-accent); text-align: center;">ГРУППЫ (КОМНАТЫ)</h3>
-        
-        <div id="roomsListContainer" style="max-height: 200px; overflow-y: auto;"></div>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display:flex; flex-direction:column; gap:8px;">
-            <span style="font-size: 11px; font-weight: 700; color: #7bed9f;">СОЗДАТЬ СВОЮ ГРУППУ</span>
-            <input type="text" class="m-input" id="newRoomName" placeholder="Название (напр. Семья-Нашхо)">
-            <input type="password" class="m-input" id="newRoomPass" placeholder="Пароль (если группа закрытая)">
-            <button class="btn-primary" onclick="handleCreateRoom()">СОЗДАТЬ И ПЕРЕЙТИ</button>
-        </div>
-    </div>
-</div>
-
-<!-- Модальное окно выбора проверочного слова для побудки -->
+<!-- 1. МОДАЛЬНОЕ ОКНО: ВЫБОР КОНТРОЛЬНОГО СЛОВА ДЛЯ БУДИЛЬНИКА -->
 <div class="modal-overlay" id="wakeWordModal">
     <div class="modal-body">
-        <button class="modal-close" onclick="closeWakeModal()">✕</button>
-        <h3 style="font-family:'Cinzel', serif; color: #ff6b81; text-align:center;">ВЫБЕРИТЕ СЛОВО ДЛЯ СИРЕНЫ</h3>
-        <p style="font-size: 12px; color: var(--text-secondary); text-align:center;">
-            У человека включится громкий сигнал. Он не отключится, пока он не напишет это слово в ответ:
+        <button class="modal-close" id="btnCloseWakeModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
+        <p style="font-size: 12px; color: var(--text-secondary); text-align: center;" id="txtWakeModalDesc">
+            Выберите контрольное слово. У адресата зазвенит будильник, и он не выключится, пока человек не напишет это же слово в ответ:
         </p>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" id="wakeWordChips"></div>
+        <div class="words-grid" id="wakeWordsGrid"></div>
 
-        <button class="btn-primary" style="background: linear-gradient(135deg, #e71d36, #990011); color: #fff;" onclick="executeWakeSignal()">
-            ВКЛЮЧИТЬ БУДИЛЬНИК
+        <button class="btn-primary" id="btnConfirmSendWake" style="background: linear-gradient(135deg, #e71d36, #990011); color: #fff; margin-top: 6px;">
+            <span id="txtSendWakeBtn">ОТПРАВИТЬ ВЫЗОВ И ВКЛЮЧИТЬ БУДИЛЬНИК</span>
         </button>
     </div>
 </div>
 
-<!-- Полноэкранный будильник при звонке -->
+<!-- 2. МОДАЛЬНОЕ ОКНО: КАТАЛОГ ГРУПП / СОЗДАТЬ + QR + ПОДЕЛИТЬСЯ / ПРОФИЛЬ -->
+<div class="modal-overlay" id="roomModal">
+    <div class="modal-body">
+        <button class="modal-close" id="btnCloseModal">✕</button>
+        
+        <div class="modal-tabs-header">
+            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">КАТАЛОГ ГРУПП</button>
+            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">+ СОЗДАТЬ / QR</button>
+            <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">ПРОФИЛЬ</button>
+        </div>
+
+        <!-- Вкладка 1: Список групп -->
+        <div class="tab-content-panel active" id="panelTabRooms">
+            <div class="search-room-wrapper">
+                <span class="search-room-icon">🔍</span>
+                <input type="text" class="search-room-input" id="inpSearchRooms" placeholder="Поиск группы по названию...">
+            </div>
+            
+            <div class="m-label" style="margin-top: 2px;">
+                <span id="lblSavedRoomsHeader">ДОСТУПНЫЕ СЕРВЕРЫ</span>
+                <span style="font-size: 11px; color: var(--text-secondary);" id="lblRoomsTotalCount">0 групп</span>
+            </div>
+
+            <div class="rooms-scroll-container" id="savedRoomsList"></div>
+        </div>
+
+        <!-- Вкладка 2: QR-код, Сканер, Поделиться программой и создание комнаты -->
+        <div class="tab-content-panel" id="panelTabCreate">
+            <div class="qr-card-container">
+                <div class="qr-wrap" id="qrContainer"></div>
+                <div class="qr-actions-row">
+                    <button class="btn-qr-action" id="btnOpenScanner">
+                        <span>📷</span>
+                        <span id="txtScanCamBtn">Сканировать QR</span>
+                    </button>
+                    <label class="btn-qr-action" style="cursor: pointer; margin: 0;">
+                        <span>🖼️</span>
+                        <span id="txtScanGalleryBtn">Из галереи</span>
+                        <input type="file" id="inpQrGallery" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
+                    <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(46, 213, 115, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #7bed9f; padding: 11px;">
+                        🔗 <span id="txtShareRoomBtn">ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)</span>
+                    </button>
+                    <button class="btn-primary" id="btnShareApkLink" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(80, 60, 10, 0.5)); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 11px;">
+                        📲 <span id="txtShareApkBtn">ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="m-label" id="lblCreateRoomHeader">ПАРАМЕТРЫ НОВОЙ ГРУППЫ</div>
+            <input type="text" class="m-input" id="inpRoomName" placeholder="Имя группы (например: Семья-Нашхо)">
+            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно, для закрытых)">
+
+            <button class="btn-primary" id="btnSaveRoomOnly">
+                <span id="txtSaveBtn">СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ</span>
+            </button>
+        </div>
+
+        <!-- Вкладка 3: Профиль и смена аккаунта -->
+        <div class="tab-content-panel" id="panelTabProfile">
+            <div class="m-label" id="lblProfileHeader">УЧЕТНЫЕ ДАННЫЕ</div>
+            <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
+            <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
+
+            <div class="m-label">ГЕОЛОКАЦИЯ ДЛЯ ВРЕМЕНИ НАМАЗА</div>
+            <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты автоматически</span></button>
+
+            <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 6px;">
+                СОХРАНИТЬ ПРОФИЛЬ
+            </button>
+            <button class="btn-primary" id="btnLogoutProfile" style="background: rgba(231,29,54,0.2); color: #ff6b81; border: 1px solid rgba(231,29,54,0.4);">
+                ВЫЙТИ ИЗ АККАУНТА
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 3. МОДАЛЬНОЕ ОКНО: КАМЕРА СКАНЕРА QR -->
+<div class="modal-overlay" id="scannerModal">
+    <div class="modal-body" style="max-width: 390px;">
+        <button class="modal-close" id="btnCloseScannerModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
+        <p style="font-size: 11px; color: var(--text-secondary); text-align: center;" id="txtScannerModalDesc">
+            Наведите камеру на QR-код комнаты для мгновенного подключения
+        </p>
+
+        <div class="scanner-view-container">
+            <div id="qrReaderBox"></div>
+        </div>
+
+        <button class="btn-primary" id="btnStopScanner" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);">
+            <span id="txtCancelScannerBtn">ЗАКРЫТЬ</span>
+        </button>
+    </div>
+</div>
+<div id="qrFileTempReader" style="display:none;"></div>
+
+<!-- 4. ПОЛНОЭКРАННАЯ ТРЕВОГА БУДИЛЬНИКА -->
 <div class="alarm-screen" id="alarmOverlay">
-    <div class="alarm-title">ВСТАВАЙ НА НАМАЗ!</div>
-    <div style="font-size: 14px; color: #ffccd5; margin-bottom: 12px;" id="txtAlarmCaller">Вас будит брат по джамаату</div>
+    <div class="alarm-title" id="txtAlarmHeader">ВСТАВАЙ НА НАМАЗ!</div>
+    <div class="alarm-sender" id="txtAlarmSender">Вас будит участник группы!</div>
 
     <div class="captcha-box">
-        <div style="font-size: 11px; color: #ffccd5;">Напишите слово, чтобы отключить сирену:</div>
-        <div class="captcha-challenge" id="targetChallengeWord">ПРОСЫПАЙСЯ</div>
-        <input type="text" class="m-input" style="text-align: center; font-size: 16px; font-weight: 800;" id="inpCaptchaAnswer" placeholder="...">
+        <div style="font-size: 11px; color: #ffccd5; margin-bottom: 4px;" id="txtCaptchaPrompt">Чтобы выключить звук, введите присланное слово:</div>
+        <div class="captcha-challenge" id="lblTargetWord">ПРОСЫПАЙСЯ</div>
+        <input type="text" class="captcha-input" id="inpCaptchaAnswer" placeholder="..." autocomplete="off">
     </div>
 
-    <button class="btn-confirm-awake" onclick="confirmAwakeAndStop()">Я ВСТАЛ, ОТКЛЮЧИТЬ</button>
+    <button class="btn-confirm-awake" id="btnVerifyAwake">
+        <span id="txtVerifyBtn">ПОДТВЕРДИТЬ И ОТВЕТИТЬ</span>
+    </button>
 </div>
 
 <div class="toast-banner" id="toastBanner"></div>
 
 <script>
+const DICTIONARY = {
+    ru: {
+        fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
+        nextPrayer: 'СЛЕДУЮЩИЙ НАМАЗ',
+        remaining: 'Осталось:',
+        doneTitle: 'ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН',
+        doneSub: 'нажмите для фиксации',
+        doneConfirmed: '✓ НАМАЗ СОВЕРШЕН',
+        statusPrefix: 'СТАТУС:',
+        stateSleep: 'СПЛЮ', stateAwake: 'ВСТАЛ', stateDone: 'ПРОЧИТАЛ',
+        changeStatus: 'нажмите чтобы сменить',
+        wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
+        members: 'УЧАСТНИКИ В ЭТОЙ ГРУППЕ',
+        peopleUnit: 'чел.',
+        roomsUnit: 'групп',
+        youBadge: '(Вы)',
+        nudgeBtn: 'РАЗБУДИТЬ',
+        roomTtlLabel: 'Текущая группа:',
+        daysShort: 'дн.',
+        permanentRoom: 'Основная группа',
+        wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
+        wakeModalDesc: 'Выберите проверочное слово. У человека включится сирена, и он должен будет написать это же слово в ответ:',
+        sendWakeBtn: 'ОТПРАВИТЬ ВЫЗОВ',
+        wakeHeader: 'ВСТАВАЙ НА НАМАЗ!',
+        wakeSenderPrefix: 'Вас будит:',
+        wakePrompt: 'Чтобы выключить сирену, введите присланное слово:',
+        inputWordPlaceholder: 'Введите слово сюда',
+        verifyBtn: 'ПОДТВЕРДИТЬ ПРОБУЖДЕНИЕ',
+        tabRooms: 'КАТАЛОГ ГРУПП',
+        tabCreate: '+ СОЗДАТЬ / QR',
+        tabProfile: 'ПРОФИЛЬ',
+        shareRoomBtn: 'ПОДЕЛИТЬСЯ ЭТОЙ КОМНАТОЙ (QR)',
+        shareApkBtn: 'ОТПРАВИТЬ ССЫЛКУ НА ПРИЛОЖЕНИЕ (APK)',
+        shareRoomTitle: 'Приглашение в группу Fajr Awake',
+        shareRoomText: 'Подключайся к нашей группе для совместного пробуждения на Фаджр:',
+        shareApkTitle: 'Скачать приложение Fajr Awake',
+        shareApkText: 'Скачай Android-приложение Fajr Awake (прямая ссылка на APK):',
+        toastRoomCopied: 'Ссылка на комнату скопирована!',
+        toastApkCopied: 'Ссылка на скачивание APK скопирована!',
+        savedRoomsHeader: 'ДОСТУПНЫЕ ГРУППЫ',
+        searchRoomsPlaceholder: 'Поиск группы по названию...',
+        profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
+        createRoomHeader: 'СОЗДАТЬ ИЛИ ПЕРЕЙТИ В ГРУППУ',
+        placeholderName: 'Ваше имя / логин',
+        placeholderUserPass: 'Пароль профиля',
+        placeholderRoomName: 'Название группы (напр. Семья)',
+        placeholderRoomPass: 'Пароль группы (необязательно)',
+        geoBtn: 'Определить GPS-координаты автоматически',
+        saveBtn: 'СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ',
+        deleteBtn: 'Удалить',
+        scanCamBtn: 'Сканировать QR',
+        scanGalleryBtn: 'Из галереи',
+        scannerModalTitle: 'СКАНИРОВАНИЕ QR-КОДА',
+        scannerModalDesc: 'Наведите камеру на QR-код комнаты для мгновенного подключения',
+        cancelScannerBtn: 'ЗАКРЫТЬ',
+        enterRoomBtn: 'Войти',
+        activeRoomBadge: 'Активна',
+        lockBadge: 'Закрытая',
+        openBadge: 'Открытая',
+        toastWakeSent: 'Сигнал тревоги со словом отправлен:',
+        toastReplyReceived: 'подтвердил пробуждение словом:',
+        toastRoomDeleted: 'Группа удалена из списка',
+        toastGeoSuccess: 'GPS координаты успешно обновлены!',
+        toastGeoFail: 'Не удалось получить доступ к GPS',
+        toastWrongWord: 'Неверное слово! Введите точно как на экране.',
+        toastAudioReady: 'Звуковой сигнал проверен и активен!',
+        toastQrScannedSuccess: 'Успешно! Подключено к группе:',
+        toastQrScanFailed: 'Не удалось найти QR-код на изображении',
+        toastCamError: 'Ошибка доступа к камере смартфона',
+        callSending: 'Отправка сигнала...',
+        callRinging: 'Звенит сирена! Ждем слово:',
+        callReplied: 'Проснулся! Ответил:',
+        words: ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан']
+    },
+    ar: {
+        fajr: 'الفجر', sunrise: 'الشروق', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء',
+        nextPrayer: 'الصلاة القادمة',
+        remaining: 'المتبقي:',
+        doneTitle: 'تأكيد: تمت الصلاة',
+        doneSub: 'اضغط للتوثيق',
+        doneConfirmed: '✓ تم أداء الصلاة',
+        statusPrefix: 'الحالة:',
+        stateSleep: 'نائم', stateAwake: 'مستيقظ', stateDone: 'صليت',
+        changeStatus: 'اضغط لتغيير الحالة',
+        wakeAll: 'إيقاظ جميع النائمين في المجموعة',
+        members: 'أعضاء المجموعة',
+        peopleUnit: 'أشخاص',
+        roomsUnit: 'غرف',
+        youBadge: '(أنت)',
+        nudgeBtn: 'إيقاظ',
+        roomTtlLabel: 'المجموعة الحالية:',
+        daysShort: 'يوم',
+        permanentRoom: 'الغرفة العامة',
+        wakeModalTitle: 'إرسال كلمة الاستيقاظ',
+        wakeModalDesc: 'اختر كلمة التحقق. سيرن المنبه لدى الشخص ولن يتوقف حتى يكتب نفس الكلمة:',
+        sendWakeBtn: 'إرسال التنبيه الآن',
+        wakeHeader: 'الصلاة خير من النوم!',
+        wakeSenderPrefix: 'يوقظك الآن:',
+        wakePrompt: 'لإيقاف المنبه، اكتب الكلمة المرسلة بدقة:',
+        inputWordPlaceholder: 'اكتب الكلمة هنا',
+        verifyBtn: 'تأكيد الاستيقاظ والرد',
+        tabRooms: 'دليل المجموعات',
+        tabCreate: '+ إنشاء / QR',
+        tabProfile: 'الملف الشخصي',
+        shareRoomBtn: 'مشاركة هذه الغرفة (QR)',
+        shareApkBtn: 'إرسال رابط التطبيق (APK)',
+        shareRoomTitle: 'دعوة للانضمام إلى مجموعة Fajr Awake',
+        shareRoomText: 'انضم إلى مجموعتنا للاستيقاظ على صلاة الفجر معاً:',
+        shareApkTitle: 'تحميل تطبيق Fajr Awake',
+        shareApkText: 'حمّل تطبيق أندرويد مباشرة (رابط APK):',
+        toastRoomCopied: 'تم نسخ رابط الغرفة!',
+        toastApkCopied: 'تم نسخ رابط تحميل التطبيق!',
+        savedRoomsHeader: 'المجموعات المتاحة',
+        searchRoomsPlaceholder: 'بحث عن مجموعة بالاسم...',
+        profileHeader: 'الملف الشخصي والموقع الجغرافي',
+        createRoomHeader: 'إنشاء أو دخول غرفة',
+        placeholderName: 'الاسم / اسم المستخدم',
+        placeholderUserPass: 'كلمة مرور الحساب',
+        placeholderRoomName: 'اسم الغرفة',
+        placeholderRoomPass: 'كلمة مرور الغرفة',
+        geoBtn: 'تحديد الموقع تلقائياً عبر GPS',
+        saveBtn: 'حفظ والانضمام',
+        deleteBtn: 'حذف',
+        scanCamBtn: 'مسح QR بالكاميرا',
+        scanGalleryBtn: 'من الاستوديو',
+        scannerModalTitle: 'مسح رمز QR',
+        scannerModalDesc: 'وجّه الكاميرا نحو رمز QR للانضمام فوراً',
+        cancelScannerBtn: 'إلغاء',
+        enterRoomBtn: 'دخول',
+        activeRoomBadge: 'نشطة',
+        lockBadge: 'خاصة',
+        openBadge: 'عامة',
+        toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
+        toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
+        toastRoomDeleted: 'تم حذف الغرفة بنجاح',
+        toastGeoSuccess: 'تم تحديث إحداثيات GPS بنجاح!',
+        toastGeoFail: 'تعذر الوصول إلى موقع GPS',
+        toastWrongWord: 'الكلمة غير صحيحة! اكتبها كما تظهر.',
+        toastAudioReady: 'تم فحص الصوت والمنبه جاهز!',
+        toastQrScannedSuccess: 'تم بنجاح! تم الانضمام إلى:',
+        toastQrScanFailed: 'لم يتم العثور على رمز QR في الصورة',
+        toastCamError: 'خطأ في تشغيل الكاميرا',
+        callSending: 'جاري إرسال الرنين...',
+        callRinging: 'يرن المنبه الآن! بانتظار الكلمة:',
+        callReplied: 'استيقظ! رد بالكلمة:',
+        words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
+    },
+    tr: {
+        fajr: 'Fecr', sunrise: 'Güneş', dhuhr: 'Öğle', asr: 'İkindi', maghrib: 'Akşam', isha: 'Yatsı',
+        nextPrayer: 'SIRADAKİ NAMAZ',
+        remaining: 'Kalan:',
+        doneTitle: 'NAMAZ KILINDI OLARAK İŞARETLE',
+        doneSub: 'kaydetmek için dokunun',
+        doneConfirmed: '✓ NAMAZ KILINDI',
+        statusPrefix: 'DURUM:',
+        stateSleep: 'UYUYOR', stateAwake: 'UYANDI', stateDone: 'KILDI',
+        changeStatus: 'değiştirmek için dokunun',
+        wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
+        members: 'ODA KATILIMCILARI',
+        peopleUnit: 'kişi',
+        roomsUnit: 'grup',
+        youBadge: '(Siz)',
+        nudgeBtn: 'UYANDIR',
+        roomTtlLabel: 'Aktif Grup:',
+        daysShort: 'gün',
+        permanentRoom: 'Ana Grup',
+        wakeModalTitle: 'UYANDIRMA KELİMESİ GÖNDER',
+        wakeModalDesc: 'Bir kontrol kelimesi seçin. Karşı tarafın alarmı çalacak ve aynı kelimeyi yazana kadar kapanmayacaktır:',
+        sendWakeBtn: 'ÇAĞRIYI GÖNDER',
+        wakeHeader: 'NAMAZA KALK!',
+        wakeSenderPrefix: 'Sizi uyandıran:',
+        wakePrompt: 'Alarmı kapatmak için gönderilen kelimeyi yazın:',
+        inputWordPlaceholder: 'Kelimeyi buraya yazın',
+        verifyBtn: 'UYANDIĞIMI ONAYLA',
+        tabRooms: 'GRUP KATALOĞU',
+        tabCreate: '+ OLUŞTUR / QR',
+        tabProfile: 'PROFİL',
+        shareRoomBtn: 'BU ODAYI PAYLAŞ (QR)',
+        shareApkBtn: 'UYGULAMA BAĞLANTISINI GÖNDER (APK)',
+        shareRoomTitle: 'Fajr Awake Grup Daveti',
+        shareRoomText: 'Sabah namazına birlikte uyanmak için grubumuza katıl:',
+        shareApkTitle: 'Fajr Awake Uygulamasını İndir',
+        shareApkText: 'Fajr Awake Android uygulamasını doğrudan indir (APK):',
+        toastRoomCopied: 'Oda bağlantısı kopyalandı!',
+        toastApkCopied: 'APK indirme bağlantısı kopyalandı!',
+        savedRoomsHeader: 'MEVCUT GRUPLAR',
+        searchRoomsPlaceholder: 'Grup adına göre ara...',
+        profileHeader: 'PROFİL VE KONUM',
+        createRoomHeader: 'ODA OLUŞTUR VEYA KATIL',
+        placeholderName: 'Adınız / Kullanıcı adınız',
+        placeholderUserPass: 'Hesap şifresi',
+        placeholderRoomName: 'Oda adı',
+        placeholderRoomPass: 'Oda şifresi (Özel için)',
+        geoBtn: 'GPS Konumunu Otomatik Belirle',
+        saveBtn: 'KAYDET VE BAĞLAN',
+        deleteBtn: 'Sil',
+        scanCamBtn: 'QR Tara',
+        scanGalleryBtn: 'Galeriden Seç',
+        scannerModalTitle: 'QR KOD TARAMA',
+        scannerModalDesc: 'Odaya hemen bağlanmak için kamerayı QR koda tutun',
+        cancelScannerBtn: 'KAPAT',
+        enterRoomBtn: 'Giriş',
+        activeRoomBadge: 'Aktif',
+        lockBadge: 'Kilitli',
+        openBadge: 'Açık',
+        toastWakeSent: 'Uyandırma sinyali gönderildi, kelime:',
+        toastReplyReceived: 'kelimeyi yazarak uyandığını onayladı:',
+        toastRoomDeleted: 'Oda listeden silindi',
+        toastGeoSuccess: 'GPS koordinatları güncellendi!',
+        toastGeoFail: 'GPS konumuna erişilemedi',
+        toastWrongWord: 'Yanlış kelime! Ekrandaki kelimeyi doğru yazın.',
+        toastAudioReady: 'Ses sinyali test edildi ve aktif!',
+        toastQrScannedSuccess: 'Başarılı! Gruba bağlanıldı:',
+        toastQrScanFailed: 'Görselde QR kod bulunamadı',
+        toastCamError: 'Kamera erişim hatası',
+        callSending: 'Sinyal gönderiliyor...',
+        callRinging: 'Alarm çalıyor! Beklenen kelime:',
+        callReplied: 'Uyandı! Cevabı:',
+        words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
+    },
+    en: {
+        fajr: 'Fajr', sunrise: 'Sunrise', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha',
+        nextPrayer: 'NEXT PRAYER',
+        remaining: 'Remaining:',
+        doneTitle: 'MARK: PRAYER COMPLETED',
+        doneSub: 'tap to confirm',
+        doneConfirmed: '✓ PRAYER COMPLETED',
+        statusPrefix: 'STATUS:',
+        stateSleep: 'ASLEEP', stateAwake: 'AWAKE', stateDone: 'PRAYED',
+        changeStatus: 'tap to toggle',
+        wakeAll: 'WAKE ALL SLEEPING MEMBERS',
+        members: 'GROUP MEMBERS',
+        peopleUnit: 'members',
+        roomsUnit: 'rooms',
+        youBadge: '(You)',
+        nudgeBtn: 'WAKE UP',
+        roomTtlLabel: 'Active Group:',
+        daysShort: 'd.',
+        permanentRoom: 'Main Group',
+        wakeModalTitle: 'SEND WAKE-UP WORD CHALLENGE',
+        wakeModalDesc: 'Select a verification word. The recipient alarm will ring until they type this exact word back:',
+        sendWakeBtn: 'SEND WAKE CHALLENGE',
+        wakeHeader: 'WAKE UP FOR PRAYER!',
+        wakeSenderPrefix: 'Woken up by:',
+        wakePrompt: 'Type the challenge word below to stop the alarm:',
+        inputWordPlaceholder: 'Type challenge word here',
+        verifyBtn: 'CONFIRM & REPLY',
+        tabRooms: 'GROUPS DIRECTORY',
+        tabCreate: '+ CREATE / QR',
+        tabProfile: 'PROFILE',
+        shareRoomBtn: 'SHARE THIS ROOM (QR)',
+        shareApkBtn: 'SEND APP DOWNLOAD LINK (APK)',
+        shareRoomTitle: 'Fajr Awake Group Invitation',
+        shareRoomText: 'Join our group to wake up for Fajr together:',
+        shareApkTitle: 'Download Fajr Awake App',
+        shareApkText: 'Download Fajr Awake Android App (Direct APK link):',
+        toastRoomCopied: 'Room link copied to clipboard!',
+        toastApkCopied: 'APK link copied to clipboard!',
+        savedRoomsHeader: 'AVAILABLE GROUPS',
+        searchRoomsPlaceholder: 'Search group by name...',
+        profileHeader: 'PROFILE & GEO-LOCATION',
+        createRoomHeader: 'CREATE OR JOIN ROOM',
+        placeholderName: 'Your Name / Username',
+        placeholderUserPass: 'Account Password',
+        placeholderRoomName: 'Room Name',
+        placeholderRoomPass: 'Room Password (Optional)',
+        geoBtn: 'Auto-Detect Precise GPS Coordinates',
+        saveBtn: 'SAVE & CONNECT',
+        deleteBtn: 'Delete',
+        scanCamBtn: 'Scan QR',
+        scanGalleryBtn: 'From Gallery',
+        scannerModalTitle: 'QR CODE SCANNER',
+        scannerModalDesc: 'Point camera at group QR code to connect instantly',
+        cancelScannerBtn: 'CLOSE',
+        enterRoomBtn: 'Join',
+        activeRoomBadge: 'Active',
+        lockBadge: 'Private',
+        openBadge: 'Public',
+        toastWakeSent: 'Wake challenge sent with word:',
+        toastReplyReceived: 'confirmed waking up with word:',
+        toastRoomDeleted: 'Room deleted from list',
+        toastGeoSuccess: 'GPS coordinates updated!',
+        toastGeoFail: 'Could not access GPS location',
+        toastWrongWord: 'Incorrect word! Type the exact word shown.',
+        toastAudioReady: 'Alarm sound tested and active!',
+        toastQrScannedSuccess: 'Success! Connected to room:',
+        toastQrScanFailed: 'No QR code found in selected image',
+        toastCamError: 'Camera permission or hardware error',
+        callSending: 'Sending signal...',
+        callRinging: 'Siren ringing! Waiting word:',
+        callReplied: 'Woke up! Replied:',
+        words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
+    }
+};
+
 const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const WAKE_WORDS = ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан'];
-
-let currentUser = JSON.parse(localStorage.getItem('fajr_auth_user')) || null;
-let currentRoom = localStorage.getItem('fajr_active_room') || 'Idlib-Jamaat';
-let myStatus = 'sleep';
-let coords = { lat: 35.9306, lng: 36.6339 };
-
-let activeMembers = {};
-let availableRooms = [];
-let audioCtx = null;
-let alarmInterval = null;
-let targetWordForCaptcha = '';
-let targetUserToWake = 'ALL';
-let chosenWord = WAKE_WORDS[0];
+let supabaseClient = null;
 let realtimeChannel = null;
 
-// Старт
-window.addEventListener('DOMContentLoaded', () => {
-    initPrayerTimes();
-    setInterval(updatePrayerCycle, 1000);
+const DEFAULT_ROOM = 'Idlib-Jamaat';
 
-    if (!currentUser || !currentUser.username) {
-        document.getElementById('authModal').classList.add('open');
-    } else {
-        startApp();
-    }
-});
+let currentLang = localStorage.getItem('fajr_lang') || 'ru';
+let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
 
-// Авторизация / Регистрация
-async function handleAuthSubmit() {
-    const u = document.getElementById('authUsername').value.trim().toLowerCase();
-    const d = document.getElementById('authDisplayName').value.trim();
-    const p = document.getElementById('authPassword').value.trim();
+// Загружаем сохраненное имя (никаких авто-ботов User_XXX)
+let savedName = (localStorage.getItem('fajr_user_name') || '').trim();
+if (savedName.toLowerCase().startsWith('user_')) {
+    savedName = '';
+    localStorage.removeItem('fajr_user_name');
+}
+let myName = savedName;
+let userPass = localStorage.getItem('fajr_user_pass') || '';
+let currentRoom = (localStorage.getItem('fajr_room_name') || DEFAULT_ROOM).trim();
+let roomPass = localStorage.getItem('fajr_room_pass') || '';
+let myStatus = 'sleep';
 
-    if (!u || !d || !p) {
-        showToast('Заполните все поля: логин, имя и пароль!');
+let targetCaptchaWord = '';
+let lastAlarmInitiator = '';
+let pendingWakeTarget = 'ALL';
+let selectedChallengeWord = '';
+let alarmInterval = null;
+let audioCtx = null;
+
+let roomsCache = {};
+let networkUsers = {};
+let userCallStates = {};
+let roomSearchFilter = '';
+let html5QrScanner = null;
+
+// Проверка ссылки приглашения ?room=...
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('room')) {
+    currentRoom = (urlParams.get('room') || DEFAULT_ROOM).trim();
+    roomPass = urlParams.get('pass') || '';
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+}
+
+/**
+ * 1. ИНИЦИАЛИЗАЦИЯ И ПРОВЕРКА РЕГИСТРАЦИИ ПРИ СТАРТЕ
+ */
+async function initSupabase() {
+    const netInd = document.getElementById('netIndicator');
+    if (typeof supabase === 'undefined') {
+        if (netInd) netInd.classList.remove('online');
         return;
     }
 
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Если человек еще не зарегистрирован — показываем обязательное окно регистрации
+    if (!myName) {
+        document.getElementById('regRoomName').value = currentRoom;
+        document.getElementById('mandatoryAuthModal').classList.add('open');
+        return;
+    }
+
+    await startOnlineSession();
+}
+
+// Обработка кнопки обязательного входа/регистрации
+document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', async () => {
+    const uName = document.getElementById('regUserName').value.trim();
+    const uPass = document.getElementById('regUserPass').value.trim();
+    const rName = document.getElementById('regRoomName').value.trim() || DEFAULT_ROOM;
+
+    if (!uName || !uPass) {
+        showToast('Обязательно введите ваше имя и пароль!');
+        return;
+    }
+
+    myName = uName;
+    userPass = uPass;
+    currentRoom = rName;
+
+    localStorage.setItem('fajr_user_name', myName);
+    localStorage.setItem('fajr_user_pass', userPass);
+    localStorage.setItem('fajr_room_name', currentRoom);
+
+    document.getElementById('mandatoryAuthModal').classList.remove('open');
+    await startOnlineSession();
+    showToast(`Добро пожаловать, ${myName}!`);
+});
+
+async function startOnlineSession() {
+    const netInd = document.getElementById('netIndicator');
     try {
-        // Проверяем существующего пользователя
-        const { data: userRow } = await supabaseClient
-            .from('fajr_users')
-            .select('*')
-            .eq('username', u)
-            .maybeSingle();
-
-        if (userRow) {
-            if (userRow.password !== p) {
-                showToast('Неверный пароль для этого логина!');
-                return;
-            }
-            currentUser = { username: userRow.username, display_name: userRow.display_name };
-        } else {
-            // Создаем нового
-            await supabaseClient.from('fajr_users').insert([{
-                username: u,
-                display_name: d,
-                password: p
-            }]);
-            currentUser = { username: u, display_name: d };
-        }
-
-        localStorage.setItem('fajr_auth_user', JSON.stringify(currentUser));
-        document.getElementById('authModal').classList.remove('open');
-        startApp();
+        renderUI();
+        await ensureRoomExistsInDb(currentRoom, roomPass, false);
+        await upsertMyPresenceInDb();
+        await fetchAllRoomsFromDb();
+        await fetchRoomMembersFromDb();
+        await subscribeToSupabaseRealtime();
+        if (netInd) netInd.classList.add('online');
     } catch (err) {
-        showToast('Ошибка подключения к базе');
+        if (netInd) netInd.classList.remove('online');
     }
 }
 
-function startApp() {
-    document.getElementById('appShell').style.display = 'flex';
-    document.getElementById('topDisplayName').innerText = currentUser.display_name;
-    document.getElementById('topUsername').innerText = '@' + currentUser.username;
-    document.getElementById('topAvatar').innerText = currentUser.display_name.charAt(0).toUpperCase();
-    document.getElementById('lblRoomBadge').innerText = currentRoom;
+/**
+ * 2. БЕЗОТКАЗНАЯ СИНХРОНИЗАЦИЯ УЧАСТНИКОВ И КОМНАТ (БЕЗ 409 CONFLICT)
+ */
+async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
+    if (!supabaseClient || !rName) return;
+    const cleanRoom = rName.trim();
+    const isPerm = cleanRoom === DEFAULT_ROOM || cleanRoom === 'Global-Zone';
 
-    joinRoom(currentRoom);
-    renderWakeWordChips();
+    const { data: existing } = await supabaseClient
+        .from('fajr_rooms')
+        .select('name')
+        .eq('name', cleanRoom)
+        .maybeSingle();
+
+    if (!existing) {
+        await supabaseClient.from('fajr_rooms').insert([{
+            name: cleanRoom,
+            pass: rPass || '',
+            owner: isNewOwner ? (myName || 'USER') : 'USER',
+            permanent: isPerm,
+            last_active: new Date().toISOString()
+        }]);
+    } else {
+        await supabaseClient
+            .from('fajr_rooms')
+            .update({ last_active: new Date().toISOString() })
+            .eq('name', cleanRoom);
+    }
 }
 
-// Работа с комнатами
-async function joinRoom(roomName, pass = '') {
-    currentRoom = roomName;
-    localStorage.setItem('fajr_active_room', currentRoom);
-    document.getElementById('lblRoomBadge').innerText = currentRoom;
+let isSyncingPresence = false;
+async function upsertMyPresenceInDb(extraFields = {}) {
+    if (!myName || !supabaseClient || isSyncingPresence) {
+        renderUI();
+        return;
+    }
+    isSyncingPresence = true;
 
-    // Гарантируем наличие комнаты
-    await supabaseClient.from('fajr_rooms').upsert([{
-        name: currentRoom,
-        pass: pass,
-        owner: currentUser.username,
-        last_active: new Date().toISOString()
-    }], { onConflict: 'name' });
-
-    // Регистрируем свое присутствие
-    await syncPresence();
-    await fetchRoomMembers();
-    await fetchRoomsList();
-    setupRealtimeSubscription();
-}
-
-async function syncPresence(extra = {}) {
-    if (!currentUser) return;
     try {
-        await supabaseClient.from('fajr_members').upsert([{
-            room_name: currentRoom,
-            username: currentUser.username,
-            display_name: currentUser.display_name,
+        const cleanRoom = currentRoom.trim();
+        const cleanUser = myName.trim();
+
+        const payload = {
+            room_name: cleanRoom,
+            user_name: cleanUser,
+            user_pass: userPass || '',
             status: myStatus,
+            lat: userCoords.lat,
+            lng: userCoords.lng,
             last_seen: new Date().toISOString(),
-            ...extra
-        }], { onConflict: 'room_name,username' });
-    } catch (e) {}
+            ...extraFields
+        };
+
+        // Проверяем, есть ли уже запись этого человека в этой комнате
+        const { data: existingRow } = await supabaseClient
+            .from('fajr_members')
+            .select('user_name')
+            .eq('room_name', cleanRoom)
+            .eq('user_name', cleanUser)
+            .maybeSingle();
+
+        if (existingRow) {
+            await supabaseClient
+                .from('fajr_members')
+                .update(payload)
+                .eq('room_name', cleanRoom)
+                .eq('user_name', cleanUser);
+        } else {
+            await supabaseClient
+                .from('fajr_members')
+                .insert([payload]);
+        }
+    } catch (e) {
+    } finally {
+        isSyncingPresence = false;
+    }
 }
 
-async function fetchRoomMembers() {
-    const { data } = await supabaseClient
+async function fetchRoomMembersFromDb() {
+    if (!supabaseClient || !currentRoom) return;
+    const cleanRoom = currentRoom.trim();
+
+    const { data, error } = await supabaseClient
         .from('fajr_members')
         .select('*')
-        .eq('room_name', currentRoom);
+        .eq('room_name', cleanRoom);
 
-    if (data) {
-        activeMembers = {};
+    if (!error && data) {
+        networkUsers = {};
         data.forEach(m => {
-            activeMembers[m.username] = m;
+            if (!m.user_name || m.user_name.toLowerCase().startsWith('user_')) return;
+            networkUsers[m.user_name] = {
+                name: m.user_name,
+                status: m.status || 'sleep',
+                lastSeen: new Date(m.last_seen).getTime()
+            };
+            if (m.call_state) {
+                userCallStates[m.user_name] = {
+                    state: m.call_state,
+                    word: m.call_word || ''
+                };
+            } else {
+                delete userCallStates[m.user_name];
+            }
         });
         renderMembers();
     }
 }
 
-function renderMembers() {
-    const container = document.getElementById('usersListContainer');
-    container.innerHTML = '';
-    const keys = Object.keys(activeMembers);
-    document.getElementById('lblUserCount').innerText = `${keys.length} чел.`;
+async function fetchAllRoomsFromDb() {
+    if (!supabaseClient) return;
+    const { data, error } = await supabaseClient
+        .from('fajr_rooms')
+        .select('*')
+        .order('permanent', { ascending: false })
+        .order('last_active', { ascending: false });
 
-    keys.forEach(uname => {
-        const u = activeMembers[uname];
-        const isMe = uname === currentUser.username;
-        const row = document.createElement('div');
-        row.className = `user-item ${u.call_state === 'ringing' ? 'ringing' : ''}`;
-
-        let bClass = 'b-sleep';
-        let bText = 'СПИТ';
-        if (u.status === 'awake') { bClass = 'b-awake'; bText = 'ВСТАЛ'; }
-        if (u.status === 'done') { bClass = 'b-done'; bText = 'СОВЕРШИЛ'; }
-
-        row.innerHTML = `
-            <div class="u-left">
-                <div class="u-avatar">${u.display_name.charAt(0).toUpperCase()}</div>
-                <div>
-                    <div class="u-name">${u.display_name} ${isMe ? '<small style="color:var(--emerald-accent)">(Вы)</small>' : ''}</div>
-                    <span class="u-badge ${bClass}">${bText}</span>
-                    ${u.call_state === 'ringing' ? `<span style="font-size:10px; color:#ff6b81; font-weight:700;"> 🔔 Звенит: ${u.call_word}</span>` : ''}
-                </div>
-            </div>
-            ${!isMe ? `<button class="btn-nudge" onclick="openWakeModalForUser('${u.username}')">🔔 РАЗБУДИТЬ</button>` : ''}
-        `;
-        container.appendChild(row);
-    });
+    if (!error && data) {
+        roomsCache = {};
+        data.forEach(row => {
+            roomsCache[row.name] = {
+                name: row.name,
+                pass: row.pass || '',
+                owner: row.owner || '',
+                permanent: row.permanent || row.name === DEFAULT_ROOM,
+                lastActive: new Date(row.last_active).getTime()
+            };
+        });
+        renderSavedRoomsList();
+        updateRoomTtlBanner();
+    }
 }
 
-// Реальное время (Realtime)
-function setupRealtimeSubscription() {
+/**
+ * 3. ПОДПИСКА REALTIME НА ИЗМЕНЕНИЯ В КОМНАТЕ И СИГНАЛЫ БУДИЛЬНИКА
+ */
+async function subscribeToSupabaseRealtime() {
+    if (!supabaseClient) return;
     if (realtimeChannel) {
-        supabaseClient.removeChannel(realtimeChannel);
+        try { await supabaseClient.removeChannel(realtimeChannel); } catch (e) {}
+        realtimeChannel = null;
     }
 
     realtimeChannel = supabaseClient
-        .channel(`room_${currentRoom}_${Date.now()}`)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_members', filter: `room_name=eq.${currentRoom}` }, () => {
-            fetchRoomMembers();
+        .channel(`fajr_live_${Date.now()}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_rooms' }, () => {
+            fetchAllRoomsFromDb();
         })
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fajr_signals', filter: `room_name=eq.${currentRoom}` }, (payload) => {
-            handleSignal(payload.new);
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_members' }, () => {
+            fetchRoomMembersFromDb();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fajr_signals' }, (payload) => {
+            if (payload.new && payload.new.room_name === currentRoom.trim()) {
+                handleIncomingSignal(payload.new);
+            }
         })
         .subscribe();
 }
 
-function handleSignal(sig) {
-    if (!sig || sig.sender === currentUser.username) return;
+async function handleIncomingSignal(sig) {
+    if (!sig || sig.sender === myName) return;
 
-    if (sig.signal_type === 'CALL') {
-        if (sig.target === 'ALL' || sig.target === currentUser.username) {
+    if (sig.signal_type === 'WAKE_CALL') {
+        if (sig.target === 'ALL' || sig.target === myName) {
             if (myStatus !== 'done') {
-                triggerLocalAlarm(sig.sender_name, sig.word);
+                triggerAlarm(sig.sender, sig.word);
             }
         }
-    } else if (sig.signal_type === 'ACK') {
-        showToast(`✓ ${sig.sender_name} подтвердил пробуждение словом "${sig.word}"`);
-        fetchRoomMembers();
+    } else if (sig.signal_type === 'WAKE_RINGING') {
+        userCallStates[sig.sender] = {
+            state: 'ringing',
+            word: sig.word || ''
+        };
+        renderMembers();
+    } else if (sig.signal_type === 'WAKE_ACK') {
+        if (networkUsers[sig.sender]) {
+            networkUsers[sig.sender].status = 'awake';
+        }
+        userCallStates[sig.sender] = {
+            state: 'replied',
+            word: sig.word || ''
+        };
+        renderMembers();
+        showToast(`✓ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
     }
 }
 
-// Будильник и проверочное слово
-function openWakeModalForUser(targetUname) {
-    targetUserToWake = targetUname;
-    document.getElementById('wakeWordModal').classList.add('open');
-}
-
-function wakeAllInGroup() {
-    targetUserToWake = 'ALL';
-    document.getElementById('wakeWordModal').classList.add('open');
-}
-
-function closeWakeModal() {
-    document.getElementById('wakeWordModal').classList.remove('open');
-}
-
-function renderWakeWordChips() {
-    const box = document.getElementById('wakeWordChips');
-    box.innerHTML = '';
-    WAKE_WORDS.forEach((w, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-act';
-        btn.style.background = idx === 0 ? 'rgba(231,29,54,0.3)' : 'rgba(255,255,255,0.06)';
-        btn.style.border = '1px solid rgba(255,255,255,0.2)';
-        btn.style.color = '#fff';
-        btn.innerText = w.toUpperCase();
-        btn.onclick = () => {
-            chosenWord = w;
-            Array.from(box.children).forEach(c => c.style.background = 'rgba(255,255,255,0.06)');
-            btn.style.background = 'rgba(231,29,54,0.4)';
-        };
-        box.appendChild(btn);
-    });
-}
-
-async function executeWakeSignal() {
-    closeWakeModal();
-    const word = chosenWord.toUpperCase();
-
+async function sendSupabaseSignal(signalType, target, word) {
+    if (!supabaseClient || !myName) return;
     await supabaseClient.from('fajr_signals').insert([{
-        room_name: currentRoom,
-        sender: currentUser.username,
-        sender_name: currentUser.display_name,
-        target: targetUserToWake,
-        signal_type: 'CALL',
+        room_name: currentRoom.trim(),
+        sender: myName.trim(),
+        target: target,
+        signal_type: signalType,
         word: word
     }]);
-
-    showToast(`Сирена со словом "${word}" отправлена!`);
 }
 
-function triggerLocalAlarm(callerName, word) {
-    targetWordForCaptcha = word.toLowerCase();
-    document.getElementById('txtAlarmCaller').innerText = `Вас будит: ${callerName}`;
-    document.getElementById('targetChallengeWord').innerText = word;
-    document.getElementById('inpCaptchaAnswer').value = '';
-    document.getElementById('alarmOverlay').classList.add('active');
+window.removeMemberFromRoom = async function(targetUserName) {
+    if (!supabaseClient || !targetUserName) return;
+    await supabaseClient
+        .from('fajr_members')
+        .delete()
+        .eq('room_name', currentRoom.trim())
+        .eq('user_name', targetUserName);
 
-    syncPresence({ call_state: 'ringing', call_word: word, caller_name: callerName });
-    playAlarmSound();
-}
+    delete networkUsers[targetUserName];
+    renderMembers();
+    showToast(`Участник ${targetUserName} удален из списка`);
+};
 
-async function confirmAwakeAndStop() {
-    const val = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
-    if (val === targetWordForCaptcha) {
-        stopAlarmSound();
-        document.getElementById('alarmOverlay').classList.remove('active');
-        myStatus = 'awake';
-        updateStatusUI();
+/**
+ * 4. УПРАВЛЕНИЕ КОМНАТАМИ И ВКЛАДКАМИ
+ */
+window.switchModalTab = function(tabName) {
+    document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
 
-        await syncPresence({ status: 'awake', call_state: 'replied' });
-        await supabaseClient.from('fajr_signals').insert([{
-            room_name: currentRoom,
-            sender: currentUser.username,
-            sender_name: currentUser.display_name,
-            target: 'ALL',
-            signal_type: 'ACK',
-            word: targetWordForCaptcha.toUpperCase()
-        }]);
+    if (tabName === 'rooms') {
+        document.getElementById('tabBtnRooms').classList.add('active');
+        document.getElementById('panelTabRooms').classList.add('active');
+        fetchAllRoomsFromDb();
+        renderSavedRoomsList();
+    } else if (tabName === 'create') {
+        document.getElementById('tabBtnCreate').classList.add('active');
+        document.getElementById('panelTabCreate').classList.add('active');
+        generateQR();
+    } else if (tabName === 'profile') {
+        document.getElementById('tabBtnProfile').classList.add('active');
+        document.getElementById('panelTabProfile').classList.add('active');
+    }
+};
+
+window.deleteRoomByName = async function(rName, event) {
+    if (event) event.stopPropagation();
+    if (rName === DEFAULT_ROOM || rName === 'Global-Zone') return;
+
+    if (supabaseClient) {
+        await supabaseClient.from('fajr_rooms').delete().eq('name', rName);
+    }
+    delete roomsCache[rName];
+
+    if (currentRoom === rName) {
+        await switchActiveRoom(DEFAULT_ROOM, '');
     } else {
-        showToast('Неверное слово! Напишите точно как в рамке');
+        await fetchAllRoomsFromDb();
     }
-}
+    showToast(`${DICTIONARY[currentLang].toastRoomDeleted}: ${rName}`);
+};
 
-// Звук сирены Web Audio API
-function playAlarmSound() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+window.selectSavedRoom = async function(rName) {
+    const room = roomsCache[rName];
+    if (!room) return;
 
-    if (alarmInterval) return;
-    const tone = () => {
-        try {
-            const osc = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.35);
-            g.gain.setValueAtTime(0.9, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-            osc.connect(g);
-            g.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.36);
-        } catch (e) {}
-    };
-    tone();
-    alarmInterval = setInterval(tone, 450);
-}
-
-function stopAlarmSound() {
-    if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-    }
-}
-
-document.getElementById('btnTestAudio').addEventListener('click', () => {
-    playAlarmSound();
-    setTimeout(stopAlarmSound, 1200);
-    showToast('Тест звука будильника активен');
-});
-
-// Смена статусов
-function toggleSleepState() {
-    myStatus = myStatus === 'sleep' ? 'awake' : 'sleep';
-    updateStatusUI();
-    syncPresence();
-}
-
-function togglePrayerDone() {
-    myStatus = myStatus === 'done' ? 'awake' : 'done';
-    updateStatusUI();
-    syncPresence();
-}
-
-function updateStatusUI() {
-    const lbl = document.getElementById('lblMyState');
-    const btnDone = document.getElementById('btnToggleDone');
-
-    if (myStatus === 'done') {
-        lbl.innerText = 'СОВЕРШИЛ';
-        lbl.style.color = 'var(--emerald-accent)';
-        btnDone.classList.add('done');
-    } else if (myStatus === 'awake') {
-        lbl.innerText = 'ВСТАЛ';
-        lbl.style.color = '#ffa502';
-        btnDone.classList.remove('done');
-    } else {
-        lbl.innerText = 'СПЛЮ';
-        lbl.style.color = '#e71d36';
-        btnDone.classList.remove('done');
-    }
-}
-
-// Управление списком комнат
-function openRoomsModal() {
-    document.getElementById('roomsModal').classList.add('open');
-    fetchRoomsList();
-}
-
-function closeRoomsModal() {
-    document.getElementById('roomsModal').classList.remove('open');
-}
-
-async function fetchRoomsList() {
-    const { data } = await supabaseClient
-        .from('fajr_rooms')
-        .select('*')
-        .order('name');
-
-    if (data) {
-        availableRooms = data;
-        const box = document.getElementById('roomsListContainer');
-        box.innerHTML = '';
-        availableRooms.forEach(r => {
-            const div = document.createElement('div');
-            div.className = `room-row ${r.name === currentRoom ? 'current' : ''}`;
-            div.innerHTML = `
-                <div>
-                    <b style="font-size:13px; color:#fff;">${r.name}</b>
-                    <small style="display:block; font-size:10px; color:var(--text-secondary);">${r.pass ? '🔒 Закрытая' : '🌐 Открытая'}</small>
-                </div>
-                ${r.name !== currentRoom ? `<button class="btn-primary" style="padding: 6px 12px; font-size:11px;" onclick="switchRoom('${r.name}', '${r.pass}')">Войти</button>` : '<span style="font-size:11px; color:var(--emerald-accent); font-weight:700;">✓ Текущая</span>'}
-            `;
-            box.appendChild(div);
-        });
-    }
-}
-
-async function switchRoom(name, pass) {
-    if (pass) {
-        const inputPass = prompt(`Введите пароль для группы "${name}":`);
-        if (inputPass !== pass) {
-            showToast('Неверный пароль!');
+    if (room.pass && room.name !== currentRoom) {
+        const entered = prompt(`Группа "${rName}" защищена паролем. Введите пароль:`);
+        if (entered === null) return;
+        if (entered.trim() !== room.pass) {
+            showToast('❌ Неверный пароль группы!');
             return;
         }
     }
-    // Удаляем себя из старой
-    await supabaseClient.from('fajr_members').delete().match({ room_name: currentRoom, username: currentUser.username });
-    closeRoomsModal();
-    joinRoom(name, pass);
-    showToast(`Вы перешли в группу: ${name}`);
+
+    await switchActiveRoom(room.name, room.pass || '');
+    document.getElementById('roomModal').classList.remove('open');
+};
+
+async function switchActiveRoom(newRoomName, newRoomPass) {
+    const cleanNew = (newRoomName || DEFAULT_ROOM).trim();
+    if (supabaseClient && currentRoom && currentRoom !== cleanNew && myName) {
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .eq('room_name', currentRoom.trim())
+            .eq('user_name', myName.trim());
+    }
+
+    currentRoom = cleanNew;
+    roomPass = newRoomPass || '';
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+
+    document.getElementById('inpRoomName').value = currentRoom;
+    document.getElementById('inpRoomPass').value = roomPass;
+
+    userCallStates = {};
+    await ensureRoomExistsInDb(currentRoom, roomPass, false);
+    await upsertMyPresenceInDb({ call_state: '', call_word: '', caller_name: '' });
+    await fetchAllRoomsFromDb();
+    await fetchRoomMembersFromDb();
+    generateQR();
+    renderUI();
+    showToast(`✓ Вы перешли в группу: ${currentRoom}`);
 }
 
-async function handleCreateRoom() {
-    const name = document.getElementById('newRoomName').value.trim();
-    const pass = document.getElementById('newRoomPass').value.trim();
-    if (!name) {
-        showToast('Введите название группы');
+function renderSavedRoomsList() {
+    const container = document.getElementById('savedRoomsList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!roomsCache[DEFAULT_ROOM]) {
+        roomsCache[DEFAULT_ROOM] = {
+            name: DEFAULT_ROOM,
+            pass: '',
+            owner: 'SYSTEM',
+            permanent: true,
+            lastActive: Date.now()
+        };
+    }
+
+    const dict = DICTIONARY[currentLang];
+    const keys = Object.keys(roomsCache);
+
+    document.getElementById('lblRoomsTotalCount').innerText = `${keys.length} ${dict.roomsUnit || dict.peopleUnit}`;
+    const filtered = keys.filter(k => k.toLowerCase().includes(roomSearchFilter.toLowerCase()));
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">Группы не найдены</div>`;
         return;
     }
-    document.getElementById('newRoomName').value = '';
-    document.getElementById('newRoomPass').value = '';
-    closeRoomsModal();
-    joinRoom(name, pass);
-    showToast(`Группа "${name}" создана`);
+
+    filtered.forEach(rName => {
+        const r = roomsCache[rName];
+        const isCurrent = rName === currentRoom;
+
+        const card = document.createElement('div');
+        card.className = `room-card-box ${isCurrent ? 'active-room' : ''}`;
+
+        const statusBadge = isCurrent
+            ? `<span class="room-badge-pill badge-active">✓ ${dict.activeRoomBadge}</span>`
+            : (r.pass
+                ? `<span class="room-badge-pill badge-lock">🔒 ${dict.lockBadge}</span>`
+                : `<span class="room-badge-pill badge-open">🌐 ${dict.openBadge}</span>`);
+
+        card.innerHTML = `
+            <div class="room-info-cell" onclick="selectSavedRoom('${r.name}')">
+                <div class="room-header-line">
+                    <span class="room-title-text">${r.name}</span>
+                    ${statusBadge}
+                </div>
+                <div class="room-sub-meta">
+                    <span>${r.permanent ? dict.permanentRoom : 'Создана участниками'}</span>
+                </div>
+            </div>
+            <div class="room-actions-cell">
+                ${!isCurrent ? `<button class="btn-enter-room" onclick="selectSavedRoom('${r.name}')">${dict.enterRoomBtn}</button>` : ''}
+                ${!r.permanent ? `<button class="btn-trash-room" title="${dict.deleteBtn}" onclick="deleteRoomByName('${r.name}', event)">✕</button>` : ''}
+            </div>
+        `;
+        container.appendChild(card);
+    });
 }
 
-function showToast(text) {
-    const b = document.getElementById('toastBanner');
-    b.innerText = text;
-    b.classList.add('show');
-    setTimeout(() => b.classList.remove('show'), 3000);
+document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
+    roomSearchFilter = e.target.value.trim();
+    renderSavedRoomsList();
+});
+
+function updateRoomTtlBanner() {
+    const lbl = document.getElementById('lblCurrentRoomTtl');
+    if (lbl) lbl.innerText = currentRoom;
 }
 
-// Расчет времени намаза
+/**
+ * 5. СКАНЕР QR-КОДА (КАМЕРА + ГАЛЕРЕЯ) И ПОДЕЛИТЬСЯ
+ */
+async function applyParsedRoomPayload(rawText) {
+    if (!rawText) return false;
+    let rName = '';
+    let rPass = '';
+
+    try {
+        if (rawText.includes('room=')) {
+            const url = new URL(rawText.startsWith('http') ? rawText : 'https://fake.url/' + rawText);
+            rName = url.searchParams.get('room') || '';
+            rPass = url.searchParams.get('pass') || '';
+        } else if (rawText.trim().startsWith('{')) {
+            const parsed = JSON.parse(rawText);
+            if (parsed.room) {
+                rName = parsed.room;
+                rPass = parsed.pass || '';
+            }
+        } else {
+            rName = rawText.trim();
+        }
+    } catch (e) {
+        rName = rawText.trim();
+    }
+
+    if (rName) {
+        await ensureRoomExistsInDb(rName, rPass, false);
+        await switchActiveRoom(rName, rPass);
+        document.getElementById('roomModal').classList.remove('open');
+        showToast(`${DICTIONARY[currentLang].toastQrScannedSuccess} ${rName}`);
+        return true;
+    }
+    return false;
+}
+
+async function startCameraScanner() {
+    const modal = document.getElementById('scannerModal');
+    modal.classList.add('open');
+
+    try {
+        if (html5QrScanner) {
+            try { await html5QrScanner.stop(); } catch (e) {}
+            html5QrScanner = null;
+        }
+
+        html5QrScanner = new Html5Qrcode("qrReaderBox");
+        await html5QrScanner.start(
+            { facingMode: "environment" },
+            {
+                fps: 12,
+                qrbox: { width: 210, height: 210 },
+                aspectRatio: 1.0
+            },
+            async (decodedText) => {
+                if (decodedText) {
+                    await stopCameraScanner();
+                    await applyParsedRoomPayload(decodedText);
+                }
+            },
+            () => {}
+        );
+    } catch (err) {
+        showToast(DICTIONARY[currentLang].toastCamError);
+        modal.classList.remove('open');
+    }
+}
+
+async function stopCameraScanner() {
+    if (html5QrScanner) {
+        try {
+            await html5QrScanner.stop();
+            await html5QrScanner.clear();
+        } catch (e) {}
+        html5QrScanner = null;
+    }
+    document.getElementById('scannerModal').classList.remove('open');
+}
+
+document.getElementById('btnOpenScanner').addEventListener('click', startCameraScanner);
+document.getElementById('btnCloseScannerModal').addEventListener('click', stopCameraScanner);
+document.getElementById('btnStopScanner').addEventListener('click', stopCameraScanner);
+
+document.getElementById('inpQrGallery').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    try {
+        const fileScanner = new Html5Qrcode("qrFileTempReader");
+        const decodedText = await fileScanner.scanFile(file, true);
+        if (decodedText) {
+            await applyParsedRoomPayload(decodedText);
+        } else {
+            showToast(DICTIONARY[currentLang].toastQrScanFailed);
+        }
+    } catch (err) {
+        showToast(DICTIONARY[currentLang].toastQrScanFailed);
+    }
+    e.target.value = '';
+});
+
+/**
+ * 6. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ВРЕМЕНИ НАМАЗОВ
+ */
 function toRad(d) { return d * Math.PI / 180.0; }
 function toDeg(r) { return r * 180.0 / Math.PI; }
 
@@ -1162,34 +2100,568 @@ function calculateSunTimes(date, lat, lng) {
         return toDeg(Math.acos(val)) / 15.0;
     }
 
-    const sunrise = noon - sunAngleTime(-0.833);
-    const sunset = noon + sunAngleTime(-0.833);
+    const sunriseAngle = sunAngleTime(-0.833);
+    const sunrise = noon - sunriseAngle;
+    const sunset = noon + sunriseAngle;
+
     const fajr = noon - sunAngleTime(-18.0);
     const dhuhr = noon + (2 / 60);
 
     const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
-    const asr = noon + sunAngleTime(toDeg(Math.atan(1 / (1 + noonShadow))));
+    const asrAngleVal = toDeg(Math.atan(1 / (1 + noonShadow)));
+    const asr = noon + sunAngleTime(asrAngleVal);
+
     const maghrib = sunset + (2 / 60);
     const isha = noon + sunAngleTime(-17.5);
 
     return { fajr, sunrise, dhuhr, asr, maghrib, isha };
 }
 
-function fmt(dec) {
-    if (isNaN(dec)) return "--:--";
-    let norm = ((dec % 24) + 24) % 24;
+function fmt(decHours) {
+    if (decHours === null || isNaN(decHours)) return "--:--";
+    let norm = ((decHours % 24) + 24) % 24;
     let h = Math.floor(norm);
     let m = Math.floor((norm - h) * 60);
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
-function initPrayerTimes() {
-    updatePrayerCycle();
+/**
+ * 7. ЗВУКОВАЯ СИРЕНА БУДИЛЬНИКА
+ */
+function ensureAudioContext() {
+    if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
 }
+
+function playSingleTone() {
+    try {
+        ensureAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+
+        gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.32);
+
+        if (navigator.vibrate) navigator.vibrate([260, 80, 260]);
+    } catch (e) {}
+}
+
+function playAlarmChime() {
+    if (alarmInterval) return;
+    playSingleTone();
+    alarmInterval = setInterval(playSingleTone, 420);
+}
+
+function stopAlarmAudio() {
+    if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+    }
+}
+
+document.getElementById('btnTestAudio').addEventListener('click', () => {
+    ensureAudioContext();
+    playSingleTone();
+    showToast(DICTIONARY[currentLang].toastAudioReady);
+});
+
+/**
+ * 8. ВЫЗОВ ПО СЛОВУ И ПОДТВЕРЖДЕНИЕ ПРОБУЖДЕНИЯ
+ */
+function openWakeWordSelector(targetUser) {
+    pendingWakeTarget = targetUser;
+    const dict = DICTIONARY[currentLang];
+    const grid = document.getElementById('wakeWordsGrid');
+    grid.innerHTML = '';
+
+    selectedChallengeWord = dict.words[0];
+
+    dict.words.forEach((word, idx) => {
+        const chip = document.createElement('div');
+        chip.className = `word-chip ${idx === 0 ? 'selected' : ''}`;
+        chip.innerText = word.toUpperCase();
+        chip.onclick = () => {
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+            selectedChallengeWord = word;
+        };
+        grid.appendChild(chip);
+    });
+
+    document.getElementById('wakeWordModal').classList.add('open');
+}
+
+document.getElementById('btnCloseWakeModal').addEventListener('click', () => {
+    document.getElementById('wakeWordModal').classList.remove('open');
+});
+
+document.getElementById('btnConfirmSendWake').addEventListener('click', async () => {
+    const wordToSend = (selectedChallengeWord || DICTIONARY[currentLang].words[0]).toUpperCase();
+
+    const targets = pendingWakeTarget === 'ALL'
+        ? Object.keys(networkUsers).filter(u => u !== myName && networkUsers[u].status === 'sleep')
+        : [pendingWakeTarget];
+
+    for (const tName of targets) {
+        userCallStates[tName] = {
+            state: 'calling',
+            word: wordToSend
+        };
+        if (supabaseClient) {
+            await supabaseClient
+                .from('fajr_members')
+                .update({ call_state: 'calling', call_word: wordToSend, caller_name: myName })
+                .eq('room_name', currentRoom.trim())
+                .eq('user_name', tName);
+        }
+    }
+
+    renderMembers();
+    await sendSupabaseSignal('WAKE_CALL', pendingWakeTarget, wordToSend);
+    showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend}"`);
+    document.getElementById('wakeWordModal').classList.remove('open');
+});
+
+async function triggerAlarm(senderName, incomingWord) {
+    const dict = DICTIONARY[currentLang];
+    lastAlarmInitiator = senderName;
+    targetCaptchaWord = incomingWord || dict.words[Math.floor(Math.random() * dict.words.length)];
+
+    document.getElementById('lblTargetWord').innerText = targetCaptchaWord.toUpperCase();
+    document.getElementById('inpCaptchaAnswer').value = '';
+    document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${senderName}`;
+
+    document.getElementById('alarmOverlay').classList.add('active');
+    ensureAudioContext();
+    playAlarmChime();
+
+    await upsertMyPresenceInDb({
+        call_state: 'ringing',
+        call_word: targetCaptchaWord.toUpperCase(),
+        caller_name: senderName
+    });
+    await sendSupabaseSignal('WAKE_RINGING', senderName, targetCaptchaWord.toUpperCase());
+}
+
+document.getElementById('btnVerifyAwake').addEventListener('click', verifyCaptchaAndStop);
+document.getElementById('inpCaptchaAnswer').addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') verifyCaptchaAndStop();
+});
+
+async function verifyCaptchaAndStop() {
+    const input = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
+    if (input === targetCaptchaWord.trim().toLowerCase()) {
+        stopAlarmAudio();
+        document.getElementById('alarmOverlay').classList.remove('active');
+        myStatus = 'awake';
+
+        await upsertMyPresenceInDb({
+            status: 'awake',
+            call_state: 'replied',
+            call_word: targetCaptchaWord.toUpperCase(),
+            caller_name: ''
+        });
+        await sendSupabaseSignal('WAKE_ACK', lastAlarmInitiator || 'ALL', targetCaptchaWord.toUpperCase());
+    } else {
+        document.getElementById('inpCaptchaAnswer').style.borderColor = '#e71d36';
+        showToast(DICTIONARY[currentLang].toastWrongWord);
+        if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+    }
+}
+
+// Авто-пульс каждые 6 секунд, чтобы устройства всегда видели друг друга онлайн
+setInterval(() => {
+    if (supabaseClient && myName) {
+        upsertMyPresenceInDb();
+        fetchRoomMembersFromDb();
+    }
+}, 6000);
+
+/**
+ * 9. ОТРИСОВКА ИНТЕРФЕЙСА И ЯЗЫКОВ
+ */
+function setLanguage(lang) {
+    if (!DICTIONARY[lang]) lang = 'ru';
+    currentLang = lang;
+    localStorage.setItem('fajr_lang', lang);
+
+    document.querySelectorAll('.btn-lang').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector(`.btn-lang[onclick="setLanguage('${lang}')"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    if (lang === 'ar') document.body.setAttribute('dir', 'rtl');
+    else document.body.removeAttribute('dir');
+
+    const dict = DICTIONARY[lang];
+    document.getElementById('tl-txt-fajr').innerText = dict.fajr;
+    document.getElementById('tl-txt-sunrise').innerText = dict.sunrise;
+    document.getElementById('tl-txt-dhuhr').innerText = dict.dhuhr;
+    document.getElementById('tl-txt-asr').innerText = dict.asr;
+    document.getElementById('tl-txt-maghrib').innerText = dict.maghrib;
+    document.getElementById('tl-txt-isha').innerText = dict.isha;
+
+    document.getElementById('lblHeroSub').innerText = dict.nextPrayer;
+    document.getElementById('lblRemainingPrefix').innerText = dict.remaining;
+    document.getElementById('txtDoneSub').innerText = dict.doneSub;
+    document.getElementById('txtStatusPrefix').innerText = dict.statusPrefix;
+    document.getElementById('txtStateSub').innerText = dict.changeStatus;
+    document.getElementById('txtWakeAll').innerText = dict.wakeAll;
+    document.getElementById('txtMembersTitle').innerText = dict.members;
+    document.getElementById('txtRoomTtlLabel').innerText = dict.roomTtlLabel;
+    document.getElementById('txtShareRoomBtn').innerText = dict.shareRoomBtn;
+    document.getElementById('txtShareApkBtn').innerText = dict.shareApkBtn;
+
+    document.getElementById('txtWakeModalTitle').innerText = dict.wakeModalTitle;
+    document.getElementById('txtWakeModalDesc').innerText = dict.wakeModalDesc;
+    document.getElementById('txtSendWakeBtn').innerText = dict.sendWakeBtn;
+
+    document.getElementById('txtAlarmHeader').innerText = dict.wakeHeader;
+    document.getElementById('txtCaptchaPrompt').innerText = dict.wakePrompt;
+    document.getElementById('inpCaptchaAnswer').placeholder = dict.inputWordPlaceholder;
+    document.getElementById('txtVerifyBtn').innerText = dict.verifyBtn;
+
+    document.getElementById('tabBtnRooms').innerText = dict.tabRooms;
+    document.getElementById('tabBtnCreate').innerText = dict.tabCreate;
+    document.getElementById('tabBtnProfile').innerText = dict.tabProfile;
+    document.getElementById('lblSavedRoomsHeader').innerText = dict.savedRoomsHeader;
+    document.getElementById('inpSearchRooms').placeholder = dict.searchRoomsPlaceholder;
+    document.getElementById('lblProfileHeader').innerText = dict.profileHeader;
+    document.getElementById('lblCreateRoomHeader').innerText = dict.createRoomHeader;
+
+    document.getElementById('txtScanCamBtn').innerText = dict.scanCamBtn;
+    document.getElementById('txtScanGalleryBtn').innerText = dict.scanGalleryBtn;
+    document.getElementById('txtScannerModalTitle').innerText = dict.scannerModalTitle;
+    document.getElementById('txtScannerModalDesc').innerText = dict.scannerModalDesc;
+    document.getElementById('txtCancelScannerBtn').innerText = dict.cancelScannerBtn;
+
+    document.getElementById('inpMyName').placeholder = dict.placeholderName;
+    document.getElementById('inpUserPass').placeholder = dict.placeholderUserPass;
+    document.getElementById('inpRoomName').placeholder = dict.placeholderRoomName;
+    document.getElementById('inpRoomPass').placeholder = dict.placeholderRoomPass;
+
+    document.getElementById('txtGeoBtn').innerText = dict.geoBtn;
+    document.getElementById('txtSaveBtn').innerText = dict.saveBtn;
+
+    updatePrayerCycle();
+    updateRoomTtlBanner();
+    renderSavedRoomsList();
+    renderUI();
+}
+
+function renderUI() {
+    const dict = DICTIONARY[currentLang];
+    const btnDone = document.getElementById('btnToggleDone');
+    const txtDone = document.getElementById('txtDoneTitle');
+    const lblState = document.getElementById('lblMyState');
+
+    if (myStatus === 'done') {
+        txtDone.innerText = dict.doneConfirmed;
+        btnDone.classList.add('done');
+        lblState.innerText = dict.stateDone;
+        lblState.style.color = 'var(--emerald-accent)';
+    } else if (myStatus === 'awake') {
+        txtDone.innerText = dict.doneTitle;
+        btnDone.classList.remove('done');
+        lblState.innerText = dict.stateAwake;
+        lblState.style.color = '#ffa502';
+    } else {
+        txtDone.innerText = dict.doneTitle;
+        btnDone.classList.remove('done');
+        lblState.innerText = dict.stateSleep;
+        lblState.style.color = '#e71d36';
+    }
+
+    document.getElementById('lblMyNamePill').innerText = myName || '---';
+    document.getElementById('lblRoomBadge').innerText = currentRoom.toUpperCase();
+    document.getElementById('lblCityDisplay').innerText = userCoords.label || `${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}°`;
+    renderMembers();
+}
+
+function renderMembers() {
+    const container = document.getElementById('usersListContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const keys = Object.keys(networkUsers);
+    const dict = DICTIONARY[currentLang];
+    document.getElementById('lblUserCount').innerText = `${keys.length} ${dict.peopleUnit}`;
+
+    keys.forEach(username => {
+        const u = networkUsers[username];
+        const callInfo = userCallStates[username];
+        const row = document.createElement('div');
+        const isOnline = (Date.now() - (u.lastSeen || 0)) < 60000;
+
+        let extraRowClass = '';
+        let callStatusHtml = '';
+
+        if (callInfo) {
+            if (callInfo.state === 'calling') {
+                extraRowClass = 'ringing';
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">📡</span> ${dict.callSending} [${callInfo.word}]</div>`;
+            } else if (callInfo.state === 'ringing') {
+                extraRowClass = 'ringing';
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">🔔</span> ${dict.callRinging} <b>"${callInfo.word}"</b></div>`;
+            } else if (callInfo.state === 'replied') {
+                extraRowClass = 'replied';
+                callStatusHtml = `<div class="u-call-status ack">✓ ${dict.callReplied} <b>"${callInfo.word}"</b></div>`;
+            }
+        }
+
+        row.className = `user-item ${extraRowClass}`;
+
+        let badgeClass = 'b-sleep';
+        let badgeTxt = dict.stateSleep;
+        if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
+        if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
+
+        const actionBtnHtml = (u.name !== myName)
+            ? `<div style="display:flex; align-items:center; gap:6px;">
+                <button class="btn-nudge" onclick="wakeIndividual('${u.name}')">
+                    ${callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing') ? '<span class="ring-icon">🔔</span>' : '🔔'} ${dict.nudgeBtn}
+                </button>
+                <button class="btn-kick-ghost" title="Удалить из списка" onclick="removeMemberFromRoom('${u.name}')">✕</button>
+               </div>`
+            : '';
+
+        row.innerHTML = `
+            <div class="u-left">
+                <div class="u-avatar">${u.name.substring(0, 1).toUpperCase()}</div>
+                <div>
+                    <div class="u-name">
+                        <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
+                        ${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}
+                    </div>
+                    <span class="u-badge ${badgeClass}">${badgeTxt}</span>
+                    ${callStatusHtml}
+                </div>
+            </div>
+            ${actionBtnHtml}
+        `;
+        container.appendChild(row);
+    });
+}
+
+window.wakeIndividual = function(name) {
+    openWakeWordSelector(name);
+};
+
+function showToast(text) {
+    const banner = document.getElementById('toastBanner');
+    banner.innerText = text;
+    banner.classList.add('show');
+    setTimeout(() => {
+        banner.classList.remove('show');
+    }, 3500);
+}
+
+document.getElementById('btnToggleState').addEventListener('click', () => {
+    if (myStatus === 'sleep') myStatus = 'awake';
+    else if (myStatus === 'awake') myStatus = 'sleep';
+    else myStatus = 'sleep';
+    upsertMyPresenceInDb();
+});
+
+document.getElementById('btnToggleDone').addEventListener('click', () => {
+    myStatus = (myStatus === 'done') ? 'awake' : 'done';
+    upsertMyPresenceInDb();
+});
+
+document.getElementById('btnWakeAll').addEventListener('click', () => {
+    openWakeWordSelector('ALL');
+});
+
+/**
+ * 10. ФУНКЦИИ ПОДЕЛИТЬСЯ КОМНАТОЙ, APK И QR-КОД
+ */
+function getBaseAppUrl() {
+    const baseUrl = `${location.origin}${location.pathname}`;
+    return baseUrl.endsWith('/') ? baseUrl : baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
+}
+
+function shareRoomLink() {
+    const dict = DICTIONARY[currentLang];
+    const cleanBaseUrl = getBaseAppUrl();
+    const webRoomUrl = `${cleanBaseUrl}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
+    const msg = `${dict.shareRoomTitle}\n${dict.shareRoomText}\n${webRoomUrl}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: dict.shareRoomTitle,
+            text: msg,
+            url: webRoomUrl
+        }).catch(() => copyTextFallback(msg, dict.toastRoomCopied));
+    } else {
+        copyTextFallback(msg, dict.toastRoomCopied);
+    }
+}
+
+function shareApkLink() {
+    const dict = DICTIONARY[currentLang];
+    const cleanBaseUrl = getBaseAppUrl();
+    const apkUrl = `${cleanBaseUrl}fajr-awake.apk`;
+    const msg = `${dict.shareApkTitle}\n${dict.shareApkText}\n${apkUrl}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: dict.shareApkTitle,
+            text: msg,
+            url: apkUrl
+        }).catch(() => copyTextFallback(msg, dict.toastApkCopied));
+    } else {
+        copyTextFallback(msg, dict.toastApkCopied);
+    }
+}
+
+function copyTextFallback(text, successToast) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    try {
+        document.execCommand('copy');
+        showToast(successToast || 'Скопировано в буфер обмена!');
+    } catch (err) {
+        prompt('Скопируйте текст:', text);
+    }
+    document.body.removeChild(el);
+}
+
+document.getElementById('btnShareRoomQr').addEventListener('click', shareRoomLink);
+document.getElementById('btnShareApkLink').addEventListener('click', shareApkLink);
+
+let qrObj = null;
+function generateQR() {
+    const wrap = document.getElementById('qrContainer');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    
+    const shareUrl = `${location.origin}${location.pathname}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
+    
+    try {
+        qrObj = new QRCode(wrap, {
+            text: shareUrl,
+            width: 140,
+            height: 140,
+            colorDark: "#020705",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    } catch (e) {}
+}
+
+document.getElementById('btnOpenRoom').addEventListener('click', () => {
+    document.getElementById('inpMyName').value = myName;
+    document.getElementById('inpUserPass').value = userPass;
+    document.getElementById('inpRoomName').value = currentRoom;
+    document.getElementById('inpRoomPass').value = roomPass;
+    fetchAllRoomsFromDb();
+    switchModalTab('rooms');
+    document.getElementById('roomModal').classList.add('open');
+});
+
+document.getElementById('btnCloseModal').addEventListener('click', () => {
+    document.getElementById('roomModal').classList.remove('open');
+});
+
+document.getElementById('btnRequestGeo').addEventListener('click', () => {
+    const dict = DICTIONARY[currentLang];
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                userCoords.lat = pos.coords.latitude;
+                userCoords.lng = pos.coords.longitude;
+                userCoords.label = `${pos.coords.latitude.toFixed(2)}°, ${pos.coords.longitude.toFixed(2)}°`;
+                localStorage.setItem('fajr_coords', JSON.stringify(userCoords));
+                showToast(dict.toastGeoSuccess);
+                updatePrayerCycle();
+                renderUI();
+            },
+            () => showToast(dict.toastGeoFail)
+        );
+    } else {
+        showToast(dict.toastGeoFail);
+    }
+});
+
+document.getElementById('btnSaveRoomOnly').addEventListener('click', async () => {
+    const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
+    const rp = document.getElementById('inpRoomPass').value.trim() || '';
+
+    await ensureRoomExistsInDb(r, rp, true);
+    await switchActiveRoom(r, rp);
+    switchModalTab('rooms');
+    showToast(`Группа "${r}" создана!`);
+});
+
+document.getElementById('btnSaveProfileOnly').addEventListener('click', async () => {
+    const oldName = myName;
+    const n = document.getElementById('inpMyName').value.trim();
+    const up = document.getElementById('inpUserPass').value.trim();
+
+    if (!n) {
+        showToast('Пожалуйста, введите ваше имя!');
+        return;
+    }
+
+    if (oldName && n !== oldName && supabaseClient) {
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .eq('room_name', currentRoom.trim())
+            .eq('user_name', oldName.trim());
+    }
+    myName = n;
+    localStorage.setItem('fajr_user_name', n);
+    userPass = up;
+    localStorage.setItem('fajr_user_pass', up);
+
+    await upsertMyPresenceInDb();
+    await fetchRoomMembersFromDb();
+    document.getElementById('roomModal').classList.remove('open');
+    showToast(`Профиль "${myName}" сохранен!`);
+});
+
+document.getElementById('btnLogoutProfile').addEventListener('click', async () => {
+    if (supabaseClient && myName) {
+        await supabaseClient
+            .from('fajr_members')
+            .delete()
+            .eq('room_name', currentRoom.trim())
+            .eq('user_name', myName.trim());
+    }
+    localStorage.removeItem('fajr_user_name');
+    localStorage.removeItem('fajr_user_pass');
+    myName = '';
+    userPass = '';
+    document.getElementById('roomModal').classList.remove('open');
+    document.getElementById('mandatoryAuthModal').classList.add('open');
+});
+
+/**
+ * 11. ТАЙМЕР ОБРАТНОГО ОТСЧЕТА ДО НАМАЗА
+ */
+let lastTriggeredPrayerMinute = '';
 
 function updatePrayerCycle() {
     const now = new Date();
-    const times = calculateSunTimes(now, coords.lat, coords.lng);
+    const times = calculateSunTimes(now, userCoords.lat, userCoords.lng);
 
     document.getElementById('t-fajr').innerText = fmt(times.fajr);
     document.getElementById('t-sunrise').innerText = fmt(times.sunrise);
@@ -1199,13 +2671,15 @@ function updatePrayerCycle() {
     document.getElementById('t-isha').innerText = fmt(times.isha);
 
     const currentDec = now.getHours() + (now.getMinutes() / 60) + (now.getSeconds() / 3600);
+    const dict = DICTIONARY[currentLang];
+
     const prayers = [
-        { id: 'fajr', name: 'ФАДЖР', time: times.fajr },
-        { id: 'sunrise', name: 'ВОСХОД', time: times.sunrise },
-        { id: 'dhuhr', name: 'ЗУХР', time: times.dhuhr },
-        { id: 'asr', name: 'АСР', time: times.asr },
-        { id: 'maghrib', name: 'МАГРИБ', time: times.maghrib },
-        { id: 'isha', name: 'ИША', time: times.isha }
+        { id: 'fajr', name: dict.fajr, time: times.fajr, isSalah: true },
+        { id: 'sunrise', name: dict.sunrise, time: times.sunrise, isSalah: false },
+        { id: 'dhuhr', name: dict.dhuhr, time: times.dhuhr, isSalah: true },
+        { id: 'asr', name: dict.asr, time: times.asr, isSalah: true },
+        { id: 'maghrib', name: dict.maghrib, time: times.maghrib, isSalah: true },
+        { id: 'isha', name: dict.isha, time: times.isha, isSalah: true }
     ];
 
     let next = prayers.find(p => p.time > currentDec);
@@ -1214,12 +2688,12 @@ function updatePrayerCycle() {
     document.querySelectorAll('.tl-box').forEach(b => b.classList.remove('active'));
 
     if (next) {
-        document.getElementById('lblHeroName').innerText = next.name;
+        document.getElementById('lblHeroName').innerText = next.name.toUpperCase();
         document.getElementById('lblHeroTime').innerText = fmt(next.time);
         document.getElementById('box-' + next.id).classList.add('active');
         diff = next.time - currentDec;
     } else {
-        document.getElementById('lblHeroName').innerText = 'ФАДЖР';
+        document.getElementById('lblHeroName').innerText = dict.fajr.toUpperCase();
         document.getElementById('lblHeroTime').innerText = fmt(times.fajr);
         document.getElementById('box-fajr').classList.add('active');
         diff = (24 - currentDec) + times.fajr;
@@ -1230,12 +2704,22 @@ function updatePrayerCycle() {
     const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
     const ss = String(totalSec % 60).padStart(2, '0');
     document.getElementById('lblCountdown').innerText = `${hh}:${mm}:${ss}`;
+
+    const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    prayers.forEach(p => {
+        if (p.isSalah && fmt(p.time) === nowHHMM && lastTriggeredPrayerMinute !== `${p.id}_${nowHHMM}`) {
+            lastTriggeredPrayerMinute = `${p.id}_${nowHHMM}`;
+            if (myStatus !== 'done') {
+                triggerAlarm(`АЗАН: ${p.name}`, dict.words[0]);
+            }
+        }
+    });
 }
 
-// Периодическое обновление присутствия
-setInterval(() => {
-    if (currentUser) syncPresence();
-}, 15000);
+setLanguage(currentLang);
+updatePrayerCycle();
+setInterval(updatePrayerCycle, 1000);
+initSupabase();
 </script>
 </body>
 </html>
