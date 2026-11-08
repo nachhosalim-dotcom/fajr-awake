@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AL-FAJR AWAKE — Global Prayer Network</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #020705;
+            --emerald-card: rgba(6, 32, 21, 0.85);
+            --emerald-border: rgba(46, 213, 115, 0.28);
+            --emerald-accent: #2ed573;
+            --gold-accent: #d4af37;
+            --ruby-danger: #e71d36;
+            --diamond-cyan: #70a1ff;
+            --text-primary: #f1f2f6;
+            --text-secondary: #a4b0be;
+            --radius-card: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(20, 85, 52, 0.5) 0%, transparent 65%),
+                radial-gradient(circle at 100% 100%, rgba(5, 32, 19, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(3, 18, 11, 0.6) 0%, transparent 50%);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 14px 12px 70px;
+        }
+
+        body[dir="rtl"] {
+            font-family: 'Segoe UI', Tahoma, 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 470px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--emerald-card);
+            border: 1px solid var(--emerald-border);
+            border-radius: var(--radius-card);
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            gap: 8px;
+        }
+
+        .lang-switch {
+            display: flex;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 11px;
+            padding: 2px;
+            gap: 2px;
+        }
+
+        .btn-lang {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-lang.active {
+            background: var(--emerald-accent);
+            color: #020705;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-room-badge {
+            background: linear-gradient(135deg, rgba(46, 213, 115, 0.2), rgba(6, 43, 26, 0.7));
+            border: 1px solid rgba(46, 213, 115, 0.45);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 7px 11px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            max-width: 155px;
+        }
+        .btn-room-badge span.truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .btn-room-badge:active { transform: scale(0.96); }
+
+        .btn-icon-top {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .network-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffa502;
+            box-shadow: 0 0 8px #ffa502;
+            display: inline-block;
+            margin-right: 2px;
+        }
+        .network-indicator.online {
+            background: var(--emerald-accent);
+            box-shadow: 0 0 8px var(--emerald-accent);
+        }
+
+        /* Main Prayer Hero Card */
+        .prayer-hero {
+            background: linear-gradient(160deg, rgba(9, 44, 30, 0.92) 0%, rgba(3, 18, 12, 0.96) 100%);
+            border: 1px solid var(--emerald-border);
+            border-radius: 24px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+        }
+
+        .prayer-hero-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #7bed9f;
+            font-weight: 700;
+        }
+
+        .prayer-hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 4px 0 2px;
+            text-shadow: 0 2px 14px rgba(46, 213, 115, 0.35);
+        }
+
+        .prayer-hero-time {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--gold-accent);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 10px;
+        }
+
+        .meta-strip {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #dcdde1;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .pill b { color: var(--emerald-accent); font-weight: 700; }
+
+        /* 6-Box Astronomical Timeline */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
+
+        .tl-box {
+            background: var(--emerald-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 8px 2px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .tl-box.active {
+            background: linear-gradient(180deg, rgba(46, 213, 115, 0.28) 0%, rgba(6, 40, 24, 0.9) 100%);
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.3);
+        }
+
+        .tl-name {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tl-box.active .tl-name { color: var(--emerald-accent); }
+
+        .tl-time {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Action Buttons Cluster */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-act {
+            padding: 13px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .btn-act:active { transform: scale(0.97); }
+
+        .btn-done-prayer {
+            background: linear-gradient(135deg, #10ac84, #065e47);
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(16, 172, 132, 0.3);
+        }
+        .btn-done-prayer.done {
+            background: linear-gradient(135deg, #2ed573, #1e90ff);
+            box-shadow: 0 0 20px rgba(46, 213, 115, 0.5);
+        }
+
+        .btn-my-state {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #ffffff;
+        }
+
+        .btn-wake-jamaat {
+            background: linear-gradient(135deg, #e71d36, #990011);
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(231, 29, 54, 0.45);
+            grid-column: span 2;
+            padding: 15px;
+            font-size: 12px;
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        /* Members Card */
+        .members-card {
+            background: var(--emerald-card);
+            border: 1px solid var(--emerald-border);
+            border-radius: var(--radius-card);
+            padding: 15px;
+            backdrop-filter: blur(16px);
+        }
+
+        .members-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .members-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--emerald-accent);
+        }
+
+        .room-ttl-banner {
+            font-size: 10px;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .user-item:last-child { border-bottom: none; }
+
+        .u-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .u-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(46, 213, 115, 0.15);
+            border: 1px solid rgba(46, 213, 115, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--emerald-accent);
+        }
+
+        .u-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .u-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .b-sleep { background: rgba(231, 29, 54, 0.2); color: #ff6b81; border: 1px solid rgba(231, 29, 54, 0.35); }
+        .b-awake { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid rgba(255, 165, 2, 0.35); }
+        .b-done { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); }
+
+        .btn-nudge {
+            background: linear-gradient(135deg, rgba(231, 29, 54, 0.25), rgba(153, 0, 17, 0.4));
+            border: 1px solid rgba(231, 29, 54, 0.55);
+            color: #ffccd5;
+            padding: 7px 12px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-nudge:active { transform: scale(0.92); }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.86);
+            backdrop-filter: blur(18px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            padding: 14px;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-body {
+            width: 100%;
+            max-width: 430px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: linear-gradient(160deg, #072517 0%, #03130b 100%);
+            border: 1px solid var(--emerald-border);
+            border-radius: 24px;
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+        body[dir="rtl"] .modal-close {
+            right: auto;
+            left: 16px;
+        }
+
+        .qr-wrap {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 14px;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .m-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7bed9f;
+            margin-bottom: -6px;
+        }
+
+        .m-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 11px 13px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+        }
+        .m-input:focus { border-color: var(--emerald-accent); }
+
+        .btn-geo {
+            background: rgba(46, 213, 115, 0.12);
+            border: 1px dashed var(--emerald-accent);
+            color: #7bed9f;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2ed573, #10ac84);
+            color: #020705;
+            font-weight: 800;
+            padding: 13px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Saved Rooms List with Delete & Auto-Expire Timer */
+        .rooms-list-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 170px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .room-item-row {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .room-item-row.current {
+            border-color: var(--emerald-accent);
+            background: rgba(46, 213, 115, 0.1);
+        }
+
+        .room-item-info {
+            flex: 1;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .room-item-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .room-item-exp {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .btn-del-room {
+            background: rgba(231, 29, 54, 0.18);
+            border: 1px solid rgba(231, 29, 54, 0.4);
+            color: #ff6b81;
+            border-radius: 8px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-del-room:hover { background: rgba(231, 29, 54, 0.35); }
+
+        /* Word Selector Chips */
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        .word-chip {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 11px;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .word-chip.selected {
+            background: rgba(231, 29, 54, 0.3);
+            border-color: #ff6b81;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(231, 29, 54, 0.4);
+        }
+
+        /* Fullscreen Alarm Screen */
+        .alarm-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, #59040e 0%, #0d0103 100%);
+            z-index: 99999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 22px;
+            text-align: center;
+            animation: rubyPulse 1.1s infinite alternate;
+        }
+        .alarm-screen.active { display: flex; }
+
+        @keyframes rubyPulse {
+            0% { box-shadow: inset 0 0 50px rgba(231, 29, 54, 0.6); }
+            100% { box-shadow: inset 0 0 140px rgba(231, 29, 54, 0.95); }
+        }
+
+        .alarm-title {
+            font-family: 'Cinzel', serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            text-shadow: 0 0 20px #e71d36;
+        }
+
+        .alarm-sender {
+            font-size: 14px;
+            color: #ffccd5;
+            margin-bottom: 18px;
+        }
+
+        .captcha-box {
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            max-width: 340px;
+            margin-bottom: 18px;
+        }
+
+        .captcha-challenge {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold-accent);
+            letter-spacing: 2px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px dashed rgba(212, 175, 55, 0.4);
+        }
+
+        .captcha-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+        .captcha-input:focus { border-color: var(--emerald-accent); }
+
+        .btn-confirm-awake {
+            background: #ffffff;
+            color: #990011;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 16px 28px;
+            border-radius: 28px;
+            border: none;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Custom Non-blocking Toast Banner */
+        .toast-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(8, 42, 27, 0.96);
+            border: 1px solid var(--emerald-accent);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            z-index: 100000;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            max-width: 90%;
+        }
+        .toast-banner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- Top Navigation: 4 Languages + Room Manager + Sound Check -->
+    <div class="top-bar">
+        <div class="lang-switch">
+            <button class="btn-lang" onclick="setLanguage('tr')">TR</button>
+            <button class="btn-lang" onclick="setLanguage('ar')">عربي</button>
+            <button class="btn-lang" onclick="setLanguage('en')">EN</button>
+            <button class="btn-lang active" onclick="setLanguage('ru')">RU</button>
+        </div>
+        <div class="top-actions">
+            <button class="btn-icon-top" id="btnTestAudio" title="Test Sound">🔔</button>
+            <button class="btn-room-badge" id="btnOpenRoom">
+                <span class="network-indicator" id="netIndicator"></span>
+                <span class="truncate" id="lblRoomBadge">GLOBAL-ZONE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Upcoming Prayer Hero -->
+    <div class="prayer-hero">
+        <div class="prayer-hero-tag" id="lblHeroSub">СЛЕДУЮЩИЙ НАМАЗ</div>
+        <div class="prayer-hero-title" id="lblHeroName">ФАДЖР</div>
+        <div class="prayer-hero-time" id="lblHeroTime">04:45</div>
+        <div class="meta-strip">
+            <div class="pill">📍 <b id="lblCityDisplay">35.93°, 36.63°</b></div>
+            <div class="pill"><span id="lblRemainingPrefix">Осталось:</span> <b id="lblCountdown">--:--:--</b></div>
+        </div>
+    </div>
+
+    <!-- 5 Prayers + True Sunrise Astronomical Timeline -->
+    <div class="timeline-grid">
+        <div class="tl-box" id="box-fajr">
+            <div class="tl-name" id="tl-txt-fajr">Фаджр</div>
+            <div class="tl-time" id="t-fajr">--:--</div>
+        </div>
+        <div class="tl-box" id="box-sunrise">
+            <div class="tl-name" id="tl-txt-sunrise">Восход</div>
+            <div class="tl-time" id="t-sunrise">--:--</div>
+        </div>
+        <div class="tl-box" id="box-dhuhr">
+            <div class="tl-name" id="tl-txt-dhuhr">Зухр</div>
+            <div class="tl-time" id="t-dhuhr">--:--</div>
+        </div>
+        <div class="tl-box" id="box-asr">
+            <div class="tl-name" id="tl-txt-asr">Аср</div>
+            <div class="tl-time" id="t-asr">--:--</div>
+        </div>
+        <div class="tl-box" id="box-maghrib">
+            <div class="tl-name" id="tl-txt-maghrib">Магриб</div>
+            <div class="tl-time" id="t-maghrib">--:--</div>
+        </div>
+        <div class="tl-box" id="box-isha">
+            <div class="tl-name" id="tl-txt-isha">Иша</div>
+            <div class="tl-time" id="t-isha">--:--</div>
+        </div>
+    </div>
+
+    <!-- User Action Buttons -->
+    <div class="action-grid">
+        <button class="btn-act btn-done-prayer" id="btnToggleDone">
+            <span id="txtDoneTitle">ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН</span>
+            <small style="font-size: 9px; opacity: 0.8;" id="txtDoneSub">нажмите для фиксации</small>
+        </button>
+
+        <button class="btn-act btn-my-state" id="btnToggleState">
+            <span><span id="txtStatusPrefix">СТАТУС:</span> <b id="lblMyState" style="color:#ffa502;">СПЛЮ</b></span>
+            <small style="font-size: 9px; opacity: 0.7;" id="txtStateSub">нажмите чтобы сменить</small>
+        </button>
+
+        <button class="btn-act btn-wake-jamaat" id="btnWakeAll">
+            <span>🚨</span>
+            <span id="txtWakeAll">РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ</span>
+        </button>
+    </div>
+
+    <!-- Active Jamaat & Network Members -->
+    <div class="members-card">
+        <div class="members-head">
+            <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ СЕТИ / КОМНАТЫ</span>
+            <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
+        </div>
+        <div class="room-ttl-banner" id="roomTtlBanner">
+            <span id="txtRoomTtlLabel">Автоочистка пустых комнат (30 дн.):</span>
+            <b style="color: var(--emerald-accent);" id="lblCurrentRoomTtl">30 дн.</b>
+        </div>
+        <div id="usersListContainer"></div>
+    </div>
+
+</div>
+
+<!-- 1. MODAL: SEND WAKE CHALLENGE WORD TO SLEEPING USER -->
+<div class="modal-overlay" id="wakeWordModal">
+    <div class="modal-body">
+        <button class="modal-close" id="btnCloseWakeModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
+        <p style="font-size: 12px; color: var(--text-secondary); text-align: center;" id="txtWakeModalDesc">
+            Выберите контрольное слово. У адресата зазвенит будильник, и он не выключится, пока человек не напишет это же слово в ответ:
+        </p>
+
+        <div class="words-grid" id="wakeWordsGrid"></div>
+
+        <button class="btn-primary" id="btnConfirmSendWake" style="background: linear-gradient(135deg, #e71d36, #990011); color: #fff; margin-top: 6px;">
+            <span id="txtSendWakeBtn">ОТПРАВИТЬ ВЫЗОВ И ВКЛЮЧИТЬ БУДИЛЬНИК</span>
+        </button>
+    </div>
+</div>
+
+<!-- 2. MODAL: ROOMS, AUTO-CLEANUP & PROFILE -->
+<div class="modal-overlay" id="roomModal">
+    <div class="modal-body">
+        <button class="modal-close" id="btnCloseModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtModalTitle">УПРАВЛЕНИЕ КОМНАТАМИ И ПРОФИЛЕМ</h3>
+
+        <div class="qr-wrap" id="qrContainer"></div>
+
+        <div class="m-label" id="lblSavedRoomsHeader">МОИ СОХРАНЕННЫЕ ГРУППЫ (АВТОУДАЛЕНИЕ 30 ДН.)</div>
+        <div class="rooms-list-box" id="savedRoomsList"></div>
+
+        <div class="m-label" id="lblProfileHeader">ПРОФИЛЬ И ГЕОПОЗИЦИЯ</div>
+        <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
+        <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
+
+        <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты точно</span></button>
+
+        <div class="m-label" id="lblCreateRoomHeader">СОЗДАТЬ ИЛИ ВОЙТИ В ГРУППУ</div>
+        <input type="text" class="m-input" id="inpRoomName" placeholder="Имя сервера (по умолчанию: Global-Zone)">
+        <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль комнаты (для закрытых/женских групп)">
+
+        <button class="btn-primary" id="btnSaveAll" style="margin-top: 4px;">
+            <span id="txtSaveBtn">СОХРАНИТЬ И ПОДКЛЮЧИТЬСЯ</span>
+        </button>
+    </div>
+</div>
+
+<!-- 3. FULLSCREEN EMERGENCY ALARM OVERLAY WITH LEXICAL WORD CHALLENGE -->
+<div class="alarm-screen" id="alarmOverlay">
+    <div class="alarm-title" id="txtAlarmHeader">ВСТАВАЙ НА НАМАЗ!</div>
+    <div class="alarm-sender" id="txtAlarmSender">Вас будит участник группы!</div>
+
+    <div class="captcha-box">
+        <div style="font-size: 11px; color: #ffccd5; margin-bottom: 4px;" id="txtCaptchaPrompt">Чтобы выключить звук, введите присланное слово:</div>
+        <div class="captcha-challenge" id="lblTargetWord">ПРОСЫПАЙСЯ</div>
+        <input type="text" class="captcha-input" id="inpCaptchaAnswer" placeholder="..." autocomplete="off">
+    </div>
+
+    <button class="btn-confirm-awake" id="btnVerifyAwake">
+        <span id="txtVerifyBtn">ПОДТВЕРДИТЬ И ОТВЕТИТЬ</span>
+    </button>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-banner" id="toastBanner"></div>
+
+<script>
+/**
+ * 1. ПОЛНЫЙ ЧЕТЫРЕХЪЯЗЫЧНЫЙ СЛОВАРЬ (RU, AR, TR, EN)
+ * Ни одно слово в интерфейсе не остается без перевода.
+ */
+const DICTIONARY = {
+    ru: {
+        fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
+        nextPrayer: 'СЛЕДУЮЩИЙ НАМАЗ',
+        remaining: 'Осталось:',
+        doneTitle: 'ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН',
+        doneSub: 'нажмите для фиксации',
+        doneConfirmed: '✓ НАМАЗ СОВЕРШЕН',
+        statusPrefix: 'СТАТУС:',
+        stateSleep: 'СПЛЮ', stateAwake: 'ВСТАЛ', stateDone: 'ПРОЧИТАЛ',
+        changeStatus: 'нажмите чтобы сменить',
+        wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
+        members: 'УЧАСТНИКИ СЕТИ / КОМНАТЫ',
+        peopleUnit: 'чел.',
+        youBadge: '(Вы)',
+        nudgeBtn: 'РАЗБУДИТЬ',
+        roomTtlLabel: 'Автоочистка неактивных групп (30 дн.):',
+        daysShort: 'дн.',
+        permanentRoom: 'Основная зона (постоянная)',
+        wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
+        wakeModalDesc: 'Выберите проверочное слово. У человека включится сирена, и он должен будет написать это же слово в ответ:',
+        sendWakeBtn: 'ОТПРАВИТЬ ВЫЗОВ',
+        wakeHeader: 'ВСТАВАЙ НА НАМАЗ!',
+        wakeSenderPrefix: 'Вас будит:',
+        wakePrompt: 'Чтобы выключить сирену, введите присланное слово:',
+        inputWordPlaceholder: 'Введите слово сюда',
+        verifyBtn: 'ПОДТВЕРДИТЬ ПРОБУЖДЕНИЕ',
+        modalTitle: 'УПРАВЛЕНИЕ КОМНАТАМИ И ПРОФИЛЕМ',
+        savedRoomsHeader: 'МОИ ГРУППЫ (УДАЛЕНИЕ И АВТООЧИСТКА 30 ДН.)',
+        profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
+        createRoomHeader: 'СОЗДАТЬ ИЛИ ПЕРЕЙТИ В ГРУППУ',
+        placeholderName: 'Ваше имя / логин',
+        placeholderUserPass: 'Пароль профиля',
+        placeholderRoomName: 'Название группы (напр. Global-Zone)',
+        placeholderRoomPass: 'Пароль группы (для закрытых/женских комнат)',
+        geoBtn: 'Определить GPS-координаты автоматически',
+        saveBtn: 'СОХРАНИТЬ И ПОДКЛЮЧИТЬСЯ',
+        deleteBtn: 'Удалить',
+        toastWakeSent: 'Сигнал тревоги со словом отправлен:',
+        toastReplyReceived: 'подтвердил пробуждение словом:',
+        toastRoomDeleted: 'Группа удалена из списка',
+        toastExpiredCleaned: 'Удалены неактивные группы (>30 дней):',
+        toastGeoSuccess: 'GPS координаты успешно обновлены!',
+        toastGeoFail: 'Не удалось получить доступ к GPS',
+        toastWrongWord: 'Неверное слово! Введите точно как на экране.',
+        toastAudioReady: 'Звуковой сигнал проверен и активен!',
+        words: ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан']
+    },
+    ar: {
+        fajr: 'الفجر', sunrise: 'الشروق', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء',
+        nextPrayer: 'الصلاة القادمة',
+        remaining: 'المتبقي:',
+        doneTitle: 'تأكيد: تمت الصلاة',
+        doneSub: 'اضغط للتوثيق',
+        doneConfirmed: '✓ تم أداء الصلاة',
+        statusPrefix: 'الحالة:',
+        stateSleep: 'نائم', stateAwake: 'مستيقظ', stateDone: 'صليت',
+        changeStatus: 'اضغط لتغيير الحالة',
+        wakeAll: 'إيقاظ جميع النائمين في المجموعة',
+        members: 'أعضاء الشبكة / الغرفة',
+        peopleUnit: 'عضو',
+        youBadge: '(أنت)',
+        nudgeBtn: 'إيقاظ',
+        roomTtlLabel: 'الحذف التلقائي للغرف غير النشطة (30 يوماً):',
+        daysShort: 'يوم',
+        permanentRoom: 'الغرفة العامة (دائمة)',
+        wakeModalTitle: 'إرسال كلمة الاستيقاظ',
+        wakeModalDesc: 'اختر كلمة التحقق. سيرن المنبه لدى الشخص ولن يتوقف حتى يكتب نفس الكلمة:',
+        sendWakeBtn: 'إرسال التنبيه الآن',
+        wakeHeader: 'الصلاة خير من النوم!',
+        wakeSenderPrefix: 'يوقظك الآن:',
+        wakePrompt: 'لإيقاف المنبه، اكتب الكلمة المرسلة بدقة:',
+        inputWordPlaceholder: 'اكتب الكلمة هنا',
+        verifyBtn: 'تأكيد الاستيقاظ والرد',
+        modalTitle: 'إدارة الغرف والملف الشخصي',
+        savedRoomsHeader: 'غرفي المحفوظة (حذف يدوي وتلقائي بعد 30 يوماً)',
+        profileHeader: 'الملف الشخصي والموقع الجغرافي',
+        createRoomHeader: 'إنشاء أو دخول غرفة',
+        placeholderName: 'الاسم / اسم المستخدم',
+        placeholderUserPass: 'كلمة مرور الحساب',
+        placeholderRoomName: 'اسم الغرفة (الافتراضي: Global-Zone)',
+        placeholderRoomPass: 'كلمة مرور الغرفة (للغرف الخاصة/النسائية)',
+        geoBtn: 'تحديد الموقع تلقائياً عبر GPS',
+        saveBtn: 'حفظ والانضمام',
+        deleteBtn: 'حذف',
+        toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
+        toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
+        toastRoomDeleted: 'تم حذف الغرفة بنجاح',
+        toastExpiredCleaned: 'تم مسح الغرف الخاملة لأكثر من 30 يوماً:',
+        toastGeoSuccess: 'تم تحديث إحداثيات GPS بنجاح!',
+        toastGeoFail: 'تعذر الوصول إلى موقع GPS',
+        toastWrongWord: 'الكلمة غير صحيحة! اكتبها كما تظهر.',
+        toastAudioReady: 'تم فحص الصوت والمنبه جاهز!',
+        words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
+    },
+    tr: {
+        fajr: 'Fecr', sunrise: 'Güneş', dhuhr: 'Öğle', asr: 'İkindi', maghrib: 'Akşam', isha: 'Yatsı',
+        nextPrayer: 'SIRADAKİ NAMAZ',
+        remaining: 'Kalan:',
+        doneTitle: 'NAMAZ KILINDI OLARAK İŞARETLE',
+        doneSub: 'kaydetmek için dokunun',
+        doneConfirmed: '✓ NAMAZ KILINDI',
+        statusPrefix: 'DURUM:',
+        stateSleep: 'UYUYOR', stateAwake: 'UYANDI', stateDone: 'KILDI',
+        changeStatus: 'değiştirmek için dokunun',
+        wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
+        members: 'AĞ / ODA KATILIMCILARI',
+        peopleUnit: 'kişi',
+        youBadge: '(Siz)',
+        nudgeBtn: 'UYANDIR',
+        roomTtlLabel: 'Boş odaların otomatik silinmesi (30 gün):',
+        daysShort: 'gün',
+        permanentRoom: 'Ana Bölge (Kalıcı)',
+        wakeModalTitle: 'UYANDIRMA KELİMESİ GÖNDER',
+        wakeModalDesc: 'Bir kontrol kelimesi seçin. Karşı tarafın alarmı çalacak ve aynı kelimeyi yazana kadar kapanmayacaktır:',
+        sendWakeBtn: 'ÇAĞRIYI GÖNDER',
+        wakeHeader: 'NAMAZA KALK!',
+        wakeSenderPrefix: 'Sizi uyandıran:',
+        wakePrompt: 'Alarmı kapatmak için gönderilen kelimeyi yazın:',
+        inputWordPlaceholder: 'Kelimeyi buraya yazın',
+        verifyBtn: 'UYANDIĞIMI ONAYLA',
+        modalTitle: 'ODA VE PROFİL YÖNETİMİ',
+        savedRoomsHeader: 'KAYITLI ODALARIM (SİLME & 30 GÜN OTOMATİK TEMİZLİK)',
+        profileHeader: 'PROFİL VE KONUM',
+        createRoomHeader: 'ODA OLUŞTUR VEYA KATIL',
+        placeholderName: 'Adınız / Kullanıcı adınız',
+        placeholderUserPass: 'Hesap şifresi',
+        placeholderRoomName: 'Oda adı (Varsayılan: Global-Zone)',
+        placeholderRoomPass: 'Oda şifresi (Özel/Hanımlar için)',
+        geoBtn: 'GPS Konumunu Otomatik Belirle',
+        saveBtn: 'KAYDET VE BAĞLAN',
+        deleteBtn: 'Sil',
+        toastWakeSent: 'Uyandırma sinyali gönderildi, kelime:',
+        toastReplyReceived: 'kelimeyi yazarak uyandığını onayladı:',
+        toastRoomDeleted: 'Oda listeden silindi',
+        toastExpiredCleaned: '30체 günden eski aktif olmayan odalar silindi:',
+        toastGeoSuccess: 'GPS koordinatları güncellendi!',
+        toastGeoFail: 'GPS konumuna erişilemedi',
+        toastWrongWord: 'Yanlış kelime! Ekrandaki kelimeyi doğru yazın.',
+        toastAudioReady: 'Ses sinyali test edildi ve aktif!',
+        words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
+    },
+    en: {
+        fajr: 'Fajr', sunrise: 'Sunrise', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha',
+        nextPrayer: 'NEXT PRAYER',
+        remaining: 'Remaining:',
+        doneTitle: 'MARK: PRAYER COMPLETED',
+        doneSub: 'tap to confirm',
+        doneConfirmed: '✓ PRAYER COMPLETED',
+        statusPrefix: 'STATUS:',
+        stateSleep: 'ASLEEP', stateAwake: 'AWAKE', stateDone: 'PRAYED',
+        changeStatus: 'tap to toggle',
+        wakeAll: 'WAKE ALL SLEEPING MEMBERS',
+        members: 'NETWORK / ROOM MEMBERS',
+        peopleUnit: 'users',
+        youBadge: '(You)',
+        nudgeBtn: 'WAKE UP',
+        roomTtlLabel: 'Auto-cleanup of inactive rooms (30d):',
+        daysShort: 'd.',
+        permanentRoom: 'Global Zone (Permanent)',
+        wakeModalTitle: 'SEND WAKE-UP WORD CHALLENGE',
+        wakeModalDesc: 'Select a verification word. The recipient alarm will ring until they type this exact word back:',
+        sendWakeBtn: 'SEND WAKE CHALLENGE',
+        wakeHeader: 'WAKE UP FOR PRAYER!',
+        wakeSenderPrefix: 'Woken up by:',
+        wakePrompt: 'Type the challenge word below to stop the alarm:',
+        inputWordPlaceholder: 'Type challenge word here',
+        verifyBtn: 'CONFIRM & REPLY',
+        modalTitle: 'ROOMS & PROFILE MANAGEMENT',
+        savedRoomsHeader: 'MY SAVED ROOMS (DELETE & 30-DAY AUTO-EXPIRY)',
+        profileHeader: 'PROFILE & GEO-LOCATION',
+        createRoomHeader: 'CREATE OR JOIN ROOM',
+        placeholderName: 'Your Name / Username',
+        placeholderUserPass: 'Account Password',
+        placeholderRoomName: 'Room Name (Default: Global-Zone)',
+        placeholderRoomPass: 'Room Password (Optional for private/sisters)',
+        geoBtn: 'Auto-Detect Precise GPS Coordinates',
+        saveBtn: 'SAVE & CONNECT',
+        deleteBtn: 'Delete',
+        toastWakeSent: 'Wake challenge sent with word:',
+        toastReplyReceived: 'confirmed waking up with word:',
+        toastRoomDeleted: 'Room deleted from list',
+        toastExpiredCleaned: 'Cleaned inactive rooms (>30 days):',
+        toastGeoSuccess: 'GPS coordinates updated!',
+        toastGeoFail: 'Could not access GPS location',
+        toastWrongWord: 'Incorrect word! Type the exact word shown.',
+        toastAudioReady: 'Alarm sound tested and active!',
+        words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
+    }
+};
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const DEFAULT_ROOM = 'Global-Zone';
+
+let currentLang = localStorage.getItem('fajr_lang') || 'ru';
+let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
+let myName = localStorage.getItem('fajr_user_name') || 'User_' + Math.floor(Math.random() * 899 + 100);
+let userPass = localStorage.getItem('fajr_user_pass') || '';
+let currentRoom = localStorage.getItem('fajr_room_name') || DEFAULT_ROOM;
+let roomPass = localStorage.getItem('fajr_room_pass') || '';
+let myStatus = 'sleep'; // 'sleep', 'awake', 'done'
+let lastResetDate = localStorage.getItem('fajr_last_reset_date') || '';
+
+let targetCaptchaWord = '';
+let lastAlarmInitiator = '';
+let pendingWakeTarget = 'ALL';
+let selectedChallengeWord = '';
+let alarmInterval = null;
+let audioCtx = null;
+
+let mqttClient = null;
+let isMqttConnected = false;
+
+/**
+ * 2. УПРАВЛЕНИЕ РЕЕСТРОМ КОМНАТ: РУЧНОЕ УДАЛЕНИЕ И АВТООЧИСТКА ЧЕРЕЗ 30 ДНЕЙ
+ */
+function getRoomsRegistry() {
+    let reg = {};
+    try {
+        reg = JSON.parse(localStorage.getItem('fajr_rooms_registry')) || {};
+    } catch (e) { reg = {}; }
+
+    // Global-Zone существует всегда
+    if (!reg[DEFAULT_ROOM]) {
+        reg[DEFAULT_ROOM] = {
+            name: DEFAULT_ROOM,
+            pass: '',
+            owner: 'SYSTEM',
+            lastActive: Date.now(),
+            permanent: true
+        };
+    }
+    return reg;
+}
+
+function saveRoomsRegistry(reg) {
+    localStorage.setItem('fajr_rooms_registry', JSON.stringify(reg));
+}
+
+function touchRoomActivity(roomName, pass = '', isOwner = false) {
+    if (!roomName) return;
+    const reg = getRoomsRegistry();
+    if (!reg[roomName]) {
+        reg[roomName] = {
+            name: roomName,
+            pass: pass,
+            owner: isOwner ? myName : '',
+            lastActive: Date.now(),
+            permanent: roomName === DEFAULT_ROOM
+        };
+    } else {
+        reg[roomName].lastActive = Date.now();
+        if (pass) reg[roomName].pass = pass;
+    }
+    saveRoomsRegistry(reg);
+}
+
+// Автоматическое удаление комнат, которыми никто не пользовался 30 дней
+function cleanupExpiredRooms() {
+    const reg = getRoomsRegistry();
+    const now = Date.now();
+    let removedCount = 0;
+
+    Object.keys(reg).forEach(rName => {
+        const room = reg[rName];
+        if (!room.permanent && rName !== DEFAULT_ROOM) {
+            if (now - (room.lastActive || 0) > THIRTY_DAYS_MS) {
+                delete reg[rName];
+                removedCount++;
+                if (currentRoom === rName) {
+                    currentRoom = DEFAULT_ROOM;
+                    roomPass = '';
+                    localStorage.setItem('fajr_room_name', currentRoom);
+                    localStorage.setItem('fajr_room_pass', '');
+                }
+            }
+        }
+    });
+
+    if (removedCount > 0) {
+        saveRoomsRegistry(reg);
+        showToast(`${DICTIONARY[currentLang].toastExpiredCleaned} ${removedCount}`);
+    }
+    updateRoomTtlBanner();
+}
+
+// Ручное удаление созданной или сохраненной комнаты
+window.deleteRoomByName = function(rName, event) {
+    if (event) event.stopPropagation();
+    if (rName === DEFAULT_ROOM) return;
+
+    const reg = getRoomsRegistry();
+    delete reg[rName];
+    saveRoomsRegistry(reg);
+
+    if (currentRoom === rName) {
+        currentRoom = DEFAULT_ROOM;
+        roomPass = '';
+        localStorage.setItem('fajr_room_name', currentRoom);
+        localStorage.setItem('fajr_room_pass', '');
+        document.getElementById('inpRoomName').value = currentRoom;
+        document.getElementById('inpRoomPass').value = '';
+        setupNetwork();
+    }
+
+    renderSavedRoomsList();
+    renderUI();
+    generateQR();
+    showToast(`${DICTIONARY[currentLang].toastRoomDeleted}: ${rName}`);
+};
+
+window.selectSavedRoom = function(rName) {
+    const reg = getRoomsRegistry();
+    const room = reg[rName];
+    if (!room) return;
+
+    currentRoom = room.name;
+    roomPass = room.pass || '';
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+
+    document.getElementById('inpRoomName').value = currentRoom;
+    document.getElementById('inpRoomPass').value = roomPass;
+
+    touchRoomActivity(currentRoom, roomPass);
+    setupNetwork();
+    renderSavedRoomsList();
+    generateQR();
+    renderUI();
+};
+
+function renderSavedRoomsList() {
+    const container = document.getElementById('savedRoomsList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const reg = getRoomsRegistry();
+    const dict = DICTIONARY[currentLang];
+    const now = Date.now();
+
+    Object.keys(reg).forEach(rName => {
+        const r = reg[rName];
+        const isCurrent = rName === currentRoom;
+        const elapsed = now - (r.lastActive || now);
+        const daysLeft = Math.max(1, Math.ceil((THIRTY_DAYS_MS - elapsed) / (24 * 60 * 60 * 1000)));
+
+        const row = document.createElement('div');
+        row.className = `room-item-row ${isCurrent ? 'current' : ''}`;
+        row.onclick = () => selectSavedRoom(rName);
+
+        const expText = r.permanent
+            ? dict.permanentRoom
+            : `⏳ ${daysLeft} ${dict.daysShort}`;
+
+        row.innerHTML = `
+            <div class="room-item-info">
+                <div class="room-item-title">
+                    <span>${r.pass ? '🔒' : '🌐'}</span>
+                    <span>${r.name}</span>
+                </div>
+                <div class="room-item-exp">${expText}</div>
+            </div>
+            ${!r.permanent ? `<button class="btn-del-room" onclick="deleteRoomByName('${r.name}', event)">✕ ${dict.deleteBtn}</button>` : ''}
+        `;
+        container.appendChild(row);
+    });
+}
+
+function updateRoomTtlBanner() {
+    const reg = getRoomsRegistry();
+    const dict = DICTIONARY[currentLang];
+    const r = reg[currentRoom];
+    const lbl = document.getElementById('lblCurrentRoomTtl');
+    if (!lbl) return;
+
+    if (!r || r.permanent || currentRoom === DEFAULT_ROOM) {
+        lbl.innerText = '∞';
+    } else {
+        const daysLeft = Math.max(1, Math.ceil((THIRTY_DAYS_MS - (Date.now() - (r.lastActive || Date.now()))) / (24 * 60 * 60 * 1000)));
+        lbl.innerText = `${daysLeft} ${dict.daysShort}`;
+    }
+}
+
+/**
+ * 3. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ИСТИННОГО ВОСХОДА, ЗАКАТА И 5 НАМАЗОВ
+ */
+function toRad(d) { return d * Math.PI / 180.0; }
+function toDeg(r) { return r * 180.0 / Math.PI; }
+
+function calculateSunTimes(date, lat, lng) {
+    const tz = -date.getTimezoneOffset() / 60;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const JD = 367 * year - Math.floor((7 * (year + Math.floor((month + 9) / 12))) / 4) +
+               Math.floor((275 * month) / 9) + day + 1721013.5 - (lng / (15 * 24));
+    const D = JD - 2451545.0;
+
+    const g = (357.529 + 0.98560028 * D) % 360;
+    const q = (280.459 + 0.98564736 * D) % 360;
+    const L = (q + 1.915 * Math.sin(toRad(g)) + 0.020 * Math.sin(toRad(2 * g))) % 360;
+    const e = 23.439 - 0.00000036 * D;
+
+    const RA = toDeg(Math.atan2(Math.cos(toRad(e)) * Math.sin(toRad(L)), Math.cos(toRad(L)))) / 15.0;
+    const decl = toDeg(Math.asin(Math.sin(toRad(e)) * Math.sin(toRad(L))));
+
+    const EqT = (q / 15.0) - (RA < 0 ? RA + 24 : RA);
+    const noon = 12 + tz - (lng / 15.0) - EqT;
+
+    function sunAngleTime(angle) {
+        const val = (Math.sin(toRad(angle)) - Math.sin(toRad(lat)) * Math.sin(toRad(decl))) /
+                    (Math.cos(toRad(lat)) * Math.cos(toRad(decl)));
+        if (val > 1 || val < -1) return 1.5;
+        return toDeg(Math.acos(val)) / 15.0;
+    }
+
+    const sunriseAngle = sunAngleTime(-0.833);
+    const sunrise = noon - sunriseAngle;
+    const sunset = noon + sunriseAngle;
+
+    // Фаджр: Солнце на -18° под горизонтом (~1.5 часа до восхода)
+    const fajr = noon - sunAngleTime(-18.0);
+    const dhuhr = noon + (2 / 60);
+
+    const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
+    const asrAngleVal = toDeg(Math.atan(1 / (1 + noonShadow)));
+    const asr = noon + sunAngleTime(asrAngleVal);
+
+    const maghrib = sunset + (2 / 60);
+    const isha = noon + sunAngleTime(-17.5);
+
+    return { fajr, sunrise, dhuhr, asr, maghrib, isha };
+}
+
+function fmt(decHours) {
+    if (decHours === null || isNaN(decHours)) return "--:--";
+    let norm = ((decHours % 24) + 24) % 24;
+    let h = Math.floor(norm);
+    let m = Math.floor((norm - h) * 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+/**
+ * 4. WEB AUDIO API СИНТЕЗАТОР БУДИЛЬНИКА
+ */
+function ensureAudioContext() {
+    if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+function playSingleTone() {
+    try {
+        ensureAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+
+        gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.32);
+
+        if (navigator.vibrate) navigator.vibrate([260, 80, 260]);
+    } catch (e) {}
+}
+
+function playAlarmChime() {
+    if (alarmInterval) return;
+    playSingleTone();
+    alarmInterval = setInterval(playSingleTone, 420);
+}
+
+function stopAlarmAudio() {
+    if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+    }
+}
+
+document.getElementById('btnTestAudio').addEventListener('click', () => {
+    playSingleTone();
+    showToast(DICTIONARY[currentLang].toastAudioReady);
+});
+
+/**
+ * 5. ВЗАИМНЫЙ ВЫЗОВ ПО СЛОВУ: ОТПРАВКА СЛОВА И ОБРАТНОЕ ПОДТВЕРЖДЕНИЕ
+ */
+function openWakeWordSelector(targetUser) {
+    pendingWakeTarget = targetUser;
+    const dict = DICTIONARY[currentLang];
+    const grid = document.getElementById('wakeWordsGrid');
+    grid.innerHTML = '';
+
+    selectedChallengeWord = dict.words[0];
+
+    dict.words.forEach((word, idx) => {
+        const chip = document.createElement('div');
+        chip.className = `word-chip ${idx === 0 ? 'selected' : ''}`;
+        chip.innerText = word.toUpperCase();
+        chip.onclick = () => {
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+            selectedChallengeWord = word;
+        };
+        grid.appendChild(chip);
+    });
+
+    document.getElementById('wakeWordModal').classList.add('open');
+}
+
+document.getElementById('btnCloseWakeModal').addEventListener('click', () => {
+    document.getElementById('wakeWordModal').classList.remove('open');
+});
+
+document.getElementById('btnConfirmSendWake').addEventListener('click', () => {
+    const wordToSend = selectedChallengeWord || DICTIONARY[currentLang].words[0];
+    const payload = {
+        type: 'WAKE_CALL',
+        sender: myName,
+        target: pendingWakeTarget,
+        word: wordToSend
+    };
+    sendNetworkMessage(payload);
+    touchRoomActivity(currentRoom, roomPass);
+    showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend.toUpperCase()}"`);
+    document.getElementById('wakeWordModal').classList.remove('open');
+});
+
+function triggerAlarm(senderName, incomingWord) {
+    const dict = DICTIONARY[currentLang];
+    lastAlarmInitiator = senderName;
+    targetCaptchaWord = incomingWord || dict.words[Math.floor(Math.random() * dict.words.length)];
+
+    document.getElementById('lblTargetWord').innerText = targetCaptchaWord.toUpperCase();
+    document.getElementById('inpCaptchaAnswer').value = '';
+    document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${senderName}`;
+
+    document.getElementById('alarmOverlay').classList.add('active');
+    playAlarmChime();
+}
+
+document.getElementById('btnVerifyAwake').addEventListener('click', verifyCaptchaAndStop);
+document.getElementById('inpCaptchaAnswer').addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') verifyCaptchaAndStop();
+});
+
+function verifyCaptchaAndStop() {
+    const input = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
+    if (input === targetCaptchaWord.trim().toLowerCase()) {
+        stopAlarmAudio();
+        document.getElementById('alarmOverlay').classList.remove('active');
+        myStatus = 'awake';
+        syncUserState();
+
+        // Отправляем ответное уведомление тому, кто будил
+        sendNetworkMessage({
+            type: 'WAKE_ACK',
+            sender: myName,
+            word: targetCaptchaWord.toUpperCase()
+        });
+    } else {
+        document.getElementById('inpCaptchaAnswer').style.borderColor = '#e71d36';
+        showToast(DICTIONARY[currentLang].toastWrongWord);
+        if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+    }
+}
+
+/**
+ * 6. СЕТЕВАЯ ШИНА И ЛОКАЛЬНАЯ СИНХРОНИЗАЦИЯ (BroadcastChannel + LocalStorage Bridge + Safe Remote Bridge)
+ */
+let broadcast = null;
+let networkUsers = {};
+
+function handleIncomingMessage(msg) {
+    if (!msg || !msg.sender) return;
+    touchRoomActivity(currentRoom, roomPass);
+
+    if (msg.type === 'HEARTBEAT') {
+        networkUsers[msg.sender] = { name: msg.sender, status: msg.status, lastSeen: Date.now() };
+        renderMembers();
+    } else if (msg.type === 'WAKE_CALL') {
+        if (msg.target === 'ALL' || msg.target === myName) {
+            if (myStatus !== 'done') {
+                triggerAlarm(msg.sender, msg.word);
+            }
+        }
+    } else if (msg.type === 'WAKE_ACK') {
+        showToast(`✓ ${msg.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${msg.word}"`);
+    }
+}
+
+function sendNetworkMessage(obj) {
+    // 1. Локально между вкладками через BroadcastChannel
+    try {
+        if (broadcast) broadcast.postMessage(obj);
+    } catch (e) {}
+
+    // 2. Локальный резервный мост через localStorage (работает в sandboxed canvas и iframe)
+    try {
+        const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
+        const payload = { ...obj, _ts: Date.now(), _nonce: Math.random() };
+        localStorage.setItem(busKey, JSON.stringify(payload));
+    } catch (e) {}
+
+    // 3. Удаленный мост (если разрешен окружением)
+    if (mqttClient && isMqttConnected) {
+        try {
+            const topic = 'fajrwake/' + encodeURIComponent(currentRoom) + '/' + encodeURIComponent(roomPass || 'open');
+            const message = new Paho.MQTT.Message(JSON.stringify(obj));
+            message.destinationName = topic;
+            mqttClient.send(message);
+        } catch (e) {}
+    }
+}
+
+function setupNetwork() {
+    if (broadcast) {
+        try { broadcast.close(); } catch (e) {}
+    }
+
+    const channelKey = 'fajr_net_' + currentRoom + '_' + (roomPass || 'open');
+    try {
+        broadcast = new BroadcastChannel(channelKey);
+        broadcast.onmessage = (e) => {
+            handleIncomingMessage(e.data);
+        };
+    } catch (e) {}
+
+    // Слушатель событий storage для резервной межвкладочной синхронизации
+    window.addEventListener('storage', (e) => {
+        const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
+        if (e.key === busKey && e.newValue) {
+            try {
+                const parsed = JSON.parse(e.newValue);
+                if (parsed.sender !== myName) {
+                    handleIncomingMessage(parsed);
+                }
+            } catch (err) {}
+        }
+    });
+
+    networkUsers = {};
+    networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
+
+    initGlobalMqttSafely();
+    syncUserState();
+}
+
+function initGlobalMqttSafely() {
+    const netInd = document.getElementById('netIndicator');
+
+    // Безопасная проверка: если мы внутри iframe / Canvas песочницы с ограничениями безопасности,
+    // мягко переключаемся в локальный автономный режим без падения скрипта
+    try {
+        if (typeof Paho === 'undefined' || typeof WebSocket === 'undefined') {
+            if (netInd) netInd.classList.add('online');
+            return;
+        }
+
+        if (mqttClient) {
+            try { mqttClient.disconnect(); } catch (e) {}
+        }
+
+        const clientId = 'fajr_' + Math.random().toString(16).substr(2, 8);
+        mqttClient = new Paho.MQTT.Client('broker.emqx.io', 8084, clientId);
+
+        mqttClient.onConnectionLost = () => {
+            isMqttConnected = false;
+            if (netInd) netInd.classList.remove('online');
+        };
+
+        mqttClient.onMessageArrived = (message) => {
+            try {
+                const data = JSON.parse(message.payloadString);
+                if (data.sender !== myName) {
+                    handleIncomingMessage(data);
+                }
+            } catch (e) {}
+        };
+
+        const topic = 'fajrwake/' + encodeURIComponent(currentRoom) + '/' + encodeURIComponent(roomPass || 'open');
+
+        mqttClient.connect({
+            useSSL: true,
+            timeout: 4,
+            onSuccess: () => {
+                isMqttConnected = true;
+                if (netInd) netInd.classList.add('online');
+                mqttClient.subscribe(topic);
+                sendNetworkMessage({ type: 'HEARTBEAT', sender: myName, status: myStatus });
+            },
+            onFailure: () => {
+                isMqttConnected = false;
+                // В локальной среде или при блокировке портов Canvas отображаем активный локальный режим
+                if (netInd) netInd.classList.add('online');
+            }
+        });
+    } catch (err) {
+        // Защита от SecurityError в песочницах (Canvas / iFrame)
+        isMqttConnected = false;
+        if (netInd) netInd.classList.add('online');
+    }
+}
+
+function syncUserState() {
+    networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
+    sendNetworkMessage({ type: 'HEARTBEAT', sender: myName, status: myStatus });
+    renderUI();
+}
+
+setInterval(() => {
+    syncUserState();
+    const now = Date.now();
+    for (let u in networkUsers) {
+        if (u !== myName && now - networkUsers[u].lastSeen > 12000) {
+            delete networkUsers[u];
+        }
+    }
+    renderMembers();
+}, 3000);
+
+/**
+ * 7. ПОЛНАЯ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА НА 4 ЯЗЫКА
+ */
+function setLanguage(lang) {
+    if (!DICTIONARY[lang]) lang = 'ru';
+    currentLang = lang;
+    localStorage.setItem('fajr_lang', lang);
+
+    document.querySelectorAll('.btn-lang').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector(`.btn-lang[onclick="setLanguage('${lang}')"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    if (lang === 'ar') document.body.setAttribute('dir', 'rtl');
+    else document.body.removeAttribute('dir');
+
+    const dict = DICTIONARY[lang];
+    document.getElementById('tl-txt-fajr').innerText = dict.fajr;
+    document.getElementById('tl-txt-sunrise').innerText = dict.sunrise;
+    document.getElementById('tl-txt-dhuhr').innerText = dict.dhuhr;
+    document.getElementById('tl-txt-asr').innerText = dict.asr;
+    document.getElementById('tl-txt-maghrib').innerText = dict.maghrib;
+    document.getElementById('tl-txt-isha').innerText = dict.isha;
+
+    document.getElementById('lblHeroSub').innerText = dict.nextPrayer;
+    document.getElementById('lblRemainingPrefix').innerText = dict.remaining;
+    document.getElementById('txtDoneSub').innerText = dict.doneSub;
+    document.getElementById('txtStatusPrefix').innerText = dict.statusPrefix;
+    document.getElementById('txtStateSub').innerText = dict.changeStatus;
+    document.getElementById('txtWakeAll').innerText = dict.wakeAll;
+    document.getElementById('txtMembersTitle').innerText = dict.members;
+    document.getElementById('txtRoomTtlLabel').innerText = dict.roomTtlLabel;
+
+    document.getElementById('txtWakeModalTitle').innerText = dict.wakeModalTitle;
+    document.getElementById('txtWakeModalDesc').innerText = dict.wakeModalDesc;
+    document.getElementById('txtSendWakeBtn').innerText = dict.sendWakeBtn;
+
+    document.getElementById('txtAlarmHeader').innerText = dict.wakeHeader;
+    document.getElementById('txtCaptchaPrompt').innerText = dict.wakePrompt;
+    document.getElementById('inpCaptchaAnswer').placeholder = dict.inputWordPlaceholder;
+    document.getElementById('txtVerifyBtn').innerText = dict.verifyBtn;
+
+    document.getElementById('txtModalTitle').innerText = dict.modalTitle;
+    document.getElementById('lblSavedRoomsHeader').innerText = dict.savedRoomsHeader;
+    document.getElementById('lblProfileHeader').innerText = dict.profileHeader;
+    document.getElementById('lblCreateRoomHeader').innerText = dict.createRoomHeader;
+
+    document.getElementById('inpMyName').placeholder = dict.placeholderName;
+    document.getElementById('inpUserPass').placeholder = dict.placeholderUserPass;
+    document.getElementById('inpRoomName').placeholder = dict.placeholderRoomName;
+    document.getElementById('inpRoomPass').placeholder = dict.placeholderRoomPass;
+
+    document.getElementById('txtGeoBtn').innerText = dict.geoBtn;
+    document.getElementById('txtSaveBtn').innerText = dict.saveBtn;
+
+    updatePrayerCycle();
+    updateRoomTtlBanner();
+    renderUI();
+}
+
+function renderUI() {
+    const dict = DICTIONARY[currentLang];
+    const btnDone = document.getElementById('btnToggleDone');
+    const txtDone = document.getElementById('txtDoneTitle');
+    const lblState = document.getElementById('lblMyState');
+
+    if (myStatus === 'done') {
+        txtDone.innerText = dict.doneConfirmed;
+        btnDone.classList.add('done');
+        lblState.innerText = dict.stateDone;
+        lblState.style.color = 'var(--emerald-accent)';
+    } else if (myStatus === 'awake') {
+        txtDone.innerText = dict.doneTitle;
+        btnDone.classList.remove('done');
+        lblState.innerText = dict.stateAwake;
+        lblState.style.color = '#ffa502';
+    } else {
+        txtDone.innerText = dict.doneTitle;
+        btnDone.classList.remove('done');
+        lblState.innerText = dict.stateSleep;
+        lblState.style.color = '#e71d36';
+    }
+
+    document.getElementById('lblRoomBadge').innerText = currentRoom.toUpperCase();
+    document.getElementById('lblCityDisplay').innerText = userCoords.label || `${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}°`;
+    renderMembers();
+}
+
+function renderMembers() {
+    const container = document.getElementById('usersListContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const keys = Object.keys(networkUsers);
+    const dict = DICTIONARY[currentLang];
+    document.getElementById('lblUserCount').innerText = `${keys.length} ${dict.peopleUnit}`;
+
+    keys.forEach(username => {
+        const u = networkUsers[username];
+        const row = document.createElement('div');
+        row.className = 'user-item';
+
+        let badgeClass = 'b-sleep';
+        let badgeTxt = dict.stateSleep;
+        if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
+        if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
+
+        row.innerHTML = `
+            <div class="u-left">
+                <div class="u-avatar">${u.name.substring(0, 1).toUpperCase()}</div>
+                <div>
+                    <div class="u-name">${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}</div>
+                    <span class="u-badge ${badgeClass}">${badgeTxt}</span>
+                </div>
+            </div>
+            ${u.name !== myName ? `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">🔔 ${dict.nudgeBtn}</button>` : ''}
+        `;
+        container.appendChild(row);
+    });
+}
+
+window.wakeIndividual = function(name) {
+    openWakeWordSelector(name);
+};
+
+/**
+ * 8. СОБЫТИЯ КНОПОК И УВЕДОМЛЕНИЙ
+ */
+function showToast(text) {
+    const banner = document.getElementById('toastBanner');
+    banner.innerText = text;
+    banner.classList.add('show');
+    setTimeout(() => {
+        banner.classList.remove('show');
+    }, 3500);
+}
+
+document.getElementById('btnToggleState').addEventListener('click', () => {
+    if (myStatus === 'sleep') myStatus = 'awake';
+    else if (myStatus === 'awake') myStatus = 'sleep';
+    else myStatus = 'sleep';
+    syncUserState();
+});
+
+document.getElementById('btnToggleDone').addEventListener('click', () => {
+    myStatus = (myStatus === 'done') ? 'awake' : 'done';
+    syncUserState();
+});
+
+document.getElementById('btnWakeAll').addEventListener('click', () => {
+    openWakeWordSelector('ALL');
+});
+
+/**
+ * 9. QR-КОД, GPS И НАСТРОЙКИ КОМНАТ
+ */
+let qrObj = null;
+function generateQR() {
+    const wrap = document.getElementById('qrContainer');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const shareUrl = `${location.origin}${location.pathname}?room=${encodeURIComponent(currentRoom)}&pass=${encodeURIComponent(roomPass)}`;
+    try {
+        qrObj = new QRCode(wrap, {
+            text: shareUrl,
+            width: 130,
+            height: 130,
+            colorDark: "#020705",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    } catch (e) {}
+}
+
+document.getElementById('btnOpenRoom').addEventListener('click', () => {
+    document.getElementById('inpMyName').value = myName;
+    document.getElementById('inpUserPass').value = userPass;
+    document.getElementById('inpRoomName').value = currentRoom;
+    document.getElementById('inpRoomPass').value = roomPass;
+    cleanupExpiredRooms();
+    renderSavedRoomsList();
+    generateQR();
+    document.getElementById('roomModal').classList.add('open');
+});
+
+document.getElementById('btnCloseModal').addEventListener('click', () => {
+    document.getElementById('roomModal').classList.remove('open');
+});
+
+document.getElementById('btnRequestGeo').addEventListener('click', () => {
+    const dict = DICTIONARY[currentLang];
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                userCoords.lat = pos.coords.latitude;
+                userCoords.lng = pos.coords.longitude;
+                userCoords.label = `${pos.coords.latitude.toFixed(2)}°, ${pos.coords.longitude.toFixed(2)}°`;
+                localStorage.setItem('fajr_coords', JSON.stringify(userCoords));
+                showToast(dict.toastGeoSuccess);
+                updatePrayerCycle();
+                renderUI();
+            },
+            () => showToast(dict.toastGeoFail)
+        );
+    } else {
+        showToast(dict.toastGeoFail);
+    }
+});
+
+document.getElementById('btnSaveAll').addEventListener('click', () => {
+    const n = document.getElementById('inpMyName').value.trim();
+    const up = document.getElementById('inpUserPass').value.trim();
+    const r = document.getElementById('inpRoomName').value.trim();
+    const rp = document.getElementById('inpRoomPass').value.trim();
+
+    if (n) {
+        myName = n;
+        localStorage.setItem('fajr_user_name', n);
+    }
+    userPass = up;
+    localStorage.setItem('fajr_user_pass', up);
+
+    currentRoom = r || DEFAULT_ROOM;
+    roomPass = rp || '';
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+
+    touchRoomActivity(currentRoom, roomPass, true);
+    setupNetwork();
+    updateRoomTtlBanner();
+    document.getElementById('roomModal').classList.remove('open');
+    renderUI();
+});
+
+/**
+ * 10. ЦИКЛ ВРЕМЕНИ НАМАЗОВ И АВТО-БУДИЛЬНИК АЗАНА
+ */
+let lastTriggeredPrayerMinute = '';
+
+function updatePrayerCycle() {
+    const now = new Date();
+    const todayKey = now.toISOString().slice(0, 10);
+
+    // Сброс статуса в новый день
+    if (lastResetDate !== todayKey) {
+        lastResetDate = todayKey;
+        localStorage.setItem('fajr_last_reset_date', todayKey);
+    }
+
+    const times = calculateSunTimes(now, userCoords.lat, userCoords.lng);
+
+    document.getElementById('t-fajr').innerText = fmt(times.fajr);
+    document.getElementById('t-sunrise').innerText = fmt(times.sunrise);
+    document.getElementById('t-dhuhr').innerText = fmt(times.dhuhr);
+    document.getElementById('t-asr').innerText = fmt(times.asr);
+    document.getElementById('t-maghrib').innerText = fmt(times.maghrib);
+    document.getElementById('t-isha').innerText = fmt(times.isha);
+
+    const currentDec = now.getHours() + (now.getMinutes() / 60) + (now.getSeconds() / 3600);
+    const dict = DICTIONARY[currentLang];
+
+    const prayers = [
+        { id: 'fajr', name: dict.fajr, time: times.fajr, isSalah: true },
+        { id: 'sunrise', name: dict.sunrise, time: times.sunrise, isSalah: false },
+        { id: 'dhuhr', name: dict.dhuhr, time: times.dhuhr, isSalah: true },
+        { id: 'asr', name: dict.asr, time: times.asr, isSalah: true },
+        { id: 'maghrib', name: dict.maghrib, time: times.maghrib, isSalah: true },
+        { id: 'isha', name: dict.isha, time: times.isha, isSalah: true }
+    ];
+
+    let next = prayers.find(p => p.time > currentDec);
+    let diff = 0;
+
+    document.querySelectorAll('.tl-box').forEach(b => b.classList.remove('active'));
+
+    if (next) {
+        document.getElementById('lblHeroName').innerText = next.name.toUpperCase();
+        document.getElementById('lblHeroTime').innerText = fmt(next.time);
+        document.getElementById('box-' + next.id).classList.add('active');
+        diff = next.time - currentDec;
+    } else {
+        document.getElementById('lblHeroName').innerText = dict.fajr.toUpperCase();
+        document.getElementById('lblHeroTime').innerText = fmt(times.fajr);
+        document.getElementById('box-fajr').classList.add('active');
+        diff = (24 - currentDec) + times.fajr;
+    }
+
+    const totalSec = Math.max(0, Math.floor(diff * 3600));
+    const hh = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+    const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+    const ss = String(totalSec % 60).padStart(2, '0');
+    document.getElementById('lblCountdown').innerText = `${hh}:${mm}:${ss}`;
+
+    // Автоматическое срабатывание будильника при наступлении времени любого из 5 намазов
+    const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    prayers.forEach(p => {
+        if (p.isSalah && fmt(p.time) === nowHHMM && lastTriggeredPrayerMinute !== `${p.id}_${nowHHMM}`) {
+            lastTriggeredPrayerMinute = `${p.id}_${nowHHMM}`;
+            if (myStatus !== 'done') {
+                triggerAlarm(`АЗАН: ${p.name}`, dict.words[0]);
+            }
+        }
+    });
+}
+
+// Обработка входа по QR-ссылке (?room=...&pass=...)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('room')) {
+    currentRoom = urlParams.get('room') || DEFAULT_ROOM;
+    roomPass = urlParams.get('pass') || '';
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+}
+
+// Инициализация приложения
+touchRoomActivity(currentRoom, roomPass);
+cleanupExpiredRooms();
+setupNetwork();
+setLanguage(currentLang);
+updatePrayerCycle();
+setInterval(updatePrayerCycle, 1000);
+</script>
+
+</body>
+</html>
