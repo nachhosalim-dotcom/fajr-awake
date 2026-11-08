@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AL-FAJR AWAKE — Global Prayer Network</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1662,25 +1663,47 @@ async function fetchRoomMembersFromDb() {
     }
 }
 
+let isSyncingPresence = false;
 async function upsertMyPresenceInDb(extraFields = {}) {
     networkUsers[myName] = { name: myName, status: myStatus, lastSeen: Date.now() };
     renderUI();
 
-    if (!supabaseClient) return;
-    const row = {
-        room_name: currentRoom,
-        user_name: myName,
-        user_pass: userPass || '',
-        status: myStatus,
-        lat: userCoords.lat,
-        lng: userCoords.lng,
-        last_seen: new Date().toISOString(),
-        ...extraFields
-    };
+    if (!supabaseClient || isSyncingPresence) return;
+    isSyncingPresence = true;
 
-    await supabaseClient
-        .from('fajr_members')
-        .upsert(row, { onConflict: 'room_name,user_name' });
+    try {
+        const updatePayload = {
+            user_pass: userPass || '',
+            status: myStatus,
+            lat: userCoords.lat,
+            lng: userCoords.lng,
+            last_seen: new Date().toISOString(),
+            ...extraFields
+        };
+
+        // Сначала пробуем обновить существующую запись участника в комнате (без 409 конфликта)
+        const { data: updatedRows, error: updateErr } = await supabaseClient
+            .from('fajr_members')
+            .update(updatePayload)
+            .eq('room_name', currentRoom)
+            .eq('user_name', myName)
+            .select();
+
+        // Если такой записи еще нет — аккуратно вставляем новую
+        if (!updateErr && (!updatedRows || updatedRows.length === 0)) {
+            await supabaseClient
+                .from('fajr_members')
+                .insert([{
+                    room_name: currentRoom,
+                    user_name: myName,
+                    ...updatePayload
+                }]);
+        }
+    } catch (e) {
+        // Игнорируем случайные дубли при быстрой смене вкладок
+    } finally {
+        isSyncingPresence = false;
+    }
 }
 
 function subscribeToSupabaseRealtime() {
