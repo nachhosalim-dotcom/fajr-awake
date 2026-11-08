@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
         :root {
@@ -356,14 +357,12 @@
         }
         .user-item:last-child { margin-bottom: 0; }
 
-        /* Анимация когда участника прямо сейчас будят */
         .user-item.ringing {
             background: linear-gradient(90deg, rgba(231, 29, 54, 0.28), rgba(80, 5, 18, 0.4));
             border-color: #ff6b81;
             animation: rowRingPulse 0.9s infinite alternate;
         }
 
-        /* Анимация когда участник успешно ответил словом */
         .user-item.replied {
             background: linear-gradient(90deg, rgba(46, 213, 115, 0.25), rgba(6, 45, 28, 0.4));
             border-color: var(--emerald-accent);
@@ -474,12 +473,12 @@
         }
         .btn-nudge:active { transform: scale(0.92); }
 
-        /* Modals */
+        /* Modals Common */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.86);
-            backdrop-filter: blur(18px);
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(20px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -490,18 +489,18 @@
 
         .modal-body {
             width: 100%;
-            max-width: 430px;
+            max-width: 440px;
             max-height: 90vh;
-            overflow-y: auto;
             background: linear-gradient(160deg, #072517 0%, #03130b 100%);
             border: 1px solid var(--emerald-border);
             border-radius: 24px;
-            padding: 20px 18px;
+            padding: 18px 16px 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             position: relative;
             box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+            overflow: hidden;
         }
 
         .modal-close {
@@ -513,29 +512,245 @@
             color: var(--text-secondary);
             font-size: 20px;
             cursor: pointer;
+            z-index: 5;
         }
         body[dir="rtl"] .modal-close {
             right: auto;
             left: 16px;
         }
 
+        /* --- НОВЫЙ ДИЗАЙН: ТАБЫ В МОДАЛЬНОМ ОКНЕ --- */
+        .modal-tabs-header {
+            display: flex;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 4px;
+            margin-top: 24px;
+        }
+
+        .modal-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 9px 4px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .modal-tab-btn.active {
+            background: var(--emerald-accent);
+            color: #020705;
+            box-shadow: 0 2px 10px rgba(46, 213, 115, 0.3);
+        }
+
+        .tab-content-panel {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            max-height: 58vh;
+            padding-right: 2px;
+        }
+        .tab-content-panel.active {
+            display: flex;
+        }
+
+        /* Поле поиска комнат */
+        .search-room-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-room-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 11px 14px 11px 36px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+        }
+        .search-room-input:focus {
+            border-color: var(--emerald-accent);
+            box-shadow: 0 0 12px rgba(46, 213, 115, 0.2);
+        }
+        .search-room-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Карточки комнат в списке (Крупные, четкие, не сплющенные) */
+        .rooms-scroll-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            padding: 2px;
+        }
+
+        .room-card-box {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .room-card-box.active-room {
+            border-color: var(--emerald-accent);
+            background: linear-gradient(135deg, rgba(46, 213, 115, 0.18), rgba(6, 40, 24, 0.5));
+            box-shadow: 0 0 16px rgba(46, 213, 115, 0.2);
+        }
+
+        .room-info-cell {
+            flex: 1;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .room-header-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .room-title-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .room-badge-pill {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-active { background: var(--emerald-accent); color: #020705; }
+        .badge-lock { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid rgba(255, 165, 2, 0.4); }
+        .badge-open { background: rgba(112, 161, 255, 0.2); color: #70a1ff; border: 1px solid rgba(112, 161, 255, 0.4); }
+
+        .room-sub-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .room-actions-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-enter-room {
+            background: linear-gradient(135deg, #2ed573, #10ac84);
+            border: none;
+            color: #020705;
+            padding: 8px 14px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-enter-room:active { transform: scale(0.92); }
+
+        .btn-trash-room {
+            background: rgba(231, 29, 54, 0.15);
+            border: 1px solid rgba(231, 29, 54, 0.35);
+            color: #ff6b81;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-trash-room:hover { background: rgba(231, 29, 54, 0.35); }
+
+        /* Вкладка QR и создание */
+        .qr-card-container {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
         .qr-wrap {
             background: #ffffff;
             padding: 10px;
             border-radius: 14px;
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        .qr-actions-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-qr-action {
+            flex: 1;
+            background: rgba(46, 213, 115, 0.15);
+            border: 1px solid rgba(46, 213, 115, 0.4);
+            color: #7bed9f;
+            border-radius: 10px;
+            padding: 10px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-qr-action:active { transform: scale(0.97); }
+
         .m-label {
             font-size: 11px;
             font-weight: 700;
             color: #7bed9f;
-            margin-bottom: -6px;
+            margin-bottom: -4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .m-input {
@@ -543,7 +758,7 @@
             background: rgba(0, 0, 0, 0.45);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 11px 13px;
+            padding: 12px 14px;
             color: #ffffff;
             font-size: 13px;
             outline: none;
@@ -555,8 +770,8 @@
             background: rgba(46, 213, 115, 0.12);
             border: 1px dashed var(--emerald-accent);
             color: #7bed9f;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
@@ -567,7 +782,7 @@
             background: linear-gradient(135deg, #2ed573, #10ac84);
             color: #020705;
             font-weight: 800;
-            padding: 13px;
+            padding: 14px;
             border-radius: 12px;
             border: none;
             cursor: pointer;
@@ -576,63 +791,51 @@
             text-transform: uppercase;
         }
 
-        /* Saved Rooms List with Delete & Auto-Expire Timer */
-        .rooms-list-box {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 170px;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-
-        .room-item-row {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 8px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-        .room-item-row.current {
-            border-color: var(--emerald-accent);
-            background: rgba(46, 213, 115, 0.1);
-        }
-
-        .room-item-info {
-            flex: 1;
-            cursor: pointer;
+        /* QR Scanner Overlay */
+        .scanner-view-container {
+            position: relative;
+            width: 100%;
+            height: 230px;
+            background: #000000;
+            border-radius: 16px;
             overflow: hidden;
-        }
-
-        .room-item-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            border: 1px solid rgba(46, 213, 115, 0.4);
         }
 
-        .room-item-exp {
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-top: 2px;
+        #scannerVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .btn-del-room {
-            background: rgba(231, 29, 54, 0.18);
-            border: 1px solid rgba(231, 29, 54, 0.4);
-            color: #ff6b81;
-            border-radius: 8px;
-            padding: 5px 9px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
+        .scanner-frame {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border: 2px solid var(--emerald-accent);
+            border-radius: 16px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-del-room:hover { background: rgba(231, 29, 54, 0.35); }
+
+        .scanner-laser {
+            width: 90%;
+            height: 2px;
+            background: var(--emerald-accent);
+            box-shadow: 0 0 10px var(--emerald-accent);
+            animation: laserScan 1.6s infinite alternate ease-in-out;
+        }
+
+        @keyframes laserScan {
+            0% { transform: translateY(-65px); }
+            100% { transform: translateY(65px); }
+        }
 
         /* Word Selector Chips */
         .words-grid {
@@ -885,34 +1088,99 @@
     </div>
 </div>
 
-<!-- 2. MODAL: ROOMS, AUTO-CLEANUP & PROFILE -->
+<!-- 2. НОВОЕ ОРГАНИЗОВАННОЕ ОКНО: ТАБЫ (КАТАЛОГ ГРУПП / СОЗДАТЬ И QR / МОЙ ПРОФИЛЬ) -->
 <div class="modal-overlay" id="roomModal">
     <div class="modal-body">
         <button class="modal-close" id="btnCloseModal">✕</button>
-        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtModalTitle">УПРАВЛЕНИЕ КОМНАТАМИ И ПРОФИЛЕМ</h3>
+        
+        <!-- Вкладки навигации -->
+        <div class="modal-tabs-header">
+            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">КАТАЛОГ ГРУПП</button>
+            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">+ СОЗДАТЬ / QR</button>
+            <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">ПРОФИЛЬ</button>
+        </div>
 
-        <div class="qr-wrap" id="qrContainer"></div>
+        <!-- 1-я вкладка: КАТАЛОГ ГРУПП (Четкий список без сплющивания) -->
+        <div class="tab-content-panel active" id="panelTabRooms">
+            <div class="search-room-wrapper">
+                <span class="search-room-icon">🔍</span>
+                <input type="text" class="search-room-input" id="inpSearchRooms" placeholder="Поиск группы по названию...">
+            </div>
+            
+            <div class="m-label" style="margin-top: 2px;">
+                <span id="lblSavedRoomsHeader">ДОСТУПНЫЕ СЕРВЕРЫ</span>
+                <span style="font-size: 11px; color: var(--text-secondary);" id="lblRoomsTotalCount">0 групп</span>
+            </div>
 
-        <div class="m-label" id="lblSavedRoomsHeader">МОИ СОХРАНЕННЫЕ ГРУППЫ (АВТОУДАЛЕНИЕ 30 ДН.)</div>
-        <div class="rooms-list-box" id="savedRoomsList"></div>
+            <div class="rooms-scroll-container" id="savedRoomsList"></div>
+        </div>
 
-        <div class="m-label" id="lblProfileHeader">ПРОФИЛЬ И ГЕОПОЗИЦИЯ</div>
-        <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
-        <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
+        <!-- 2-я вкладка: СОЗДАТЬ СЕРВЕР / QR КОД И СКАНЕР -->
+        <div class="tab-content-panel" id="panelTabCreate">
+            <div class="qr-card-container">
+                <div class="qr-wrap" id="qrContainer"></div>
+                <div class="qr-actions-row">
+                    <button class="btn-qr-action" id="btnOpenScanner">
+                        <span>📷</span>
+                        <span id="txtScanCamBtn">Сканировать QR</span>
+                    </button>
+                    <label class="btn-qr-action" style="cursor: pointer; margin: 0;">
+                        <span>🖼️</span>
+                        <span id="txtScanGalleryBtn">Из галереи</span>
+                        <input type="file" id="inpQrGallery" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+            </div>
 
-        <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты точно</span></button>
+            <div class="m-label" id="lblCreateRoomHeader">ПАРАМЕТРЫ НОВОЙ ГРУППЫ</div>
+            <input type="text" class="m-input" id="inpRoomName" placeholder="Имя группы (например: Idlib-Fajr)">
+            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно, для закрытых)">
 
-        <div class="m-label" id="lblCreateRoomHeader">СОЗДАТЬ ИЛИ ВОЙТИ В ГРУППУ</div>
-        <input type="text" class="m-input" id="inpRoomName" placeholder="Имя сервера (по умолчанию: Global-Zone)">
-        <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль комнаты (для закрытых/женских групп)">
+            <button class="btn-primary" id="btnSaveRoomOnly">
+                <span id="txtSaveBtn">СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ</span>
+            </button>
+        </div>
 
-        <button class="btn-primary" id="btnSaveAll" style="margin-top: 4px;">
-            <span id="txtSaveBtn">СОХРАНИТЬ И ПОДКЛЮЧИТЬСЯ</span>
+        <!-- 3-я вкладка: ПРОФИЛЬ И GPS -->
+        <div class="tab-content-panel" id="panelTabProfile">
+            <div class="m-label" id="lblProfileHeader">УЧЕТНЫЕ ДАННЫЕ</div>
+            <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
+            <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
+
+            <div class="m-label">ГЕОЛОКАЦИЯ ДЛЯ ВРЕМЕНИ НАМАЗА</div>
+            <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты автоматически</span></button>
+
+            <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 10px;">
+                СОХРАНИТЬ ПРОФИЛЬ
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- 3. MODAL: QR CAMERA SCANNER -->
+<div class="modal-overlay" id="scannerModal">
+    <div class="modal-body" style="max-width: 380px;">
+        <button class="modal-close" id="btnCloseScannerModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
+        <p style="font-size: 11px; color: var(--text-secondary); text-align: center;" id="txtScannerModalDesc">
+            Наведите камеру на QR-код комнаты для мгновенного подключения
+        </p>
+
+        <div class="scanner-view-container">
+            <video id="scannerVideo" playsinline></video>
+            <div class="scanner-frame">
+                <div class="scanner-laser"></div>
+            </div>
+        </div>
+
+        <button class="btn-primary" id="btnStopScanner" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);">
+            <span id="txtCancelScannerBtn">ЗАКРЫТЬ</span>
         </button>
     </div>
 </div>
 
-<!-- 3. FULLSCREEN EMERGENCY ALARM OVERLAY WITH LEXICAL WORD CHALLENGE -->
+<!-- 4. FULLSCREEN EMERGENCY ALARM OVERLAY WITH LEXICAL WORD CHALLENGE -->
 <div class="alarm-screen" id="alarmOverlay">
     <div class="alarm-title" id="txtAlarmHeader">ВСТАВАЙ НА НАМАЗ!</div>
     <div class="alarm-sender" id="txtAlarmSender">Вас будит участник группы!</div>
@@ -934,7 +1202,6 @@
 <script>
 /**
  * 1. ПОЛНЫЙ ЧЕТЫРЕХЪЯЗЫЧНЫЙ СЛОВАРЬ (RU, AR, TR, EN)
- * Ни одно слово в интерфейсе не остается без перевода.
  */
 const DICTIONARY = {
     ru: {
@@ -949,10 +1216,10 @@ const DICTIONARY = {
         changeStatus: 'нажмите чтобы сменить',
         wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
         members: 'УЧАСТНИКИ СЕТИ / КОМНАТЫ',
-        peopleUnit: 'чел.',
+        peopleUnit: 'серверов',
         youBadge: '(Вы)',
         nudgeBtn: 'РАЗБУДИТЬ',
-        roomTtlLabel: 'Автоочистка неактивных групп (30 дн.):',
+        roomTtlLabel: 'Автоочистка пустых комнат (30 дн.):',
         daysShort: 'дн.',
         permanentRoom: 'Основная зона (постоянная)',
         wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
@@ -963,8 +1230,11 @@ const DICTIONARY = {
         wakePrompt: 'Чтобы выключить сирену, введите присланное слово:',
         inputWordPlaceholder: 'Введите слово сюда',
         verifyBtn: 'ПОДТВЕРДИТЬ ПРОБУЖДЕНИЕ',
-        modalTitle: 'УПРАВЛЕНИЕ КОМНАТАМИ И ПРОФИЛЕМ',
-        savedRoomsHeader: 'МОИ ГРУППЫ (УДАЛЕНИЕ И АВТООЧИСТКА 30 ДН.)',
+        tabRooms: 'КАТАЛОГ ГРУПП',
+        tabCreate: '+ СОЗДАТЬ / QR',
+        tabProfile: 'ПРОФИЛЬ',
+        savedRoomsHeader: 'ДОСТУПНЫЕ СЕРВЕРЫ',
+        searchRoomsPlaceholder: 'Поиск группы по названию...',
         profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
         createRoomHeader: 'СОЗДАТЬ ИЛИ ПЕРЕЙТИ В ГРУППУ',
         placeholderName: 'Ваше имя / логин',
@@ -974,6 +1244,15 @@ const DICTIONARY = {
         geoBtn: 'Определить GPS-координаты автоматически',
         saveBtn: 'СОХРАНИТЬ И ПОДКЛЮЧИТЬСЯ',
         deleteBtn: 'Удалить',
+        scanCamBtn: 'Сканировать QR',
+        scanGalleryBtn: 'Из галереи',
+        scannerModalTitle: 'СКАНИРОВАНИЕ QR-КОДА',
+        scannerModalDesc: 'Наведите камеру на QR-код комнаты для мгновенного подключения',
+        cancelScannerBtn: 'ЗАКРЫТЬ',
+        enterRoomBtn: 'Войти',
+        activeRoomBadge: 'Активна',
+        lockBadge: 'Закрытая',
+        openBadge: 'Открытая',
         toastWakeSent: 'Сигнал тревоги со словом отправлен:',
         toastReplyReceived: 'подтвердил пробуждение словом:',
         toastRoomDeleted: 'Группа удалена из списка',
@@ -982,6 +1261,9 @@ const DICTIONARY = {
         toastGeoFail: 'Не удалось получить доступ к GPS',
         toastWrongWord: 'Неверное слово! Введите точно как на экране.',
         toastAudioReady: 'Звуковой сигнал проверен и активен!',
+        toastQrScannedSuccess: 'Успешно! Подключено к группе:',
+        toastQrScanFailed: 'Не удалось найти QR-код на изображении',
+        toastCamError: 'Ошибка доступа к камере смартфона',
         simHint: 'Для проверки вызовов и анимации:',
         simBtnOff: '👥 + ТЕСТ-ГРУППА',
         simBtnOn: '✓ ТЕСТ-ГРУППА АКТИВНА',
@@ -1002,7 +1284,7 @@ const DICTIONARY = {
         changeStatus: 'اضغط لتغيير الحالة',
         wakeAll: 'إيقاظ جميع النائمين في المجموعة',
         members: 'أعضاء الشبكة / الغرفة',
-        peopleUnit: 'عضو',
+        peopleUnit: 'سيرفرات',
         youBadge: '(أنت)',
         nudgeBtn: 'إيقاظ',
         roomTtlLabel: 'الحذف التلقائي للغرف غير النشطة (30 يوماً):',
@@ -1016,8 +1298,11 @@ const DICTIONARY = {
         wakePrompt: 'لإيقاف المنبه، اكتب الكلمة المرسلة بدقة:',
         inputWordPlaceholder: 'اكتب الكلمة هنا',
         verifyBtn: 'تأكيد الاستيقاظ والرد',
-        modalTitle: 'إدارة الغرف والملف الشخصي',
-        savedRoomsHeader: 'غرفي المحفوظة (حذف يدوي وتلقائي بعد 30 يوماً)',
+        tabRooms: 'دليل المجموعات',
+        tabCreate: '+ إنشاء / QR',
+        tabProfile: 'الملف الشخصي',
+        savedRoomsHeader: 'السيرفرات المتاحة',
+        searchRoomsPlaceholder: 'بحث عن مجموعة بالاسم...',
         profileHeader: 'الملف الشخصي والموقع الجغرافي',
         createRoomHeader: 'إنشاء أو دخول غرفة',
         placeholderName: 'الاسم / اسم المستخدم',
@@ -1027,6 +1312,15 @@ const DICTIONARY = {
         geoBtn: 'تحديد الموقع تلقائياً عبر GPS',
         saveBtn: 'حفظ والانضمام',
         deleteBtn: 'حذف',
+        scanCamBtn: 'مسح QR بالكاميرا',
+        scanGalleryBtn: 'من الاستوديو',
+        scannerModalTitle: 'مسح رمز QR',
+        scannerModalDesc: 'وجّه الكاميرا نحو رمز QR للانضمام فوراً',
+        cancelScannerBtn: 'إلغاء',
+        enterRoomBtn: 'دخول',
+        activeRoomBadge: 'نشطة',
+        lockBadge: 'خاصة',
+        openBadge: 'عامة',
         toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
         toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
         toastRoomDeleted: 'تم حذف الغرفة بنجاح',
@@ -1035,6 +1329,9 @@ const DICTIONARY = {
         toastGeoFail: 'تعذر الوصول إلى موقع GPS',
         toastWrongWord: 'الكلمة غير صحيحة! اكتبها كما تظهر.',
         toastAudioReady: 'تم فحص الصوت والمنبه جاهز!',
+        toastQrScannedSuccess: 'تم بنجاح! تم الانضمام إلى:',
+        toastQrScanFailed: 'لم يتم العثور على رمز QR في الصورة',
+        toastCamError: 'خطأ في تشغيل الكاميرا',
         simHint: 'لتجربة التنبيهات والحركة:',
         simBtnOff: '👥 + مجموعة تجريبية',
         simBtnOn: '✓ المجموعة التجريبية نشطة',
@@ -1055,7 +1352,7 @@ const DICTIONARY = {
         changeStatus: 'değiştirmek için dokunun',
         wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
         members: 'AĞ / ODA KATILIMCILARI',
-        peopleUnit: 'kişi',
+        peopleUnit: 'sunucu',
         youBadge: '(Siz)',
         nudgeBtn: 'UYANDIR',
         roomTtlLabel: 'Boş odaların otomatik silinmesi (30 gün):',
@@ -1069,8 +1366,11 @@ const DICTIONARY = {
         wakePrompt: 'Alarmı kapatmak için gönderilen kelimeyi yazın:',
         inputWordPlaceholder: 'Kelimeyi buraya yazın',
         verifyBtn: 'UYANDIĞIMI ONAYLA',
-        modalTitle: 'ODA VE PROFİL YÖNETİMİ',
-        savedRoomsHeader: 'KAYITLI ODALARIM (SİLME & 30 GÜN OTOMATİK TEMİZLİK)',
+        tabRooms: 'GRUP KATALOĞU',
+        tabCreate: '+ OLUŞTUR / QR',
+        tabProfile: 'PROFİL',
+        savedRoomsHeader: 'MEVCUT SUNUCULAR',
+        searchRoomsPlaceholder: 'Grup adına göre ara...',
         profileHeader: 'PROFİL VE KONUM',
         createRoomHeader: 'ODA OLUŞTUR VEYA KATIL',
         placeholderName: 'Adınız / Kullanıcı adınız',
@@ -1080,14 +1380,26 @@ const DICTIONARY = {
         geoBtn: 'GPS Konumunu Otomatik Belirle',
         saveBtn: 'KAYDET VE BAĞLAN',
         deleteBtn: 'Sil',
+        scanCamBtn: 'QR Tara',
+        scanGalleryBtn: 'Galeriden Seç',
+        scannerModalTitle: 'QR KOD TARAMA',
+        scannerModalDesc: 'Odaya hemen bağlanmak için kamerayı QR koda tutun',
+        cancelScannerBtn: 'KAPAT',
+        enterRoomBtn: 'Giriş',
+        activeRoomBadge: 'Aktif',
+        lockBadge: 'Kilitli',
+        openBadge: 'Açık',
         toastWakeSent: 'Uyandırma sinyali gönderildi, kelime:',
         toastReplyReceived: 'kelimeyi yazarak uyandığını onayladı:',
         toastRoomDeleted: 'Oda listeden silindi',
-        toastExpiredCleaned: '30체 günden eski aktif olmayan odalar silindi:',
+        toastExpiredCleaned: '30 günden eski aktif olmayan odalar silindi:',
         toastGeoSuccess: 'GPS koordinatları güncellendi!',
         toastGeoFail: 'GPS konumuna erişilemedi',
         toastWrongWord: 'Yanlış kelime! Ekrandaki kelimeyi doğru yazın.',
         toastAudioReady: 'Ses sinyali test edildi ve aktif!',
+        toastQrScannedSuccess: 'Başarılı! Gruba bağlanıldı:',
+        toastQrScanFailed: 'Görselde QR kod bulunamadı',
+        toastCamError: 'Kamera erişim hatası',
         simHint: 'Çağrı ve animasyonları test et:',
         simBtnOff: '👥 + TEST GRUBU',
         simBtnOn: '✓ TEST GRUBU AKTİF',
@@ -1108,7 +1420,7 @@ const DICTIONARY = {
         changeStatus: 'tap to toggle',
         wakeAll: 'WAKE ALL SLEEPING MEMBERS',
         members: 'NETWORK / ROOM MEMBERS',
-        peopleUnit: 'users',
+        peopleUnit: 'servers',
         youBadge: '(You)',
         nudgeBtn: 'WAKE UP',
         roomTtlLabel: 'Auto-cleanup of inactive rooms (30d):',
@@ -1122,8 +1434,11 @@ const DICTIONARY = {
         wakePrompt: 'Type the challenge word below to stop the alarm:',
         inputWordPlaceholder: 'Type challenge word here',
         verifyBtn: 'CONFIRM & REPLY',
-        modalTitle: 'ROOMS & PROFILE MANAGEMENT',
-        savedRoomsHeader: 'MY SAVED ROOMS (DELETE & 30-DAY AUTO-EXPIRY)',
+        tabRooms: 'GROUPS DIRECTORY',
+        tabCreate: '+ CREATE / QR',
+        tabProfile: 'PROFILE',
+        savedRoomsHeader: 'AVAILABLE SERVERS',
+        searchRoomsPlaceholder: 'Search group by name...',
         profileHeader: 'PROFILE & GEO-LOCATION',
         createRoomHeader: 'CREATE OR JOIN ROOM',
         placeholderName: 'Your Name / Username',
@@ -1133,6 +1448,15 @@ const DICTIONARY = {
         geoBtn: 'Auto-Detect Precise GPS Coordinates',
         saveBtn: 'SAVE & CONNECT',
         deleteBtn: 'Delete',
+        scanCamBtn: 'Scan QR',
+        scanGalleryBtn: 'From Gallery',
+        scannerModalTitle: 'QR CODE SCANNER',
+        scannerModalDesc: 'Point camera at group QR code to connect instantly',
+        cancelScannerBtn: 'CLOSE',
+        enterRoomBtn: 'Join',
+        activeRoomBadge: 'Active',
+        lockBadge: 'Private',
+        openBadge: 'Public',
         toastWakeSent: 'Wake challenge sent with word:',
         toastReplyReceived: 'confirmed waking up with word:',
         toastRoomDeleted: 'Room deleted from list',
@@ -1141,6 +1465,9 @@ const DICTIONARY = {
         toastGeoFail: 'Could not access GPS location',
         toastWrongWord: 'Incorrect word! Type the exact word shown.',
         toastAudioReady: 'Alarm sound tested and active!',
+        toastQrScannedSuccess: 'Success! Connected to room:',
+        toastQrScanFailed: 'No QR code found in selected image',
+        toastCamError: 'Camera permission or hardware error',
         simHint: 'Test wake animations & replies:',
         simBtnOff: '👥 + DEMO GROUP',
         simBtnOn: '✓ DEMO GROUP ACTIVE',
@@ -1160,7 +1487,7 @@ let myName = localStorage.getItem('fajr_user_name') || 'User_' + Math.floor(Math
 let userPass = localStorage.getItem('fajr_user_pass') || '';
 let currentRoom = localStorage.getItem('fajr_room_name') || DEFAULT_ROOM;
 let roomPass = localStorage.getItem('fajr_room_pass') || '';
-let myStatus = 'sleep'; // 'sleep', 'awake', 'done'
+let myStatus = 'sleep';
 let lastResetDate = localStorage.getItem('fajr_last_reset_date') || '';
 
 let targetCaptchaWord = '';
@@ -1173,10 +1500,35 @@ let audioCtx = null;
 let mqttClient = null;
 let isMqttConnected = false;
 let simBotsEnabled = false;
-let userCallStates = {}; // Хранит состояние звонка/ответа для каждого участника: { state: 'calling'|'ringing'|'replied', word: '...', ts: 0 }
+let userCallStates = {};
+
+let cameraStream = null;
+let scannerAnimFrame = null;
+let roomSearchFilter = '';
 
 /**
- * 2. УПРАВЛЕНИЕ РЕЕСТРОМ КОМНАТ: РУЧНОЕ УДАЛЕНИЕ И АВТООЧИСТКА ЧЕРЕЗ 30 ДНЕЙ
+ * 2. УПРАВЛЕНИЕ ВКЛАДКАМИ МОДАЛЬНОГО ОКНА
+ */
+window.switchModalTab = function(tabName) {
+    document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+
+    if (tabName === 'rooms') {
+        document.getElementById('tabBtnRooms').classList.add('active');
+        document.getElementById('panelTabRooms').classList.add('active');
+        renderSavedRoomsList();
+    } else if (tabName === 'create') {
+        document.getElementById('tabBtnCreate').classList.add('active');
+        document.getElementById('panelTabCreate').classList.add('active');
+        generateQR();
+    } else if (tabName === 'profile') {
+        document.getElementById('tabBtnProfile').classList.add('active');
+        document.getElementById('panelTabProfile').classList.add('active');
+    }
+};
+
+/**
+ * 3. УПРАВЛЕНИЕ РЕЕСТРОМ КОМНАТ: КАТАЛОГ С ПОИСКОМ И АВТООЧИСТКОЙ 30 ДНЕЙ
  */
 function getRoomsRegistry() {
     let reg = {};
@@ -1184,7 +1536,6 @@ function getRoomsRegistry() {
         reg = JSON.parse(localStorage.getItem('fajr_rooms_registry')) || {};
     } catch (e) { reg = {}; }
 
-    // Global-Zone существует всегда
     if (!reg[DEFAULT_ROOM]) {
         reg[DEFAULT_ROOM] = {
             name: DEFAULT_ROOM,
@@ -1219,7 +1570,6 @@ function touchRoomActivity(roomName, pass = '', isOwner = false) {
     saveRoomsRegistry(reg);
 }
 
-// Автоматическое удаление комнат, которыми никто не пользовался 30 дней
 function cleanupExpiredRooms() {
     const reg = getRoomsRegistry();
     const now = Date.now();
@@ -1248,7 +1598,6 @@ function cleanupExpiredRooms() {
     updateRoomTtlBanner();
 }
 
-// Ручное удаление созданной или сохраненной комнаты
 window.deleteRoomByName = function(rName, event) {
     if (event) event.stopPropagation();
     if (rName === DEFAULT_ROOM) return;
@@ -1291,6 +1640,7 @@ window.selectSavedRoom = function(rName) {
     renderSavedRoomsList();
     generateQR();
     renderUI();
+    showToast(`Подключено к: ${currentRoom}`);
 };
 
 function renderSavedRoomsList() {
@@ -1302,33 +1652,58 @@ function renderSavedRoomsList() {
     const dict = DICTIONARY[currentLang];
     const now = Date.now();
 
-    Object.keys(reg).forEach(rName => {
+    const keys = Object.keys(reg);
+    document.getElementById('lblRoomsTotalCount').innerText = `${keys.length} ${dict.peopleUnit}`;
+
+    const filtered = keys.filter(k => k.toLowerCase().includes(roomSearchFilter.toLowerCase()));
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">Ничего не найдено</div>`;
+        return;
+    }
+
+    filtered.forEach(rName => {
         const r = reg[rName];
         const isCurrent = rName === currentRoom;
         const elapsed = now - (r.lastActive || now);
         const daysLeft = Math.max(1, Math.ceil((THIRTY_DAYS_MS - elapsed) / (24 * 60 * 60 * 1000)));
 
-        const row = document.createElement('div');
-        row.className = `room-item-row ${isCurrent ? 'current' : ''}`;
-        row.onclick = () => selectSavedRoom(rName);
+        const card = document.createElement('div');
+        card.className = `room-card-box ${isCurrent ? 'active-room' : ''}`;
 
-        const expText = r.permanent
+        const statusBadge = isCurrent
+            ? `<span class="room-badge-pill badge-active">✓ ${dict.activeRoomBadge}</span>`
+            : (r.pass
+                ? `<span class="room-badge-pill badge-lock">🔒 ${dict.lockBadge}</span>`
+                : `<span class="room-badge-pill badge-open">🌐 ${dict.openBadge}</span>`);
+
+        const ttlText = r.permanent
             ? dict.permanentRoom
             : `⏳ ${daysLeft} ${dict.daysShort}`;
 
-        row.innerHTML = `
-            <div class="room-item-info">
-                <div class="room-item-title">
-                    <span>${r.pass ? '🔒' : '🌐'}</span>
-                    <span>${r.name}</span>
+        card.innerHTML = `
+            <div class="room-info-cell" onclick="selectSavedRoom('${r.name}')">
+                <div class="room-header-line">
+                    <span class="room-title-text">${r.name}</span>
+                    ${statusBadge}
                 </div>
-                <div class="room-item-exp">${expText}</div>
+                <div class="room-sub-meta">
+                    <span>${ttlText}</span>
+                </div>
             </div>
-            ${!r.permanent ? `<button class="btn-del-room" onclick="deleteRoomByName('${r.name}', event)">✕ ${dict.deleteBtn}</button>` : ''}
+            <div class="room-actions-cell">
+                ${!isCurrent ? `<button class="btn-enter-room" onclick="selectSavedRoom('${r.name}')">${dict.enterRoomBtn}</button>` : ''}
+                ${!r.permanent ? `<button class="btn-trash-room" title="${dict.deleteBtn}" onclick="deleteRoomByName('${r.name}', event)">✕</button>` : ''}
+            </div>
         `;
-        container.appendChild(row);
+        container.appendChild(card);
     });
 }
+
+document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
+    roomSearchFilter = e.target.value.trim();
+    renderSavedRoomsList();
+});
 
 function updateRoomTtlBanner() {
     const reg = getRoomsRegistry();
@@ -1346,7 +1721,142 @@ function updateRoomTtlBanner() {
 }
 
 /**
- * 3. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ИСТИННОГО ВОСХОДА, ЗАКАТА И 5 НАМАЗОВ
+ * 4. QR-СКАНЕР (КАМЕРА + ГАЛЕРЕЯ)
+ */
+function applyParsedRoomPayload(rawText) {
+    let rName = '';
+    let rPass = '';
+
+    try {
+        if (rawText.includes('room=')) {
+            const url = new URL(rawText.startsWith('http') ? rawText : 'https://fake.url/' + rawText);
+            rName = url.searchParams.get('room') || '';
+            rPass = url.searchParams.get('pass') || '';
+        } else {
+            const parsed = JSON.parse(rawText);
+            if (parsed.room) {
+                rName = parsed.room;
+                rPass = parsed.pass || '';
+            }
+        }
+    } catch (e) {
+        rName = rawText.trim();
+    }
+
+    if (rName) {
+        currentRoom = rName;
+        roomPass = rPass;
+        localStorage.setItem('fajr_room_name', currentRoom);
+        localStorage.setItem('fajr_room_pass', roomPass);
+
+        document.getElementById('inpRoomName').value = currentRoom;
+        document.getElementById('inpRoomPass').value = roomPass;
+
+        touchRoomActivity(currentRoom, roomPass);
+        setupNetwork();
+        renderSavedRoomsList();
+        generateQR();
+        renderUI();
+        showToast(`${DICTIONARY[currentLang].toastQrScannedSuccess} ${currentRoom}`);
+        return true;
+    }
+    return false;
+}
+
+async function startCameraScanner() {
+    const video = document.getElementById('scannerVideo');
+    const modal = document.getElementById('scannerModal');
+
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+        });
+        video.srcObject = cameraStream;
+        video.setAttribute('playsinline', true);
+        await video.play();
+
+        modal.classList.add('open');
+        scanCameraFrame();
+    } catch (err) {
+        showToast(DICTIONARY[currentLang].toastCamError);
+    }
+}
+
+function stopCameraScanner() {
+    if (scannerAnimFrame) {
+        cancelAnimationFrame(scannerAnimFrame);
+        scannerAnimFrame = null;
+    }
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+    }
+    document.getElementById('scannerModal').classList.remove('open');
+}
+
+function scanCameraFrame() {
+    const video = document.getElementById('scannerVideo');
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        if (typeof jsQR !== 'undefined') {
+            const code = jsQR(imgData.data, imgData.width, imgData.height, {
+                inversionAttempts: 'dontInvert'
+            });
+
+            if (code && code.data) {
+                if (applyParsedRoomPayload(code.data)) {
+                    stopCameraScanner();
+                    return;
+                }
+            }
+        }
+    }
+    scannerAnimFrame = requestAnimationFrame(scanCameraFrame);
+}
+
+document.getElementById('btnOpenScanner').addEventListener('click', startCameraScanner);
+document.getElementById('btnCloseScannerModal').addEventListener('click', stopCameraScanner);
+document.getElementById('btnStopScanner').addEventListener('click', stopCameraScanner);
+
+document.getElementById('inpQrGallery').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            if (typeof jsQR !== 'undefined') {
+                const code = jsQR(imgData.data, imgData.width, imgData.height);
+                if (code && code.data) {
+                    if (applyParsedRoomPayload(code.data)) {
+                        return;
+                    }
+                }
+            }
+            showToast(DICTIONARY[currentLang].toastQrScanFailed);
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+});
+
+/**
+ * 5. АСТРОНОМИЧЕСКИЙ РАСЧЕТ ИСТИННОГО ВОСХОДА, ЗАКАТА И НАМАЗОВ
  */
 function toRad(d) { return d * Math.PI / 180.0; }
 function toDeg(r) { return r * 180.0 / Math.PI; }
@@ -1383,7 +1893,6 @@ function calculateSunTimes(date, lat, lng) {
     const sunrise = noon - sunriseAngle;
     const sunset = noon + sunriseAngle;
 
-    // Фаджр: Солнце на -18° под горизонтом (~1.5 часа до восхода)
     const fajr = noon - sunAngleTime(-18.0);
     const dhuhr = noon + (2 / 60);
 
@@ -1406,7 +1915,7 @@ function fmt(decHours) {
 }
 
 /**
- * 4. WEB AUDIO API СИНТЕЗАТОР БУДИЛЬНИКА
+ * 6. WEB AUDIO API СИНТЕЗАТОР БУДИЛЬНИКА
  */
 function ensureAudioContext() {
     if (!audioCtx) {
@@ -1458,7 +1967,7 @@ document.getElementById('btnTestAudio').addEventListener('click', () => {
 });
 
 /**
- * 5. ВЗАИМНЫЙ ВЫЗОВ ПО СЛОВУ: ОТПРАВКА СЛОВА И ОБРАТНОЕ ПОДТВЕРЖДЕНИЕ
+ * 7. ВЫЗОВ ПО СЛОВУ
  */
 function openWakeWordSelector(targetUser) {
     pendingWakeTarget = targetUser;
@@ -1496,7 +2005,6 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', () => {
         word: wordToSend
     };
 
-    // Отмечаем визуальный статус вызова у участников в списке
     const targets = pendingWakeTarget === 'ALL'
         ? Object.keys(networkUsers).filter(u => u !== myName && networkUsers[u].status === 'sleep')
         : [pendingWakeTarget];
@@ -1508,7 +2016,6 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', () => {
             ts: Date.now()
         };
 
-        // Если это тестовый бот — симулируем получение вызова и осознанный ответ словом
         if (networkUsers[tName] && networkUsers[tName].isBot) {
             setTimeout(() => {
                 if (userCallStates[tName]) {
@@ -1552,7 +2059,6 @@ function triggerAlarm(senderName, incomingWord) {
     document.getElementById('alarmOverlay').classList.add('active');
     playAlarmChime();
 
-    // Сообщаем отправителю, что наш телефон реально получил сигнал и сирена зазвенела!
     sendNetworkMessage({
         type: 'WAKE_RINGING',
         sender: myName,
@@ -1574,7 +2080,6 @@ function verifyCaptchaAndStop() {
         myStatus = 'awake';
         syncUserState();
 
-        // Отправляем ответное уведомление тому, кто будил
         sendNetworkMessage({
             type: 'WAKE_ACK',
             sender: myName,
@@ -1588,7 +2093,7 @@ function verifyCaptchaAndStop() {
 }
 
 /**
- * 6. СЕТЕВАЯ ШИНА И ЛОКАЛЬНАЯ СИНХРОНИЗАЦИЯ (BroadcastChannel + LocalStorage Bridge + Safe Remote Bridge)
+ * 8. СЕТЕВАЯ ШИНА И СИНХРОНИЗАЦИЯ
  */
 let broadcast = null;
 let networkUsers = {};
@@ -1647,7 +2152,6 @@ function handleIncomingMessage(msg) {
             }
         }
     } else if (msg.type === 'WAKE_RINGING') {
-        // Устройство получателя подтвердило, что сирена реально включилась
         userCallStates[msg.sender] = {
             state: 'ringing',
             word: msg.word || '',
@@ -1655,7 +2159,6 @@ function handleIncomingMessage(msg) {
         };
         renderMembers();
     } else if (msg.type === 'WAKE_ACK') {
-        // Получатель ввел проверочное слово и проснулся
         if (networkUsers[msg.sender]) {
             networkUsers[msg.sender].status = 'awake';
         }
@@ -1670,19 +2173,16 @@ function handleIncomingMessage(msg) {
 }
 
 function sendNetworkMessage(obj) {
-    // 1. Локально между вкладками через BroadcastChannel
     try {
         if (broadcast) broadcast.postMessage(obj);
     } catch (e) {}
 
-    // 2. Локальный резервный мост через localStorage (работает в sandboxed canvas и iframe)
     try {
         const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
         const payload = { ...obj, _ts: Date.now(), _nonce: Math.random() };
         localStorage.setItem(busKey, JSON.stringify(payload));
     } catch (e) {}
 
-    // 3. Удаленный мост (если разрешен окружением)
     if (mqttClient && isMqttConnected) {
         try {
             const topic = 'fajrwake/' + encodeURIComponent(currentRoom) + '/' + encodeURIComponent(roomPass || 'open');
@@ -1706,7 +2206,6 @@ function setupNetwork() {
         };
     } catch (e) {}
 
-    // Слушатель событий storage для резервной межвкладочной синхронизации
     window.addEventListener('storage', (e) => {
         const busKey = 'fajr_bus_' + encodeURIComponent(currentRoom);
         if (e.key === busKey && e.newValue) {
@@ -1729,8 +2228,6 @@ function setupNetwork() {
 function initGlobalMqttSafely() {
     const netInd = document.getElementById('netIndicator');
 
-    // Безопасная проверка: если мы внутри iframe / Canvas песочницы с ограничениями безопасности,
-    // мягко переключаемся в локальный автономный режим без падения скрипта
     try {
         if (typeof Paho === 'undefined' || typeof WebSocket === 'undefined') {
             if (netInd) netInd.classList.add('online');
@@ -1771,12 +2268,10 @@ function initGlobalMqttSafely() {
             },
             onFailure: () => {
                 isMqttConnected = false;
-                // В локальной среде или при блокировке портов Canvas отображаем активный локальный режим
                 if (netInd) netInd.classList.add('online');
             }
         });
     } catch (err) {
-        // Защита от SecurityError в песочницах (Canvas / iFrame)
         isMqttConnected = false;
         if (netInd) netInd.classList.add('online');
     }
@@ -1801,7 +2296,7 @@ setInterval(() => {
 }, 3000);
 
 /**
- * 7. ПОЛНАЯ ЛОКАЛИЗАЦИЯ ИНТЕРФЕЙСА НА 4 ЯЗЫКА
+ * 9. ЛОКАЛИЗАЦИЯ
  */
 function setLanguage(lang) {
     if (!DICTIONARY[lang]) lang = 'ru';
@@ -1841,10 +2336,19 @@ function setLanguage(lang) {
     document.getElementById('inpCaptchaAnswer').placeholder = dict.inputWordPlaceholder;
     document.getElementById('txtVerifyBtn').innerText = dict.verifyBtn;
 
-    document.getElementById('txtModalTitle').innerText = dict.modalTitle;
+    document.getElementById('tabBtnRooms').innerText = dict.tabRooms;
+    document.getElementById('tabBtnCreate').innerText = dict.tabCreate;
+    document.getElementById('tabBtnProfile').innerText = dict.tabProfile;
     document.getElementById('lblSavedRoomsHeader').innerText = dict.savedRoomsHeader;
+    document.getElementById('inpSearchRooms').placeholder = dict.searchRoomsPlaceholder;
     document.getElementById('lblProfileHeader').innerText = dict.profileHeader;
     document.getElementById('lblCreateRoomHeader').innerText = dict.createRoomHeader;
+
+    document.getElementById('txtScanCamBtn').innerText = dict.scanCamBtn;
+    document.getElementById('txtScanGalleryBtn').innerText = dict.scanGalleryBtn;
+    document.getElementById('txtScannerModalTitle').innerText = dict.scannerModalTitle;
+    document.getElementById('txtScannerModalDesc').innerText = dict.scannerModalDesc;
+    document.getElementById('txtCancelScannerBtn').innerText = dict.cancelScannerBtn;
 
     document.getElementById('inpMyName').placeholder = dict.placeholderName;
     document.getElementById('inpUserPass').placeholder = dict.placeholderUserPass;
@@ -1859,6 +2363,7 @@ function setLanguage(lang) {
 
     updatePrayerCycle();
     updateRoomTtlBanner();
+    renderSavedRoomsList();
     renderUI();
 }
 
@@ -1953,7 +2458,7 @@ window.wakeIndividual = function(name) {
 };
 
 /**
- * 8. СОБЫТИЯ КНОПОК И УВЕДОМЛЕНИЙ
+ * 10. КНОПКИ И УВЕДОМЛЕНИЯ
  */
 function showToast(text) {
     const banner = document.getElementById('toastBanner');
@@ -1981,7 +2486,7 @@ document.getElementById('btnWakeAll').addEventListener('click', () => {
 });
 
 /**
- * 9. QR-КОД, GPS И НАСТРОЙКИ КОМНАТ
+ * 11. QR, GPS И СОХРАНЕНИЯ
  */
 let qrObj = null;
 function generateQR() {
@@ -1992,8 +2497,8 @@ function generateQR() {
     try {
         qrObj = new QRCode(wrap, {
             text: shareUrl,
-            width: 130,
-            height: 130,
+            width: 120,
+            height: 120,
             colorDark: "#020705",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.M
@@ -2007,8 +2512,7 @@ document.getElementById('btnOpenRoom').addEventListener('click', () => {
     document.getElementById('inpRoomName').value = currentRoom;
     document.getElementById('inpRoomPass').value = roomPass;
     cleanupExpiredRooms();
-    renderSavedRoomsList();
-    generateQR();
+    switchModalTab('rooms');
     document.getElementById('roomModal').classList.add('open');
 });
 
@@ -2036,18 +2540,10 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
     }
 });
 
-document.getElementById('btnSaveAll').addEventListener('click', () => {
-    const n = document.getElementById('inpMyName').value.trim();
-    const up = document.getElementById('inpUserPass').value.trim();
+// Кнопка сохранения новой созданной группы
+document.getElementById('btnSaveRoomOnly').addEventListener('click', () => {
     const r = document.getElementById('inpRoomName').value.trim();
     const rp = document.getElementById('inpRoomPass').value.trim();
-
-    if (n) {
-        myName = n;
-        localStorage.setItem('fajr_user_name', n);
-    }
-    userPass = up;
-    localStorage.setItem('fajr_user_pass', up);
 
     currentRoom = r || DEFAULT_ROOM;
     roomPass = rp || '';
@@ -2057,12 +2553,30 @@ document.getElementById('btnSaveAll').addEventListener('click', () => {
     touchRoomActivity(currentRoom, roomPass, true);
     setupNetwork();
     updateRoomTtlBanner();
-    document.getElementById('roomModal').classList.remove('open');
+    generateQR();
     renderUI();
+    switchModalTab('rooms');
+    showToast(`Группа "${currentRoom}" создана и активна!`);
+});
+
+// Кнопка сохранения профиля
+document.getElementById('btnSaveProfileOnly').addEventListener('click', () => {
+    const n = document.getElementById('inpMyName').value.trim();
+    const up = document.getElementById('inpUserPass').value.trim();
+
+    if (n) {
+        myName = n;
+        localStorage.setItem('fajr_user_name', n);
+    }
+    userPass = up;
+    localStorage.setItem('fajr_user_pass', up);
+
+    syncUserState();
+    showToast('Профиль успешно обновлен!');
 });
 
 /**
- * 10. ЦИКЛ ВРЕМЕНИ НАМАЗОВ И АВТО-БУДИЛЬНИК АЗАНА
+ * 12. ТАЙМЕРЫ НАМАЗОВ
  */
 let lastTriggeredPrayerMinute = '';
 
@@ -2070,7 +2584,6 @@ function updatePrayerCycle() {
     const now = new Date();
     const todayKey = now.toISOString().slice(0, 10);
 
-    // Сброс статуса в новый день
     if (lastResetDate !== todayKey) {
         lastResetDate = todayKey;
         localStorage.setItem('fajr_last_reset_date', todayKey);
@@ -2120,7 +2633,6 @@ function updatePrayerCycle() {
     const ss = String(totalSec % 60).padStart(2, '0');
     document.getElementById('lblCountdown').innerText = `${hh}:${mm}:${ss}`;
 
-    // Автоматическое срабатывание будильника при наступлении времени любого из 5 намазов
     const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     prayers.forEach(p => {
         if (p.isSalah && fmt(p.time) === nowHHMM && lastTriggeredPrayerMinute !== `${p.id}_${nowHHMM}`) {
@@ -2132,7 +2644,6 @@ function updatePrayerCycle() {
     });
 }
 
-// Обработка входа по QR-ссылке (?room=...&pass=...)
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('room')) {
     currentRoom = urlParams.get('room') || DEFAULT_ROOM;
@@ -2141,7 +2652,7 @@ if (urlParams.has('room')) {
     localStorage.setItem('fajr_room_pass', roomPass);
 }
 
-// Инициализация приложения
+// Старт
 touchRoomActivity(currentRoom, roomPass);
 cleanupExpiredRooms();
 setupNetwork();
