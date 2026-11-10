@@ -8,9 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-main: #020705;
@@ -1038,6 +1035,7 @@
         .toast-banner.show {
             transform: translateX(-50%) translateY(0);
         }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
     </style>
 </head>
 <body>
@@ -1388,6 +1386,58 @@ const GITHUB_APK_URL = GITHUB_APP_BASE_URL + 'fajr-awake.apk';
 const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtna2hmanBheG1raWJoanJod25sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMzQwMTAsImV4cCI6MjEwOTcxMDAxMH0.Tl0hVQDri-Tn9kv5QOIUI0XO2TEzFvv8wfH9MdN52Z8';
 
+const LIB_URLS = {
+    supabase: ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'https://unpkg.com/@supabase/supabase-js@2'],
+    qrcode: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js'],
+    scanner: ['https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js', 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js']
+};
+const libPromises = {};
+function loadLib(name, check) {
+    if (check()) return Promise.resolve(true);
+    if (libPromises[name]) return libPromises[name];
+    libPromises[name] = (async () => {
+        for (const url of LIB_URLS[name]) {
+            const ok = await new Promise(res => {
+                const s = document.createElement('script');
+                const timer = setTimeout(() => { s.remove(); res(false); }, 8000);
+                s.src = url;
+                s.onload = () => { clearTimeout(timer); res(true); };
+                s.onerror = () => { clearTimeout(timer); s.remove(); res(false); };
+                document.head.appendChild(s);
+            });
+            if (ok && check()) return true;
+        }
+        return false;
+    })().then(ok => { if (!ok) delete libPromises[name]; return ok; });
+    return libPromises[name];
+}
+const hasSupabase = () => typeof window.supabase !== 'undefined' && !!window.supabase.createClient;
+async function ensureSupabaseClient() {
+    if (supabaseClient) return true;
+    if (!(await loadLib('supabase', hasSupabase))) return false;
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+}
+async function bootAfterReconnect() {
+    if (!(await ensureSupabaseClient())) return;
+    if (!myName) { document.getElementById('mandatoryAuthModal').classList.add('open'); return; }
+    await startOnlineSession();
+}
+function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+async function hashSecret(s) {
+    if (!s) return '';
+    try {
+        if (window.crypto && crypto.subtle) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('fajr:' + s));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+    } catch (e) {}
+    let x = 5381; for (let i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0;
+    return 'h' + x.toString(16);
+}
+
 const DICTIONARY = {
     ru: {
         fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
@@ -1696,6 +1746,12 @@ let userPass = localStorage.getItem('fajr_user_pass') || '';
 let currentRoom = (localStorage.getItem('fajr_room_name') || DEFAULT_ROOM).trim();
 let roomPass = localStorage.getItem('fajr_room_pass') || '';
 let myStatus = 'sleep';
+try {
+    const st = JSON.parse(localStorage.getItem('fajr_my_status') || 'null');
+    if (st && Date.now() - st.t < 4 * 3600 * 1000 && ['sleep', 'awake', 'done'].includes(st.s)) myStatus = st.s;
+} catch (e) {}
+function saveMyStatus() { localStorage.setItem('fajr_my_status', JSON.stringify({ s: myStatus, t: Date.now() })); }
+let adhanTimeoutId = null;
 
 let targetCaptchaWord = '';
 let lastAlarmInitiator = '';
@@ -1746,7 +1802,7 @@ function updateOfflineBlockerState(isOnline) {
 window.addEventListener('offline', () => updateOfflineBlockerState(false));
 window.addEventListener('online', () => {
     updateOfflineBlockerState(true);
-    if (myName) startOnlineSession();
+    bootAfterReconnect();
 });
 
 window.checkInternetAndReconnect = async function() {
@@ -1761,9 +1817,9 @@ window.checkInternetAndReconnect = async function() {
             headers: { 'apikey': SUPABASE_ANON_KEY },
             cache: 'no-store'
         });
-        if (res.ok || res.status === 404 || res.status === 200) {
+        if (res && res.status >= 0) {
             updateOfflineBlockerState(true);
-            if (myName) await startOnlineSession();
+            await bootAfterReconnect();
             showToast('✓ Соединение восстановлено!');
         } else {
             updateOfflineBlockerState(false);
@@ -1786,7 +1842,10 @@ async function checkForGithubIndexUpdate(manualNotify = false) {
             return;
         }
         const remoteHtml = await resp.text();
-        const remoteHash = String(remoteHtml.length) + '_' + remoteHtml.slice(0, 120).length;
+        if (!remoteHtml.includes('AL-FAJR')) return;
+        let hh = 5381;
+        for (let i = 0; i < remoteHtml.length; i++) hh = ((hh * 33) ^ remoteHtml.charCodeAt(i)) >>> 0;
+        const remoteHash = remoteHtml.length + '_' + hh;
         const savedHash = localStorage.getItem('fajr_ota_index_hash');
 
         if (!savedHash) {
@@ -1835,9 +1894,14 @@ function openAudioDb() {
 async function saveCustomAudioToDb(key, dataUrl, fileName) {
     try {
         const db = await openAudioDb();
-        const tx = db.transaction('sounds', 'readwrite');
-        tx.objectStore('sounds').put({ dataUrl, fileName }, key);
-    } catch (e) {}
+        await new Promise((res, rej) => {
+            const tx = db.transaction('sounds', 'readwrite');
+            tx.objectStore('sounds').put({ dataUrl, fileName }, key);
+            tx.oncomplete = res;
+            tx.onerror = tx.onabort = () => rej(tx.error);
+        });
+        return true;
+    } catch (e) { return false; }
 }
 
 async function loadCustomAudiosFromDb() {
@@ -1874,7 +1938,7 @@ document.getElementById('inpCustomAlarmFile').addEventListener('change', (e) => 
         document.getElementById('selAlarmSoundType').value = 'custom_alarm';
         localStorage.setItem('fajr_alarm_sound_type', 'custom_alarm');
         document.getElementById('lblCustomAlarmStatus').innerText = `Свой файл: ${file.name}`;
-        await saveCustomAudioToDb('custom_alarm', customAlarmDataUrl, file.name);
+        if (!(await saveCustomAudioToDb('custom_alarm', customAlarmDataUrl, file.name))) { showToast('⚠️ Не удалось сохранить файл (слишком большой?). Будет играть до перезапуска'); return; }
         showToast(`✓ Мелодия будильника "${file.name}" сохранена!`);
     };
     reader.readAsDataURL(file);
@@ -1890,7 +1954,7 @@ document.getElementById('inpCustomAdhanFile').addEventListener('change', (e) => 
         document.getElementById('selAdhanSoundType').value = 'custom_adhan';
         localStorage.setItem('fajr_adhan_sound_type', 'custom_adhan');
         document.getElementById('lblCustomAdhanStatus').innerText = `Свой файл Азана: ${file.name}`;
-        await saveCustomAudioToDb('custom_adhan', customAdhanDataUrl, file.name);
+        if (!(await saveCustomAudioToDb('custom_adhan', customAdhanDataUrl, file.name))) { showToast('⚠️ Не удалось сохранить файл (слишком большой?). Будет играть до перезапуска'); return; }
         showToast(`✓ Азан "${file.name}" сохранен!`);
     };
     reader.readAsDataURL(file);
@@ -1919,7 +1983,16 @@ function ensureAudioContext() {
     }
 }
 
+['pointerdown', 'keydown', 'touchend'].forEach(ev => document.addEventListener(ev, function unlock() {
+    try { ensureAudioContext(); } catch (e) {}
+    if (audioCtx && audioCtx.state === 'running') document.removeEventListener(ev, unlock);
+}, { passive: true }));
+
 window.stopAllAudioPlayback = function() {
+    clearTimeout(adhanTimeoutId);
+    adhanTimeoutId = null;
+    const ao = document.getElementById('adhanOverlay');
+    if (ao) ao.classList.remove('active');
     if (alarmInterval) {
         clearInterval(alarmInterval);
         alarmInterval = null;
@@ -2003,6 +2076,7 @@ function startAlarmAudioLoop() {
 
 function startAdhanAudioPlayback(prayerName) {
     if (!adhanEnabled) return;
+    if (document.getElementById('alarmOverlay').classList.contains('active')) return;
     stopAllAudioPlayback();
 
     document.getElementById('adhanTitleText').innerText = `ВРЕМЯ НАМАЗА: ${prayerName.toUpperCase()}`;
@@ -2012,11 +2086,11 @@ function startAdhanAudioPlayback(prayerName) {
         activeHtmlAudio = new Audio(customAdhanDataUrl);
         activeHtmlAudio.loop = false;
         activeHtmlAudio.onended = () => stopAdhanPlayback();
-        activeHtmlAudio.play().catch(() => {});
+        activeHtmlAudio.play().catch(() => stopAdhanPlayback());
     } else {
         playSynthPattern('makkah_synth');
         alarmInterval = setInterval(() => playSynthPattern('makkah_synth'), 950);
-        setTimeout(() => stopAdhanPlayback(), 25000);
+        adhanTimeoutId = setTimeout(() => stopAdhanPlayback(), 25000);
     }
 }
 
@@ -2027,7 +2101,7 @@ window.stopAdhanPlayback = function() {
 
 window.testSelectedAlarmSound = function() {
     startAlarmAudioLoop();
-    setTimeout(() => stopAllAudioPlayback(), 3500);
+    setTimeout(() => { if (!document.getElementById('alarmOverlay').classList.contains('active')) stopAllAudioPlayback(); }, 3500);
 };
 
 window.testSelectedAdhanSound = function() {
@@ -2050,12 +2124,10 @@ async function initSupabase() {
     document.getElementById('selAdhanSoundType').value = adhanSoundType;
     document.getElementById('chkEnableAdhan').checked = adhanEnabled;
 
-    if (typeof supabase === 'undefined') {
+    if (!(await ensureSupabaseClient())) {
         updateOfflineBlockerState(false);
         return;
     }
-
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     if (!myName) {
         document.getElementById('regRoomName').value = currentRoom;
@@ -2090,6 +2162,13 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     showToast(`Добро пожаловать, ${myName}!`);
 });
 
+async function canJoinRoom(name, pass) {
+    if (!supabaseClient) return true;
+    const { data } = await supabaseClient.from('fajr_rooms').select('pass').eq('name', name.trim()).maybeSingle();
+    if (!data || !data.pass) return true;
+    return data.pass === (pass || '');
+}
+
 async function startOnlineSession() {
     if (!navigator.onLine) {
         updateOfflineBlockerState(false);
@@ -2097,6 +2176,12 @@ async function startOnlineSession() {
     }
     try {
         renderUI();
+        if (!(await canJoinRoom(currentRoom, roomPass))) {
+            showToast('❌ Неверный пароль группы!');
+            currentRoom = DEFAULT_ROOM; roomPass = '';
+            localStorage.setItem('fajr_room_name', currentRoom);
+            localStorage.setItem('fajr_room_pass', '');
+        }
         await ensureRoomExistsInDb(currentRoom, roomPass, false);
         await upsertMyPresenceInDb();
         await fetchAllRoomsFromDb();
@@ -2136,9 +2221,15 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
 }
 
 let isSyncingPresence = false;
+let pendingPresenceExtra = null;
 async function upsertMyPresenceInDb(extraFields = {}) {
-    if (!myName || !supabaseClient || isSyncingPresence || !navigator.onLine) {
+    saveMyStatus();
+    if (!myName || !supabaseClient || !navigator.onLine) {
         renderUI();
+        return;
+    }
+    if (isSyncingPresence) {
+        pendingPresenceExtra = { ...(pendingPresenceExtra || {}), ...extraFields };
         return;
     }
     isSyncingPresence = true;
@@ -2150,7 +2241,7 @@ async function upsertMyPresenceInDb(extraFields = {}) {
         const payload = {
             room_name: cleanRoom,
             user_name: cleanUser,
-            user_pass: userPass || '',
+            user_pass: await hashSecret(userPass),
             status: myStatus,
             lat: userCoords.lat,
             lng: userCoords.lng,
@@ -2166,21 +2257,25 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             .maybeSingle();
 
         if (existingRow) {
-            await supabaseClient
-                .from('fajr_members')
-                .update(payload)
-                .eq('room_name', cleanRoom)
-                .eq('user_name', cleanUser);
+            await supabaseClient.from('fajr_members').update(payload)
+                .eq('room_name', cleanRoom).eq('user_name', cleanUser);
         } else {
-            await supabaseClient
-                .from('fajr_members')
-                .insert([payload]);
+            await supabaseClient.from('fajr_members').insert([payload]);
         }
     } catch (e) {
     } finally {
         isSyncingPresence = false;
+        if (pendingPresenceExtra) {
+            const next = pendingPresenceExtra;
+            pendingPresenceExtra = null;
+            upsertMyPresenceInDb(next);
+        }
     }
 }
+
+let fetchMembersTimer = null, fetchRoomsTimer = null;
+function debouncedFetchMembers() { clearTimeout(fetchMembersTimer); fetchMembersTimer = setTimeout(fetchRoomMembersFromDb, 500); }
+function debouncedFetchRooms() { clearTimeout(fetchRoomsTimer); fetchRoomsTimer = setTimeout(fetchAllRoomsFromDb, 500); }
 
 async function fetchRoomMembersFromDb() {
     if (!supabaseClient || !currentRoom || !navigator.onLine) return;
@@ -2188,7 +2283,7 @@ async function fetchRoomMembersFromDb() {
 
     const { data, error } = await supabaseClient
         .from('fajr_members')
-        .select('*')
+        .select('user_name,status,last_seen,call_state,call_word,caller_name')
         .eq('room_name', cleanRoom);
 
     if (!error && data) {
@@ -2209,6 +2304,7 @@ async function fetchRoomMembersFromDb() {
                 delete userCallStates[m.user_name];
             }
         });
+        Object.keys(userCallStates).forEach(k => { if (!networkUsers[k]) delete userCallStates[k]; });
         renderMembers();
     }
 }
@@ -2250,10 +2346,10 @@ async function subscribeToSupabaseRealtime() {
     realtimeChannel = supabaseClient
         .channel(`fajr_live_${Date.now()}`)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_rooms' }, () => {
-            fetchAllRoomsFromDb();
+            debouncedFetchRooms();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'fajr_members' }, () => {
-            fetchRoomMembersFromDb();
+            debouncedFetchMembers();
         })
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fajr_signals' }, (payload) => {
             if (payload.new && payload.new.room_name === currentRoom.trim()) {
@@ -2268,12 +2364,12 @@ async function handleIncomingSignal(sig) {
 
     if (sig.signal_type === 'WAKE_CALL') {
         if (sig.target === 'ALL' || sig.target === myName) {
-            if (myStatus !== 'done') {
-                triggerAlarm(sig.sender, sig.word);
-            }
+            const shouldRing = sig.target === 'ALL' ? myStatus === 'sleep' : myStatus !== 'done';
+            if (shouldRing) triggerAlarm(sig.sender, sig.word);
         }
     } else if (sig.signal_type === 'WAKE_CANCEL') {
-        if (sig.target === 'ALL' || sig.target === myName) {
+        if ((sig.target === 'ALL' || sig.target === myName) && (!lastAlarmInitiator || sig.sender === lastAlarmInitiator)) {
+            lastAlarmInitiator = '';
             stopAllAudioPlayback();
             document.getElementById('alarmOverlay').classList.remove('active');
             await upsertMyPresenceInDb({
@@ -2304,13 +2400,13 @@ async function handleIncomingSignal(sig) {
 
 async function sendSupabaseSignal(signalType, target, word) {
     if (!supabaseClient || !myName) return;
-    await supabaseClient.from('fajr_signals').insert([{
+    try { await supabaseClient.from('fajr_signals').insert([{
         room_name: currentRoom.trim(),
         sender: myName.trim(),
         target: target,
         signal_type: signalType,
         word: word
-    }]);
+    }]); } catch (e) {}
 }
 
 // Отмена отправленного вызова будильника (для одного участника или для всех сразу)
@@ -2331,7 +2427,8 @@ window.cancelWakeSignal = async function(targetUser) {
     }
 
     renderMembers();
-    await sendSupabaseSignal('WAKE_CANCEL', targetUser, '');
+    if (targetUser === 'ALL') { for (const t of targets) await sendSupabaseSignal('WAKE_CANCEL', t, ''); }
+    else await sendSupabaseSignal('WAKE_CANCEL', targetUser, '');
     showToast(DICTIONARY[currentLang].toastWakeCancelled);
 };
 
@@ -2433,9 +2530,10 @@ function copyTextFallback(text, successToast) {
 document.getElementById('btnShareRoomQr').addEventListener('click', sharePureQrImageOnly);
 document.getElementById('btnShareApkLink').addEventListener('click', shareApkLink);
 
-function generateQR() {
+async function generateQR() {
     const wrap = document.getElementById('qrContainer');
     if (!wrap) return;
+    if (!(await loadLib('qrcode', () => typeof QRCode !== 'undefined'))) return;
     wrap.innerHTML = '';
     
     const qrPayload = JSON.stringify({ room: currentRoom, pass: roomPass });
@@ -2579,9 +2677,9 @@ function renderSavedRoomsList() {
                 : `<span class="room-badge-pill badge-open">🌐 ${dict.openBadge}</span>`);
 
         card.innerHTML = `
-            <div class="room-info-cell" onclick="selectSavedRoom('${r.name}')">
+            <div class="room-info-cell" data-room="${esc(r.name)}">
                 <div class="room-header-line">
-                    <span class="room-title-text">${r.name}</span>
+                    <span class="room-title-text">${esc(r.name)}</span>
                     ${statusBadge}
                 </div>
                 <div class="room-sub-meta">
@@ -2589,13 +2687,26 @@ function renderSavedRoomsList() {
                 </div>
             </div>
             <div class="room-actions-cell">
-                ${!isCurrent ? `<button class="btn-enter-room" onclick="selectSavedRoom('${r.name}')">${dict.enterRoomBtn}</button>` : ''}
-                ${(!r.permanent && r.owner === myName) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" onclick="deleteRoomByName('${r.name}', event)">✕</button>` : ''}
+                ${!isCurrent ? `<button class="btn-enter-room" data-room="${esc(r.name)}">${dict.enterRoomBtn}</button>` : ''}
+                ${(!r.permanent && r.owner === myName) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" data-del="${esc(r.name)}">✕</button>` : ''}
             </div>
         `;
         container.appendChild(card);
     });
 }
+
+document.getElementById('savedRoomsList').addEventListener('click', (e) => {
+    const del = e.target.closest('[data-del]');
+    if (del) { deleteRoomByName(del.dataset.del, e); return; }
+    const sel = e.target.closest('[data-room]');
+    if (sel) selectSavedRoom(sel.dataset.room);
+});
+document.getElementById('usersListContainer').addEventListener('click', (e) => {
+    const c = e.target.closest('[data-cancel]');
+    if (c) { cancelWakeSignal(c.dataset.cancel); return; }
+    const w = e.target.closest('[data-wake]');
+    if (w) wakeIndividual(w.dataset.wake);
+});
 
 document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
     roomSearchFilter = e.target.value.trim();
@@ -2631,6 +2742,7 @@ async function applyParsedRoomPayload(rawText) {
     }
 
     if (rName) {
+        if (!(await canJoinRoom(rName, rPass))) { showToast('❌ Неверный пароль группы!'); return false; }
         await ensureRoomExistsInDb(rName, rPass, false);
         await switchActiveRoom(rName, rPass);
         document.getElementById('roomModal').classList.remove('open');
@@ -2643,6 +2755,11 @@ async function applyParsedRoomPayload(rawText) {
 async function startCameraScanner() {
     const modal = document.getElementById('scannerModal');
     modal.classList.add('open');
+    if (!(await loadLib('scanner', () => typeof Html5Qrcode !== 'undefined'))) {
+        showToast(DICTIONARY[currentLang].toastCamError);
+        modal.classList.remove('open');
+        return;
+    }
 
     try {
         if (html5QrScanner) {
@@ -2690,6 +2807,7 @@ document.getElementById('btnStopScanner').addEventListener('click', stopCameraSc
 document.getElementById('inpQrGallery').addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    await loadLib('scanner', () => typeof Html5Qrcode !== 'undefined');
 
     try {
         const fileScanner = new Html5Qrcode("qrFileTempReader");
@@ -2742,6 +2860,12 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', async ()
         ? Object.keys(networkUsers).filter(u => u !== myName && networkUsers[u].status === 'sleep')
         : [pendingWakeTarget];
 
+    if (pendingWakeTarget === 'ALL' && targets.length === 0) {
+        document.getElementById('wakeWordModal').classList.remove('open');
+        showToast('Спящих участников сейчас нет');
+        return;
+    }
+
     for (const tName of targets) {
         userCallStates[tName] = {
             state: 'calling',
@@ -2769,6 +2893,7 @@ async function triggerAlarm(senderName, incomingWord) {
 
     document.getElementById('lblTargetWord').innerText = targetCaptchaWord.toUpperCase();
     document.getElementById('inpCaptchaAnswer').value = '';
+    document.getElementById('inpCaptchaAnswer').style.borderColor = '';
     document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${senderName}`;
 
     document.getElementById('alarmOverlay').classList.add('active');
@@ -2783,6 +2908,7 @@ async function triggerAlarm(senderName, incomingWord) {
 }
 
 document.getElementById('btnVerifyAwake').addEventListener('click', verifyCaptchaAndStop);
+document.getElementById('inpCaptchaAnswer').addEventListener('input', e => { e.target.style.borderColor = ''; });
 document.getElementById('inpCaptchaAnswer').addEventListener('keyup', (e) => {
     if (e.key === 'Enter') verifyCaptchaAndStop();
 });
@@ -2809,12 +2935,13 @@ async function verifyCaptchaAndStop() {
 }
 
 setInterval(() => {
-    updateOfflineBlockerState(navigator.onLine);
+    updateOfflineBlockerState(navigator.onLine && (supabaseClient || hasSupabase() || !libPromises.supabase));
+    if (!supabaseClient && navigator.onLine) { bootAfterReconnect(); return; }
     if (supabaseClient && myName && navigator.onLine) {
         upsertMyPresenceInDb();
         fetchRoomMembersFromDb();
     }
-}, 6000);
+}, 15000);
 
 setInterval(() => {
     checkForGithubIndexUpdate(false);
@@ -2946,13 +3073,13 @@ function renderMembers() {
         if (callInfo) {
             if (callInfo.state === 'calling') {
                 extraRowClass = 'ringing';
-                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">📡</span> ${dict.callSending} [${callInfo.word}]</div>`;
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">📡</span> ${dict.callSending} [${esc(callInfo.word)}]</div>`;
             } else if (callInfo.state === 'ringing') {
                 extraRowClass = 'ringing';
-                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">🔔</span> ${dict.callRinging} <b>"${callInfo.word}"</b></div>`;
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">🔔</span> ${dict.callRinging} <b>"${esc(callInfo.word)}"</b></div>`;
             } else if (callInfo.state === 'replied') {
                 extraRowClass = 'replied';
-                callStatusHtml = `<div class="u-call-status ack">✓ ${dict.callReplied} <b>"${callInfo.word}"</b></div>`;
+                callStatusHtml = `<div class="u-call-status ack">✓ ${dict.callReplied} <b>"${esc(callInfo.word)}"</b></div>`;
             }
         }
 
@@ -2966,19 +3093,19 @@ function renderMembers() {
         let actionBtnHtml = '';
         if (u.name !== myName) {
             if (isCurrentlyCalling) {
-                actionBtnHtml = `<button class="btn-cancel-nudge" onclick="cancelWakeSignal('${u.name}')">🛑 ${dict.cancelNudgeBtn}</button>`;
+                actionBtnHtml = `<button class="btn-cancel-nudge" data-cancel="${esc(u.name)}">🛑 ${dict.cancelNudgeBtn}</button>`;
             } else {
-                actionBtnHtml = `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">🔔 ${dict.nudgeBtn}</button>`;
+                actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`;
             }
         }
 
         row.innerHTML = `
             <div class="u-left">
-                <div class="u-avatar">${u.name.substring(0, 1).toUpperCase()}</div>
+                <div class="u-avatar">${esc((Array.from(u.name)[0] || '?').toUpperCase())}</div>
                 <div>
                     <div class="u-name">
                         <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
-                        ${u.name} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}
+                        ${esc(u.name)} ${u.name === myName ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}
                     </div>
                     <span class="u-badge ${badgeClass}">${badgeTxt}</span>
                     ${callStatusHtml}
@@ -3064,6 +3191,7 @@ document.getElementById('btnSaveRoomOnly').addEventListener('click', async () =>
     const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
     const rp = document.getElementById('inpRoomPass').value.trim() || '';
 
+    if (!(await canJoinRoom(r, rp))) { showToast('❌ Группа уже существует, пароль неверный!'); return; }
     await ensureRoomExistsInDb(r, rp, true);
     await switchActiveRoom(r, rp);
     switchModalTab('rooms');
@@ -3135,29 +3263,34 @@ function calculateSunTimes(date, lat, lng) {
     const RA = toDeg(Math.atan2(Math.cos(toRad(e)) * Math.sin(toRad(L)), Math.cos(toRad(L)))) / 15.0;
     const decl = toDeg(Math.asin(Math.sin(toRad(e)) * Math.sin(toRad(L))));
 
-    const EqT = (q / 15.0) - (RA < 0 ? RA + 24 : RA);
+    let EqT = (q / 15.0) - (RA < 0 ? RA + 24 : RA);
+    EqT = (((EqT + 12) % 24) + 24) % 24 - 12;
     const noon = 12 + tz - (lng / 15.0) - EqT;
 
     function sunAngleTime(angle) {
         const val = (Math.sin(toRad(angle)) - Math.sin(toRad(lat)) * Math.sin(toRad(decl))) /
                     (Math.cos(toRad(lat)) * Math.cos(toRad(decl)));
-        if (val > 1 || val < -1) return 1.5;
+        if (val > 1 || val < -1) return NaN;
         return toDeg(Math.acos(val)) / 15.0;
     }
 
-    const sunriseAngle = sunAngleTime(-0.833);
+    let sunriseAngle = sunAngleTime(-0.833);
+    if (isNaN(sunriseAngle)) sunriseAngle = 6;
     const sunrise = noon - sunriseAngle;
     const sunset = noon + sunriseAngle;
 
-    const fajr = noon - sunAngleTime(-18.0);
+    const night = 24 - 2 * sunriseAngle;
+    const fajrA = sunAngleTime(-18.0), ishaA = sunAngleTime(-17.5);
+    const fajr = isNaN(fajrA) ? sunrise - night / 7 : noon - fajrA;
     const dhuhr = noon + (2 / 60);
 
     const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
     const asrAngleVal = toDeg(Math.atan(1 / (1 + noonShadow)));
-    const asr = noon + sunAngleTime(asrAngleVal);
+    const asrA = sunAngleTime(asrAngleVal);
+    const asr = noon + (isNaN(asrA) ? sunriseAngle / 2 : asrA);
 
     const maghrib = sunset + (2 / 60);
-    const isha = noon + sunAngleTime(-17.5);
+    const isha = isNaN(ishaA) ? sunset + night / 7 : noon + ishaA;
 
     return { fajr, sunrise, dhuhr, asr, maghrib, isha };
 }
