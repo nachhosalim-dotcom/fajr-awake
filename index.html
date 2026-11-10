@@ -2211,6 +2211,7 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     nativeCall('saveSession', myName, currentRoom, SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.getElementById('inpRoomName').value = currentRoom;
+    document.getElementById('mandatoryAuthModal').classList.remove('open');
     await startOnlineSession();
     showToast(`Добро пожаловать, ${myName}!`);
 });
