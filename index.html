@@ -1383,6 +1383,25 @@
 <div class="toast-banner" id="toastBanner"></div>
 
 <script>
+(function () {
+    function show(msg) {
+        try {
+            var b = document.getElementById('fajrErrBar');
+            if (!b) {
+                b = document.createElement('div');
+                b.id = 'fajrErrBar';
+                b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:300000;background:#b00020;color:#fff;font:11px/1.4 monospace;padding:6px 10px;max-height:30vh;overflow:auto;user-select:text;white-space:pre-wrap';
+                b.onclick = function () { b.remove(); };
+                document.body.appendChild(b);
+            }
+            b.textContent += msg + '\n';
+        } catch (e) {}
+    }
+    window.addEventListener('error', function (e) { show('JS: ' + e.message + ' (строка ' + e.lineno + ')'); });
+    window.addEventListener('unhandledrejection', function (e) { show('PROMISE: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
+    window.fajrShowErr = show;
+})();
+
 const GITHUB_APP_BASE_URL = 'https://nachhosalim-dotcom.github.io/fajr-awake/';
 const GITHUB_INDEX_URL = GITHUB_APP_BASE_URL + 'index.html';
 const GITHUB_APK_URL = GITHUB_APP_BASE_URL + 'fajr-awake.apk';
@@ -1419,7 +1438,24 @@ const hasSupabase = () => typeof window.supabase !== 'undefined' && !!window.sup
 async function ensureSupabaseClient() {
     if (supabaseClient) return true;
     if (!(await loadLib('supabase', hasSupabase))) return false;
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: {
+            fetch: async (u, o) => {
+                try {
+                    const r = await fetch(u, o);
+                    if (!r.ok && window.fajrShowErr) {
+                        let t = '';
+                        try { t = (await r.clone().text()).slice(0, 200); } catch (e) {}
+                        window.fajrShowErr('SUPABASE ' + r.status + ' ' + String(u).replace(SUPABASE_URL, '').slice(0, 60) + ' ' + t);
+                    }
+                    return r;
+                } catch (e) {
+                    if (window.fajrShowErr) window.fajrShowErr('СЕТЬ: ' + e.message);
+                    throw e;
+                }
+            }
+        }
+    });
     return true;
 }
 async function bootAfterReconnect() {
@@ -2230,7 +2266,8 @@ async function startOnlineSession() {
         nativeCall('saveSession', myName, currentRoom.trim(), SUPABASE_URL, SUPABASE_ANON_KEY);
         updateOfflineBlockerState(true);
     } catch (err) {
-        updateOfflineBlockerState(false);
+        if (window.fajrShowErr) window.fajrShowErr('СЕССИЯ: ' + (err && err.message ? err.message : err));
+        updateOfflineBlockerState(navigator.onLine);
     }
 }
 
