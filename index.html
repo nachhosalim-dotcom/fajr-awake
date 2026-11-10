@@ -1816,6 +1816,8 @@ let roomsCache = {};
 let networkUsers = {};
 let userCallStates = {};
 let roomSearchFilter = '';
+let isSuperAdmin = false;
+let isBanned = false;
 let html5QrScanner = null;
 let pendingOtaHtmlContent = null;
 
@@ -2218,6 +2220,7 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
 
 async function canJoinRoom(name, pass) {
     if (!supabaseClient) return true;
+    if (isSuperAdmin) return true;
     const { data } = await supabaseClient.from('fajr_rooms').select('pass').eq('name', name.trim()).maybeSingle();
     if (!data || !data.pass) return true;
     return data.pass === (pass || '');
@@ -2253,6 +2256,8 @@ async function startOnlineSession() {
     }
     try {
         renderUI();
+        if (await enforceBan()) return;
+        await checkSuperAdmin();
         if (!(await canJoinRoom(currentRoom, roomPass))) {
             showToast('❌ Неверный пароль группы!');
             currentRoom = DEFAULT_ROOM; roomPass = '';
@@ -2303,7 +2308,7 @@ let isSyncingPresence = false;
 let pendingPresenceExtra = null;
 async function upsertMyPresenceInDb(extraFields = {}) {
     saveMyStatus();
-    if (!myName || !supabaseClient || !navigator.onLine) {
+    if (!myName || !supabaseClient || !navigator.onLine || isBanned) {
         renderUI();
         return;
     }
@@ -2681,7 +2686,7 @@ window.selectSavedRoom = async function(rName) {
     const room = roomsCache[rName];
     if (!room) return;
 
-    if (room.pass && room.name !== currentRoom) {
+    if (room.pass && room.name !== currentRoom && !isSuperAdmin) {
         const entered = prompt(`Группа "${rName}" защищена паролем. Введите пароль:`);
         if (entered === null) return;
         if (entered.trim() !== room.pass) {
@@ -2773,7 +2778,7 @@ function renderSavedRoomsList() {
             </div>
             <div class="room-actions-cell">
                 ${!isCurrent ? `<button class="btn-enter-room" data-room="${esc(r.name)}">${dict.enterRoomBtn}</button>` : ''}
-                ${(!r.permanent && r.owner === myName) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" data-del="${esc(r.name)}">✕</button>` : ''}
+                ${((!r.permanent && r.owner === myName) || (isSuperAdmin && r.name !== DEFAULT_ROOM)) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" data-del="${esc(r.name)}">✕</button>` : ''}
             </div>
         `;
         container.appendChild(card);
@@ -2787,6 +2792,8 @@ document.getElementById('savedRoomsList').addEventListener('click', (e) => {
     if (sel) selectSavedRoom(sel.dataset.room);
 });
 document.getElementById('usersListContainer').addEventListener('click', (e) => {
+    const bn = e.target.closest('[data-ban]');
+    if (bn) { banUserPrompt(bn.dataset.ban); return; }
     const k = e.target.closest('[data-kick]');
     if (k) { kickMember(k.dataset.kick); return; }
     const c = e.target.closest('[data-cancel]');
@@ -2821,20 +2828,101 @@ function isOwner() {
 }
 
 function canAdmin() {
-    return isOwner() && currentRoom.trim() !== DEFAULT_ROOM;
+    return isSuperAdmin || (isOwner() && currentRoom.trim() !== DEFAULT_ROOM);
 }
+
+async function checkSuperAdmin() {
+    isSuperAdmin = false;
+    if (!supabaseClient || !myName || !userPass) return;
+    try {
+        const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
+        isSuperAdmin = data === true;
+    } catch (e) {}
+    updateRoomTtlBanner();
+    renderSavedRoomsList();
+}
+
+function showBannedScreen(reason) {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:400000;background:#1a0206;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;';
+    d.innerHTML = '<div style="font-size:56px">⛔</div><div style="font-size:20px;font-weight:800;margin:12px 0 8px">Доступ заблокирован</div><div style="font-size:13px;color:#ffccd5;max-width:320px">Администратор ограничил доступ для этого имени.' + (reason ? '<br><br>Причина: ' + esc(reason) : '') + '</div>';
+    document.body.appendChild(d);
+}
+
+async function enforceBan() {
+    if (isBanned) return true;
+    if (!supabaseClient || !myName) return false;
+    try {
+        const { data } = await supabaseClient.from('fajr_bans').select('reason').eq('user_name', myName.trim().toLowerCase()).maybeSingle();
+        if (!data) return false;
+        isBanned = true;
+        stopAllAudioPlayback();
+        nativeCall('stopAlarm');
+        nativeCall('clearSession');
+        try { await supabaseClient.from('fajr_members').delete().eq('user_name', myName.trim()); } catch (e) {}
+        showBannedScreen(data.reason);
+        return true;
+    } catch (e) { return false; }
+}
+
+async function doBan(target, why) {
+    if (!isSuperAdmin || !supabaseClient) return;
+    if (target.trim().toLowerCase() === myName.trim().toLowerCase()) { showToast('Нельзя заблокировать себя'); return; }
+    const { error } = await supabaseClient.rpc('fajr_admin_ban', {
+        adm: myName.trim(), h: await hashSecret(userPass), target: target.trim(), why: why || ''
+    });
+    if (error) { showToast('❌ ' + error.message); return; }
+    delete networkUsers[target];
+    delete userCallStates[target];
+    renderMembers();
+    showToast('🚫 ' + target + ' заблокирован');
+}
+
+window.banUserPrompt = async function (name) {
+    if (!isSuperAdmin) return;
+    const why = prompt('Заблокировать «' + name + '». Причина (можно оставить пустой):', '');
+    if (why === null) return;
+    await doBan(name, why.trim());
+};
 
 window.adminGroupMenu = async function () {
     if (!canAdmin() || !supabaseClient) return;
-    const np = prompt('Новый пароль группы (оставьте пустым, чтобы сделать группу открытой):', roomPass || '');
-    if (np === null) return;
-    const clean = np.trim();
-    await supabaseClient.from('fajr_rooms').update({ pass: clean }).eq('name', currentRoom.trim());
-    roomPass = clean;
-    localStorage.setItem('fajr_room_pass', roomPass);
-    await fetchAllRoomsFromDb();
-    generateQR();
-    showToast('✓ Пароль группы обновлён');
+    let menu = '1 — сменить пароль группы';
+    if (isSuperAdmin) menu += '\n2 — заблокировать пользователя\n3 — разблокировать пользователя\n4 — список заблокированных\n5 — удалить эту группу';
+    const c = (prompt('👑 Админ-панель\n' + menu + '\n\nВведите номер:', '') || '').trim();
+
+    if (c === '1') {
+        const np = prompt('Новый пароль группы (пусто = открытая группа):', roomPass || '');
+        if (np === null) return;
+        const clean = np.trim();
+        await supabaseClient.from('fajr_rooms').update({ pass: clean }).eq('name', currentRoom.trim());
+        roomPass = clean;
+        localStorage.setItem('fajr_room_pass', roomPass);
+        await fetchAllRoomsFromDb();
+        generateQR();
+        showToast('✓ Пароль группы обновлён');
+    } else if (isSuperAdmin && c === '2') {
+        const n = prompt('Имя пользователя для блокировки:', '');
+        if (!n || !n.trim()) return;
+        const why = prompt('Причина (можно оставить пустой):', '');
+        if (why === null) return;
+        await doBan(n.trim(), why.trim());
+    } else if (isSuperAdmin && c === '3') {
+        const n = prompt('Имя пользователя для разблокировки:', '');
+        if (!n || !n.trim()) return;
+        const { error } = await supabaseClient.rpc('fajr_admin_unban', {
+            adm: myName.trim(), h: await hashSecret(userPass), target: n.trim()
+        });
+        showToast(error ? '❌ ' + error.message : '✓ ' + n.trim() + ' разблокирован');
+    } else if (isSuperAdmin && c === '4') {
+        const { data } = await supabaseClient.from('fajr_bans').select('user_name,reason');
+        const list = (data && data.length) ? data.map(b => b.user_name + (b.reason ? ' — ' + b.reason : '')).join('\n') : 'Список пуст';
+        prompt('Заблокированные:', list);
+    } else if (isSuperAdmin && c === '5') {
+        if (currentRoom.trim() === DEFAULT_ROOM) { showToast('Основную группу удалять нельзя'); return; }
+        if (!confirm('Удалить группу «' + currentRoom + '» целиком?')) return;
+        await deleteRoomByName(currentRoom.trim());
+    }
 };
 
 window.kickMember = async function (name) {
@@ -3089,8 +3177,12 @@ setInterval(() => {
     updateOfflineBlockerState(navigator.onLine && (supabaseClient || hasSupabase() || !libPromises.supabase));
     if (!supabaseClient && navigator.onLine) { bootAfterReconnect(); return; }
     if (supabaseClient && myName && navigator.onLine) {
-        upsertMyPresenceInDb();
-        fetchRoomMembersFromDb();
+        enforceBan().then(b => {
+            if (!b) {
+                upsertMyPresenceInDb();
+                fetchRoomMembersFromDb();
+            }
+        });
     }
 }, 15000);
 
@@ -3255,6 +3347,11 @@ function renderMembers() {
             actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#444; color:#fff; border-color:#666;" data-kick="${esc(u.name)}">⛔</button>`;
         }
 
+        if (u.name !== myName && isSuperAdmin) {
+            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#7a0010; color:#fff; border-color:#b00020;" data-ban="${esc(u.name)}">🚫</button>`;
+        }
+        }
+
         row.innerHTML = `
             <div class="u-left">
                 <div class="u-avatar">${esc((Array.from(u.name)[0] || '?').toUpperCase())}</div>
@@ -3377,6 +3474,7 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     localStorage.setItem('fajr_user_pass', up);
     nativeCall('saveSession', myName, currentRoom.trim(), SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    await checkSuperAdmin();
     await upsertMyPresenceInDb();
     await fetchRoomMembersFromDb();
     document.getElementById('roomModal').classList.remove('open');
@@ -3396,6 +3494,7 @@ document.getElementById('btnLogoutProfile').addEventListener('click', async () =
     myName = '';
     userPass = '';
     nativeCall('clearSession');
+    isSuperAdmin = false;
     document.getElementById('roomModal').classList.remove('open');
     await loadRegRooms();
     document.getElementById('mandatoryAuthModal').classList.add('open');
