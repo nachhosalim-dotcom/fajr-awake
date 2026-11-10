@@ -2833,11 +2833,18 @@ function canAdmin() {
 
 async function checkSuperAdmin() {
     isSuperAdmin = false;
-    if (!supabaseClient || !myName || !userPass) return;
+    if (!myName) return;
+    if (!supabaseClient || !userPass) {
+        showToast('🔎 Админ-проверка v2: ' + (!supabaseClient ? 'нет связи с базой' : 'в браузере не сохранён пароль — выйдите и войдите заново'));
+        return;
+    }
+    let dbg = '';
     try {
-        const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
+        const { data, error } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
         isSuperAdmin = data === true;
-    } catch (e) {}
+        dbg = error ? ('ошибка: ' + (error.message || error.code)) : ('ответ базы: ' + String(data));
+    } catch (e) { dbg = 'сбой: ' + e; }
+    showToast('🔎 Админ-проверка v2 · ' + dbg);
     updateRoomTtlBanner();
     renderSavedRoomsList();
 }
