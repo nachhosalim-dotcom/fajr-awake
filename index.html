@@ -376,6 +376,22 @@
             gap: 8px;
         }
 
+        .btn-cancel-all-calls {
+            background: linear-gradient(135deg, #ffa502, #cc8400);
+            color: #020705;
+            box-shadow: 0 4px 18px rgba(255, 165, 2, 0.4);
+            grid-column: span 2;
+            padding: 13px;
+            font-size: 12px;
+            font-weight: 800;
+            flex-direction: row;
+            gap: 8px;
+            display: none;
+        }
+        .btn-cancel-all-calls.show {
+            display: flex;
+        }
+
         /* Members Card */
         .members-card {
             background: var(--emerald-card);
@@ -517,19 +533,17 @@
         }
         .btn-nudge:active { transform: scale(0.92); }
 
-        .btn-kick-ghost {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            color: var(--text-secondary);
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            font-size: 12px;
+        .btn-cancel-nudge {
+            background: linear-gradient(135deg, #ffa502, #d98200);
+            border: 1px solid #ffbe4d;
+            color: #020705;
+            padding: 7px 12px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 800;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
+        .btn-cancel-nudge:active { transform: scale(0.92); }
 
         .u-online-dot {
             width: 7px;
@@ -1153,6 +1167,11 @@
             <span>🚨</span>
             <span id="txtWakeAll">РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ</span>
         </button>
+
+        <button class="btn-act btn-cancel-all-calls" id="btnCancelAllCalls" onclick="cancelWakeSignal('ALL')">
+            <span>🛑</span>
+            <span id="txtCancelAll">ОТМЕНИТЬ ВСЕ ВЫЗОВЫ БУДИЛЬНИКА</span>
+        </button>
     </div>
 
     <!-- Участники текущей комнаты -->
@@ -1362,9 +1381,6 @@
 <div class="toast-banner" id="toastBanner"></div>
 
 <script>
-/**
- * КОНФИГУРАЦИЯ GITHUB OTA (ПРОВЕРКА ТОЛЬКО INDEX.HTML БЕЗ СКАЧИВАНИЯ APK)
- */
 const GITHUB_APP_BASE_URL = 'https://nachhosalim-dotcom.github.io/fajr-awake/';
 const GITHUB_INDEX_URL = GITHUB_APP_BASE_URL + 'index.html';
 const GITHUB_APK_URL = GITHUB_APP_BASE_URL + 'fajr-awake.apk';
@@ -1384,11 +1400,13 @@ const DICTIONARY = {
         stateSleep: 'СПЛЮ', stateAwake: 'ВСТАЛ', stateDone: 'ПРОЧИТАЛ',
         changeStatus: 'нажмите чтобы сменить',
         wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
+        cancelAllBtn: 'ОТМЕНИТЬ ВСЕ ВЫЗОВЫ БУДИЛЬНИКА',
         members: 'УЧАСТНИКИ В ЭТОЙ ГРУППЕ',
         peopleUnit: 'чел.',
         roomsUnit: 'групп',
         youBadge: '(Вы)',
         nudgeBtn: 'РАЗБУДИТЬ',
+        cancelNudgeBtn: 'ОТМЕНИТЬ',
         roomTtlLabel: 'Текущая группа:',
         permanentRoom: 'Основная группа',
         wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
@@ -1428,6 +1446,7 @@ const DICTIONARY = {
         lockBadge: 'Закрытая',
         openBadge: 'Открытая',
         toastWakeSent: 'Сигнал будильника со словом отправлен:',
+        toastWakeCancelled: 'Вызов будильника отменен!',
         toastReplyReceived: 'подтвердил пробуждение словом:',
         toastRoomDeleted: 'Группа удалена из списка',
         toastGeoSuccess: 'GPS координаты сохранены в постоянный кэш!',
@@ -1453,11 +1472,13 @@ const DICTIONARY = {
         stateSleep: 'نائم', stateAwake: 'مستيقظ', stateDone: 'صليت',
         changeStatus: 'اضغط لتغيير الحالة',
         wakeAll: 'إيقاظ جميع النائمين في المجموعة',
+        cancelAllBtn: 'إلغاء جميع نداءات المنبه',
         members: 'أعضاء المجموعة',
         peopleUnit: 'أشخاص',
         roomsUnit: 'غرف',
         youBadge: '(أنت)',
         nudgeBtn: 'إيقاظ',
+        cancelNudgeBtn: 'إلغاء',
         roomTtlLabel: 'المجموعة الحالية:',
         permanentRoom: 'الغرفة العامة',
         wakeModalTitle: 'إرسال كلمة الاستيقاظ',
@@ -1497,6 +1518,7 @@ const DICTIONARY = {
         lockBadge: 'خاصة',
         openBadge: 'عامة',
         toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
+        toastWakeCancelled: 'تم إلغاء الرنين!',
         toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
         toastRoomDeleted: 'تم حذف الغرفة بنجاح',
         toastGeoSuccess: 'تم حفظ إحداثيات GPS!',
@@ -1522,11 +1544,13 @@ const DICTIONARY = {
         stateSleep: 'UYUYOR', stateAwake: 'UYANDI', stateDone: 'KILDI',
         changeStatus: 'değiştirmek için dokunun',
         wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
+        cancelAllBtn: 'TÜM ALARMLARI İPTAL ET',
         members: 'ODA KATILIMCILARI',
         peopleUnit: 'kişi',
         roomsUnit: 'grup',
         youBadge: '(Siz)',
         nudgeBtn: 'UYANDIR',
+        cancelNudgeBtn: 'İPTAL ET',
         roomTtlLabel: 'Aktif Grup:',
         permanentRoom: 'Ana Grup',
         wakeModalTitle: 'UYANDIRMA KELİMESİ GÖNDER',
@@ -1566,6 +1590,7 @@ const DICTIONARY = {
         lockBadge: 'Kilitli',
         openBadge: 'Açık',
         toastWakeSent: 'Uyandırma sinyali gönderildi:',
+        toastWakeCancelled: 'Alarm çağrısı iptal edildi!',
         toastReplyReceived: 'uyandığını onayladı:',
         toastRoomDeleted: 'Oda silindi',
         toastGeoSuccess: 'GPS koordinatları kaydedildi!',
@@ -1591,11 +1616,13 @@ const DICTIONARY = {
         stateSleep: 'ASLEEP', stateAwake: 'AWAKE', stateDone: 'PRAYED',
         changeStatus: 'tap to toggle',
         wakeAll: 'WAKE ALL SLEEPING MEMBERS',
+        cancelAllBtn: 'CANCEL ALL WAKE ALARMS',
         members: 'GROUP MEMBERS',
         peopleUnit: 'members',
         roomsUnit: 'rooms',
         youBadge: '(You)',
         nudgeBtn: 'WAKE UP',
+        cancelNudgeBtn: 'CANCEL',
         roomTtlLabel: 'Active Group:',
         permanentRoom: 'Main Group',
         wakeModalTitle: 'SEND WAKE-UP WORD CHALLENGE',
@@ -1635,6 +1662,7 @@ const DICTIONARY = {
         lockBadge: 'Private',
         openBadge: 'Public',
         toastWakeSent: 'Wake challenge sent:',
+        toastWakeCancelled: 'Wake call cancelled!',
         toastReplyReceived: 'confirmed waking up:',
         toastRoomDeleted: 'Room deleted',
         toastGeoSuccess: 'GPS coordinates saved!',
@@ -1701,9 +1729,7 @@ if (urlParams.has('room')) {
 }
 
 /**
- * ============================================================================
  * 1. КОНТРОЛЬ ИНТЕРНЕТА (БЛОКИРОВКА ЭКРАНА НА ВЕСЬ ЭКРАН ЕСЛИ НЕТ СЕТИ)
- * ============================================================================
  */
 function updateOfflineBlockerState(isOnline) {
     const blocker = document.getElementById('offlineBlocker');
@@ -1749,9 +1775,7 @@ window.checkInternetAndReconnect = async function() {
 };
 
 /**
- * ============================================================================
  * 2. OTA ОБНОВЛЕНИЕ ИНДЕКС-ФАЙЛА С GITHUB (БЕЗ СКАЧИВАНИЯ APK И БЕЗ СБРОСА РАЗРЕШЕНИЙ)
- * ============================================================================
  */
 async function checkForGithubIndexUpdate(manualNotify = false) {
     if (!navigator.onLine) return;
@@ -1762,7 +1786,6 @@ async function checkForGithubIndexUpdate(manualNotify = false) {
             return;
         }
         const remoteHtml = await resp.text();
-        // Вычисляем контрольную сумму длины/содержимого
         const remoteHash = String(remoteHtml.length) + '_' + remoteHtml.slice(0, 120).length;
         const savedHash = localStorage.getItem('fajr_ota_index_hash');
 
@@ -1788,7 +1811,6 @@ window.applyOtaUpdateNow = function() {
     if (pendingOtaHtmlContent) {
         localStorage.setItem('fajr_ota_index_hash', pendingOtaHtmlContent.hash);
     }
-    // Если мы находимся на веб-странице или в WebView — обновляем документ на месте с сохранением всех разрешений!
     const targetUrl = new URL(GITHUB_INDEX_URL);
     targetUrl.searchParams.set('room', currentRoom);
     if (roomPass) targetUrl.searchParams.set('pass', roomPass);
@@ -1797,9 +1819,7 @@ window.applyOtaUpdateNow = function() {
 };
 
 /**
- * ============================================================================
  * 3. ХРАНИЛИЩЕ INDEXED-DB ДЛЯ ПОЛЬЗОВАТЕЛЬСКИХ MP3 ЗВУКОВ БУДИЛЬНИКА И АЗАНА
- * ============================================================================
  */
 function openAudioDb() {
     return new Promise((resolve, reject) => {
@@ -1887,9 +1907,7 @@ window.saveSoundPreferences = function() {
 };
 
 /**
- * ============================================================================
- * 4. РАЗДЕЛЬНАЯ АУДИО-СИСТЕМА: БУДИЛЬНИК И АЗАН (БЕЗ ДВОЙНОГО ЗВУКА УВЕДОМЛЕНИЙ)
- * ============================================================================
+ * 4. РАЗДЕЛЬНАЯ АУДИО-СИСТЕМА: БУДИЛЬНИК И АЗАН
  */
 function ensureAudioContext() {
     if (!audioCtx) {
@@ -1941,7 +1959,6 @@ function playSynthPattern(type) {
             osc.start();
             osc.stop(audioCtx.currentTime + 0.4);
         } else if (type === 'makkah_synth') {
-            // Мягкий духовный аккорд для Азана
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(440, audioCtx.currentTime);
             osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.25);
@@ -1953,7 +1970,6 @@ function playSynthPattern(type) {
             osc.start();
             osc.stop(audioCtx.currentTime + 0.88);
         } else {
-            // siren_fast по умолчанию
             osc.type = "sawtooth";
             osc.frequency.setValueAtTime(880, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
@@ -1969,7 +1985,6 @@ function playSynthPattern(type) {
     } catch (e) {}
 }
 
-// Запуск ТОЛЬКО звука будильника (без системного пиликанья уведомлений)
 function startAlarmAudioLoop() {
     stopAllAudioPlayback();
 
@@ -1986,7 +2001,6 @@ function startAlarmAudioLoop() {
     }
 }
 
-// Запуск ТОЛЬКО Азана при наступлении времени намаза
 function startAdhanAudioPlayback(prayerName) {
     if (!adhanEnabled) return;
     stopAllAudioPlayback();
@@ -2026,9 +2040,7 @@ document.getElementById('btnOpenSoundsQuick').addEventListener('click', () => {
 });
 
 /**
- * ============================================================================
  * 5. ИНИЦИАЛИЗАЦИЯ SUPABASE И ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ
- * ============================================================================
  */
 async function initSupabase() {
     updateOfflineBlockerState(navigator.onLine);
@@ -2226,9 +2238,7 @@ async function fetchAllRoomsFromDb() {
 }
 
 /**
- * ============================================================================
- * 6. REALTIME СИГНАЛЫ И ПРОБУЖДЕНИЕ (БЕЗ ЗВУКА СИСТЕМНЫХ УВЕДОМЛЕНИЙ)
- * ============================================================================
+ * 6. REALTIME СИГНАЛЫ, ПРОБУЖДЕНИЕ И ОТМЕНА ВЫЗОВА
  */
 async function subscribeToSupabaseRealtime() {
     if (!supabaseClient) return;
@@ -2259,9 +2269,19 @@ async function handleIncomingSignal(sig) {
     if (sig.signal_type === 'WAKE_CALL') {
         if (sig.target === 'ALL' || sig.target === myName) {
             if (myStatus !== 'done') {
-                // Запускаем ТОЛЬКО внутренний будильник программы (никаких Notification API со звуком!)
                 triggerAlarm(sig.sender, sig.word);
             }
+        }
+    } else if (sig.signal_type === 'WAKE_CANCEL') {
+        if (sig.target === 'ALL' || sig.target === myName) {
+            stopAllAudioPlayback();
+            document.getElementById('alarmOverlay').classList.remove('active');
+            await upsertMyPresenceInDb({
+                call_state: '',
+                call_word: '',
+                caller_name: ''
+            });
+            showToast(`🛑 ${sig.sender} отменил вызов будильника`);
         }
     } else if (sig.signal_type === 'WAKE_RINGING') {
         userCallStates[sig.sender] = {
@@ -2293,29 +2313,35 @@ async function sendSupabaseSignal(signalType, target, word) {
     }]);
 }
 
-window.removeMemberFromRoom = async function(targetUserName) {
-    if (!supabaseClient || !targetUserName) return;
-    await supabaseClient
-        .from('fajr_members')
-        .delete()
-        .eq('room_name', currentRoom.trim())
-        .eq('user_name', targetUserName);
+// Отмена отправленного вызова будильника (для одного участника или для всех сразу)
+window.cancelWakeSignal = async function(targetUser) {
+    const targets = targetUser === 'ALL'
+        ? Object.keys(userCallStates).filter(u => userCallStates[u] && (userCallStates[u].state === 'calling' || userCallStates[u].state === 'ringing'))
+        : [targetUser];
 
-    delete networkUsers[targetUserName];
+    for (const tName of targets) {
+        delete userCallStates[tName];
+        if (supabaseClient) {
+            await supabaseClient
+                .from('fajr_members')
+                .update({ call_state: '', call_word: '', caller_name: '' })
+                .eq('room_name', currentRoom.trim())
+                .eq('user_name', tName);
+        }
+    }
+
     renderMembers();
-    showToast(`Участник ${targetUserName} удален из списка`);
+    await sendSupabaseSignal('WAKE_CANCEL', targetUser, '');
+    showToast(DICTIONARY[currentLang].toastWakeCancelled);
 };
 
 /**
- * ============================================================================
  * 7. ПЕРЕДАЧА ЧИСТО КАРТИНКИ QR-КОДА (БЕЗ ССЫЛОК) И ОТДЕЛЬНО ССЫЛКИ НА ПРОГРАММУ
- * ============================================================================
  */
 async function sharePureQrImageOnly() {
     const qrCanvas = document.querySelector('#qrContainer canvas');
     const qrImg = document.querySelector('#qrContainer img');
 
-    // Рисуем красивую плотную карточку чисто с QR-кодом
     const outCanvas = document.createElement('canvas');
     outCanvas.width = 500;
     outCanvas.height = 560;
@@ -2353,7 +2379,6 @@ async function sharePureQrImageOnly() {
         if (!blob) return;
         const file = new File([blob], `fajr-qr-${currentRoom}.png`, { type: 'image/png' });
 
-        // Передаем ЧИСТО КАРТИНКУ (files: [file]), без поля url и без поля text!
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
@@ -2363,7 +2388,6 @@ async function sharePureQrImageOnly() {
             } catch (e) {}
         }
 
-        // Если запускается на ПК или старом WebView — скачиваем чистую картинку PNG
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `fajr-qr-${currentRoom}.png`;
@@ -2414,7 +2438,6 @@ function generateQR() {
     if (!wrap) return;
     wrap.innerHTML = '';
     
-    // Внутри самого QR зашиты только данные группы для сканера
     const qrPayload = JSON.stringify({ room: currentRoom, pass: roomPass });
     
     try {
@@ -2430,9 +2453,7 @@ function generateQR() {
 }
 
 /**
- * ============================================================================
  * 8. МОДАЛЬНЫЕ ОКНА, СКАНЕР QR И СПИСОК КОМНАТ
- * ============================================================================
  */
 window.switchModalTab = function(tabName) {
     document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
@@ -2569,7 +2590,7 @@ function renderSavedRoomsList() {
             </div>
             <div class="room-actions-cell">
                 ${!isCurrent ? `<button class="btn-enter-room" onclick="selectSavedRoom('${r.name}')">${dict.enterRoomBtn}</button>` : ''}
-                ${!r.permanent ? `<button class="btn-trash-room" title="${dict.deleteBtn}" onclick="deleteRoomByName('${r.name}', event)">✕</button>` : ''}
+                ${(!r.permanent && r.owner === myName) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" onclick="deleteRoomByName('${r.name}', event)">✕</button>` : ''}
             </div>
         `;
         container.appendChild(card);
@@ -2685,9 +2706,7 @@ document.getElementById('inpQrGallery').addEventListener('change', async (e) => 
 });
 
 /**
- * ============================================================================
  * 9. ВЫЗОВ ПО СЛОВУ И АСТРОНОМИЧЕСКИЙ ТАЙМЕР НАМАЗОВ
- * ============================================================================
  */
 function openWakeWordSelector(targetUser) {
     pendingWakeTarget = targetUser;
@@ -2789,7 +2808,6 @@ async function verifyCaptchaAndStop() {
     }
 }
 
-// Авто-пульс каждые 6 секунд + контроль связи
 setInterval(() => {
     updateOfflineBlockerState(navigator.onLine);
     if (supabaseClient && myName && navigator.onLine) {
@@ -2798,7 +2816,6 @@ setInterval(() => {
     }
 }, 6000);
 
-// Проверка обновлений index.html на GitHub каждые 3 минуты
 setInterval(() => {
     checkForGithubIndexUpdate(false);
 }, 180000);
@@ -2829,6 +2846,7 @@ function setLanguage(lang) {
     document.getElementById('txtStatusPrefix').innerText = dict.statusPrefix;
     document.getElementById('txtStateSub').innerText = dict.changeStatus;
     document.getElementById('txtWakeAll').innerText = dict.wakeAll;
+    document.getElementById('txtCancelAll').innerText = dict.cancelAllBtn;
     document.getElementById('txtMembersTitle').innerText = dict.members;
     document.getElementById('txtRoomTtlLabel').innerText = dict.roomTtlLabel;
     document.getElementById('txtShareRoomBtn').innerText = dict.shareRoomBtn;
@@ -2909,6 +2927,8 @@ function renderMembers() {
     const dict = DICTIONARY[currentLang];
     document.getElementById('lblUserCount').innerText = `${keys.length} ${dict.peopleUnit}`;
 
+    let hasActiveCalls = false;
+
     keys.forEach(username => {
         const u = networkUsers[username];
         const callInfo = userCallStates[username];
@@ -2917,6 +2937,11 @@ function renderMembers() {
 
         let extraRowClass = '';
         let callStatusHtml = '';
+        const isCurrentlyCalling = callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing');
+
+        if (isCurrentlyCalling && u.name !== myName) {
+            hasActiveCalls = true;
+        }
 
         if (callInfo) {
             if (callInfo.state === 'calling') {
@@ -2938,14 +2963,14 @@ function renderMembers() {
         if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
 
-        const actionBtnHtml = (u.name !== myName)
-            ? `<div style="display:flex; align-items:center; gap:6px;">
-                <button class="btn-nudge" onclick="wakeIndividual('${u.name}')">
-                    ${callInfo && (callInfo.state === 'calling' || callInfo.state === 'ringing') ? '<span class="ring-icon">🔔</span>' : '🔔'} ${dict.nudgeBtn}
-                </button>
-                <button class="btn-kick-ghost" title="Удалить из списка" onclick="removeMemberFromRoom('${u.name}')">✕</button>
-               </div>`
-            : '';
+        let actionBtnHtml = '';
+        if (u.name !== myName) {
+            if (isCurrentlyCalling) {
+                actionBtnHtml = `<button class="btn-cancel-nudge" onclick="cancelWakeSignal('${u.name}')">🛑 ${dict.cancelNudgeBtn}</button>`;
+            } else {
+                actionBtnHtml = `<button class="btn-nudge" onclick="wakeIndividual('${u.name}')">🔔 ${dict.nudgeBtn}</button>`;
+            }
+        }
 
         row.innerHTML = `
             <div class="u-left">
@@ -2963,6 +2988,12 @@ function renderMembers() {
         `;
         container.appendChild(row);
     });
+
+    const btnCancelAll = document.getElementById('btnCancelAllCalls');
+    if (btnCancelAll) {
+        if (hasActiveCalls) btnCancelAll.classList.add('show');
+        else btnCancelAll.classList.remove('show');
+    }
 }
 
 window.wakeIndividual = function(name) {
@@ -3187,7 +3218,6 @@ function updatePrayerCycle() {
     const ss = String(totalSec % 60).padStart(2, '0');
     document.getElementById('lblCountdown').innerText = `${hh}:${mm}:${ss}`;
 
-    // Когда наступает время намаза — включается именно Азан (а не сирена со словом!)
     const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     prayers.forEach(p => {
         if (p.isSalah && fmt(p.time) === nowHHMM && lastTriggeredPrayerMinute !== `${p.id}_${nowHHMM}`) {
