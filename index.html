@@ -551,6 +551,8 @@
         }
         .u-online-dot.on { background: #2ed573; box-shadow: 0 0 6px #2ed573; }
         .u-online-dot.off { background: #747d8c; }
+        .b-off { background: rgba(116, 125, 140, 0.2); color: #a4b0be; border: 1px solid rgba(116, 125, 140, 0.4); }
+        .user-item.offline { opacity: 0.6; }
 
         /* Modals Common */
         .modal-overlay {
@@ -1076,8 +1078,9 @@
         <div class="m-label">ПАРОЛЬ АККАУНТА</div>
         <input type="password" class="m-input" id="regUserPass" placeholder="Придумайте или введите пароль">
 
-        <div class="m-label">ГРУППА ДЛЯ ВХОДА</div>
-        <input type="text" class="m-input" id="regRoomName" value="Idlib-Jamaat" placeholder="Название группы">
+<div class="m-label">ГРУППА ДЛЯ ВХОДА</div>
+<select class="m-select" id="regRoomSelect"></select>
+<input type="password" class="m-input" id="regRoomPass" placeholder="Пароль группы" style="display:none">
 
         <button class="btn-primary" id="btnCompleteMandatoryAuth" style="margin-top: 6px;">
             ВОЙТИ В ПРОГРАММУ
@@ -1178,6 +1181,7 @@
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
                 <button onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
             </div>
         </div>
@@ -1420,7 +1424,11 @@ async function ensureSupabaseClient() {
 }
 async function bootAfterReconnect() {
     if (!(await ensureSupabaseClient())) return;
-    if (!myName) { document.getElementById('mandatoryAuthModal').classList.add('open'); return; }
+    if (!myName) {
+        await loadRegRooms();
+        document.getElementById('mandatoryAuthModal').classList.add('open');
+        return;
+    }
     await startOnlineSession();
 }
 function esc(s) {
@@ -2130,7 +2138,7 @@ async function initSupabase() {
     }
 
     if (!myName) {
-        document.getElementById('regRoomName').value = currentRoom;
+        await loadRegRooms();
         document.getElementById('mandatoryAuthModal').classList.add('open');
         return;
     }
@@ -2142,22 +2150,31 @@ async function initSupabase() {
 document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', async () => {
     const uName = document.getElementById('regUserName').value.trim();
     const uPass = document.getElementById('regUserPass').value.trim();
-    const rName = document.getElementById('regRoomName').value.trim() || DEFAULT_ROOM;
+    const rName = document.getElementById('regRoomSelect').value || DEFAULT_ROOM;
+    const rPass = document.getElementById('regRoomPass').value.trim();
 
     if (!uName || !uPass) {
         showToast('Обязательно введите ваше имя и пароль!');
         return;
     }
 
+    if (!(await canJoinRoom(rName, rPass))) {
+        showToast('❌ Неверный пароль группы!');
+        return;
+    }
+
     myName = uName;
     userPass = uPass;
     currentRoom = rName;
+    roomPass = rPass;
 
     localStorage.setItem('fajr_user_name', myName);
     localStorage.setItem('fajr_user_pass', userPass);
     localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+    nativeCall('saveSession', myName, currentRoom, SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('mandatoryAuthModal').classList.remove('open');
+    document.getElementById('inpRoomName').value = currentRoom;
     await startOnlineSession();
     showToast(`Добро пожаловать, ${myName}!`);
 });
@@ -2168,6 +2185,29 @@ async function canJoinRoom(name, pass) {
     if (!data || !data.pass) return true;
     return data.pass === (pass || '');
 }
+
+let regRooms = {};
+async function loadRegRooms() {
+    const sel = document.getElementById('regRoomSelect');
+    regRooms = {};
+    try {
+        const { data } = await supabaseClient.from('fajr_rooms')
+            .select('name,pass,permanent')
+            .order('permanent', { ascending: false })
+            .order('last_active', { ascending: false });
+        (data || []).forEach(r => regRooms[r.name] = r);
+    } catch (e) {}
+    if (!regRooms[DEFAULT_ROOM]) regRooms[DEFAULT_ROOM] = { name: DEFAULT_ROOM, pass: '' };
+    sel.innerHTML = Object.values(regRooms).map(r =>
+        `<option value="${esc(r.name)}">${r.pass ? '🔒 ' : '🌐 '}${esc(r.name)}</option>`).join('');
+    sel.value = regRooms[currentRoom] ? currentRoom : DEFAULT_ROOM;
+    onRegRoomChange();
+}
+function onRegRoomChange() {
+    const r = regRooms[document.getElementById('regRoomSelect').value];
+    document.getElementById('regRoomPass').style.display = (r && r.pass) ? 'block' : 'none';
+}
+document.getElementById('regRoomSelect').addEventListener('change', onRegRoomChange);
 
 async function startOnlineSession() {
     if (!navigator.onLine) {
@@ -2187,6 +2227,7 @@ async function startOnlineSession() {
         await fetchAllRoomsFromDb();
         await fetchRoomMembersFromDb();
         await subscribeToSupabaseRealtime();
+        nativeCall('saveSession', myName, currentRoom.trim(), SUPABASE_URL, SUPABASE_ANON_KEY);
         updateOfflineBlockerState(true);
     } catch (err) {
         updateOfflineBlockerState(false);
@@ -2371,6 +2412,7 @@ async function handleIncomingSignal(sig) {
         if ((sig.target === 'ALL' || sig.target === myName) && (!lastAlarmInitiator || sig.sender === lastAlarmInitiator)) {
             lastAlarmInitiator = '';
             stopAllAudioPlayback();
+            nativeCall('stopAlarm');
             document.getElementById('alarmOverlay').classList.remove('active');
             await upsertMyPresenceInDb({
                 call_state: '',
@@ -2395,6 +2437,11 @@ async function handleIncomingSignal(sig) {
         };
         renderMembers();
         showToast(`✓ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
+    } else if (sig.signal_type === 'KICK') {
+        if (sig.target === myName && currentRoom.trim() !== DEFAULT_ROOM) {
+            showToast('⛔ Вас исключили из группы');
+            await switchActiveRoom(DEFAULT_ROOM, '');
+        }
     }
 }
 
@@ -2702,6 +2749,8 @@ document.getElementById('savedRoomsList').addEventListener('click', (e) => {
     if (sel) selectSavedRoom(sel.dataset.room);
 });
 document.getElementById('usersListContainer').addEventListener('click', (e) => {
+    const k = e.target.closest('[data-kick]');
+    if (k) { kickMember(k.dataset.kick); return; }
     const c = e.target.closest('[data-cancel]');
     if (c) { cancelWakeSignal(c.dataset.cancel); return; }
     const w = e.target.closest('[data-wake]');
@@ -2713,9 +2762,72 @@ document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
     renderSavedRoomsList();
 });
 
+function isOnlineFn(n) {
+    const u = networkUsers[n];
+    return !!u && (Date.now() - (u.lastSeen || 0)) < 90000;
+}
+
+function agoText(ts) {
+    if (!ts) return 'давно';
+    const m = Math.floor((Date.now() - ts) / 60000);
+    if (m < 1) return 'только что';
+    if (m < 60) return m + ' мин назад';
+    if (m < 1440) return Math.floor(m / 60) + ' ч назад';
+    if (m < 43200) return Math.floor(m / 1440) + ' дн назад';
+    return 'давно';
+}
+
+function isOwner() {
+    const r = roomsCache[currentRoom.trim()];
+    return !!r && !!myName && r.owner === myName;
+}
+
+function canAdmin() {
+    return isOwner() && currentRoom.trim() !== DEFAULT_ROOM;
+}
+
+window.adminGroupMenu = async function () {
+    if (!canAdmin() || !supabaseClient) return;
+    const np = prompt('Новый пароль группы (оставьте пустым, чтобы сделать группу открытой):', roomPass || '');
+    if (np === null) return;
+    const clean = np.trim();
+    await supabaseClient.from('fajr_rooms').update({ pass: clean }).eq('name', currentRoom.trim());
+    roomPass = clean;
+    localStorage.setItem('fajr_room_pass', roomPass);
+    await fetchAllRoomsFromDb();
+    generateQR();
+    showToast('✓ Пароль группы обновлён');
+};
+
+window.kickMember = async function (name) {
+    if (!canAdmin() || !supabaseClient || name === myName) return;
+    if (!confirm('Исключить «' + name + '» из группы?')) return;
+    await sendSupabaseSignal('KICK', name, '');
+    await supabaseClient.from('fajr_members').delete()
+        .eq('room_name', currentRoom.trim()).eq('user_name', name);
+    delete networkUsers[name];
+    delete userCallStates[name];
+    renderMembers();
+    showToast('⛔ ' + name + ' исключён из группы');
+};
+
+function nativeCall(method, ...args) {
+    try {
+        const b = window.AndroidBridge || window.Android || window.AlarmBridge || window.AndroidAlarm;
+        if (b && typeof b[method] === 'function') b[method](...args);
+    } catch (e) {}
+}
+
+window.onNativeAlarm = function (sender, word) {
+    triggerAlarm(sender, word);
+};
+
 function updateRoomTtlBanner() {
     const lbl = document.getElementById('lblCurrentRoomTtl');
     if (lbl) lbl.innerText = currentRoom;
+    const adminBtn = document.getElementById('btnAdminGroup');
+    if (adminBtn) adminBtn.style.display = canAdmin() ? 'inline-block' : 'none';
+    renderMembers();
 }
 
 async function applyParsedRoomPayload(rawText) {
@@ -2917,6 +3029,7 @@ async function verifyCaptchaAndStop() {
     const input = document.getElementById('inpCaptchaAnswer').value.trim().toLowerCase();
     if (input === targetCaptchaWord.trim().toLowerCase()) {
         stopAllAudioPlayback();
+        nativeCall('stopAlarm');
         document.getElementById('alarmOverlay').classList.remove('active');
         myStatus = 'awake';
 
@@ -3050,7 +3163,7 @@ function renderMembers() {
     if (!container) return;
     container.innerHTML = '';
 
-    const keys = Object.keys(networkUsers);
+    const keys = Object.keys(networkUsers).sort((a, b) => (isOnlineFn(b) ? 1 : 0) - (isOnlineFn(a) ? 1 : 0));
     const dict = DICTIONARY[currentLang];
     document.getElementById('lblUserCount').innerText = `${keys.length} ${dict.peopleUnit}`;
 
@@ -3060,7 +3173,7 @@ function renderMembers() {
         const u = networkUsers[username];
         const callInfo = userCallStates[username];
         const row = document.createElement('div');
-        const isOnline = (Date.now() - (u.lastSeen || 0)) < 60000;
+        const isOnline = isOnlineFn(username);
 
         let extraRowClass = '';
         let callStatusHtml = '';
@@ -3083,12 +3196,13 @@ function renderMembers() {
             }
         }
 
-        row.className = `user-item ${extraRowClass}`;
+        row.className = `user-item ${extraRowClass} ${isOnline ? '' : 'offline'}`;
 
         let badgeClass = 'b-sleep';
         let badgeTxt = dict.stateSleep;
         if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
+        if (!isOnline) { badgeClass = 'b-off'; badgeTxt = '⚫ НЕ В СЕТИ · ' + agoText(u.lastSeen); }
 
         let actionBtnHtml = '';
         if (u.name !== myName) {
@@ -3097,6 +3211,10 @@ function renderMembers() {
             } else {
                 actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`;
             }
+        }
+
+        if (u.name !== myName && canAdmin()) {
+            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#444; color:#fff; border-color:#666;" data-kick="${esc(u.name)}">⛔</button>`;
         }
 
         row.innerHTML = `
@@ -3219,6 +3337,7 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     localStorage.setItem('fajr_user_name', n);
     userPass = up;
     localStorage.setItem('fajr_user_pass', up);
+    nativeCall('saveSession', myName, currentRoom.trim(), SUPABASE_URL, SUPABASE_ANON_KEY);
 
     await upsertMyPresenceInDb();
     await fetchRoomMembersFromDb();
@@ -3238,7 +3357,9 @@ document.getElementById('btnLogoutProfile').addEventListener('click', async () =
     localStorage.removeItem('fajr_user_pass');
     myName = '';
     userPass = '';
+    nativeCall('clearSession');
     document.getElementById('roomModal').classList.remove('open');
+    await loadRegRooms();
     document.getElementById('mandatoryAuthModal').classList.add('open');
 });
 
