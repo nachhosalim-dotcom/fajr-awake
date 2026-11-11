@@ -1419,12 +1419,24 @@
                 </div>
             </div>
 
-            <div class="m-label" id="lblCreateRoomHeader">СОЗДАТЬ НОВУЮ ГРУППУ</div>
-            <input type="text" class="m-input" id="inpRoomName" placeholder="Имя группы (например: Семья-Нашхо)">
-            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно)">
+<!-- Блок редактирования пароля ТЕКУЩЕЙ группы (для владельца/админа) -->
+            <div id="editCurrentRoomBox" style="display:none; flex-direction:column; gap:8px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.28); border-radius:14px; padding:12px;">
+                <div class="m-label" style="margin-bottom:0;">
+                    <span id="lblEditCurrentRoomTitle">🔐 ПАРОЛЬ ТЕКУЩЕЙ ГРУППЫ</span>
+                    <b id="lblEditCurrentRoomName" style="color:var(--gold-accent);"></b>
+                </div>
+                <input type="text" class="m-input" id="inpEditCurrentRoomPass" placeholder="Новый пароль (пусто = открытая группа)">
+                <button class="btn-primary" id="btnUpdateCurrentRoomPass" style="background:linear-gradient(135deg, #e5c158, #b38728); color:#060908; border-color:rgba(229,193,88,0.5);">
+                    💾 СОХРАНИТЬ ПАРОЛЬ ЭТОЙ ГРУППЫ
+                </button>
+            </div>
+
+            <div class="m-label" id="lblCreateRoomHeader">➕ СОЗДАТЬ НОВУЮ ГРУППУ</div>
+            <input type="text" class="m-input" id="inpRoomName" placeholder="Имя новой группы (например: Семья-Нашхо)">
+            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль для новой группы (необязательно)">
 
             <button class="btn-primary" id="btnSaveRoomOnly">
-                <span id="txtSaveBtn">СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ</span>
+                <span id="txtSaveBtn">СОЗДАТЬ НОВУЮ ГРУППУ</span>
             </button>
         </div>
 
@@ -2975,8 +2987,21 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     showToast(`Добро пожаловать, ${myName}!`);
 });
 
-// Вход без регистрации — только смотреть. Участие (статус, будильники, отметки) недоступно.
+// Вход без регистрации — только смотреть. В закрытую группу без пароля наблюдатель войти НЕ может!
 document.getElementById('btnBrowseAsGuest').addEventListener('click', async () => {
+    const rName = document.getElementById('regRoomSelect').value || DEFAULT_ROOM;
+    const rPass = document.getElementById('regRoomPass').value.trim();
+
+    if (!(await canJoinRoom(rName, rPass, true))) {
+        showToast('🔒 Эта группа закрыта паролем! Введите верный пароль группы.');
+        return;
+    }
+
+    currentRoom = rName;
+    roomPass = rPass;
+    localStorage.setItem('fajr_room_name', currentRoom);
+    localStorage.setItem('fajr_room_pass', roomPass);
+
     isGuest = true;
     localStorage.setItem('fajr_guest', '1');
     document.getElementById('mandatoryAuthModal').classList.remove('open');
@@ -2984,12 +3009,12 @@ document.getElementById('btnBrowseAsGuest').addEventListener('click', async () =
     showToast('👀 Режим наблюдателя. Чтобы участвовать — зарегистрируйтесь.');
 });
 
-async function canJoinRoom(name, pass) {
+async function canJoinRoom(name, pass, strictCheck = false) {
     if (!supabaseClient) return true;
-    if (isSuperAdmin) return true;
+    if (isSuperAdmin && !strictCheck && !isGuest) return true;
     const { data } = await supabaseClient.from('fajr_rooms').select('pass').eq('name', name.trim()).maybeSingle();
     if (!data || !data.pass) return true;
-    return data.pass === (pass || '');
+    return data.pass === (pass || '').trim();
 }
 
 // Пароли групп, которые человек уже вводил сам, храним только у него в localStorage —
@@ -3058,16 +3083,15 @@ async function startOnlineSession() {
                 return;
             }
             await checkSuperAdmin();
-            if (!(await canJoinRoom(currentRoom, roomPass))) {
-                showToast('❌ Неверный пароль группы!');
-                currentRoom = DEFAULT_ROOM; roomPass = '';
-                localStorage.setItem('fajr_room_name', currentRoom);
-                localStorage.setItem('fajr_room_pass', '');
-            }
         }
-        // Группа из прошлого сеанса могла быть удалена. Раньше ensureRoomExistsInDb молча создавал её заново
-        // «ничьей» — получалось, что удалить группу нельзя: она возвращалась при первом же запуске у любого участника.
-        // Исключение — вход по ссылке-приглашению: там группа создаётся на лету, как и задумано.
+        // Проверяем пароль группы И для обычного участника, И для наблюдателя (гостя)!
+        if (!(await canJoinRoom(currentRoom, roomPass, isGuest))) {
+            showToast('🔒 Группа защищена паролем! Переключено на основную группу.');
+            currentRoom = DEFAULT_ROOM; roomPass = '';
+            localStorage.setItem('fajr_room_name', currentRoom);
+            localStorage.setItem('fajr_room_pass', '');
+        }
+        // Группа из прошлого сеанса могла быть удалена.
         let invitedRoom = '';
         try { invitedRoom = sessionStorage.getItem('fajr_invited_room') || ''; } catch (e) {}
         const isInvitedRoom = urlParams.has('room') || (!!invitedRoom && sameName(invitedRoom, currentRoom));
@@ -3103,26 +3127,33 @@ async function startOnlineSession() {
 async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
     if (!supabaseClient || !rName) return;
     const cleanRoom = rName.trim();
+    const cleanPass = (rPass || '').trim();
     const isPerm = cleanRoom === DEFAULT_ROOM || cleanRoom === 'Global-Zone';
 
     const { data: existing } = await supabaseClient
         .from('fajr_rooms')
-        .select('name')
+        .select('name,owner,pass')
         .eq('name', cleanRoom)
         .maybeSingle();
 
     if (!existing) {
         await supabaseClient.from('fajr_rooms').insert([{
             name: cleanRoom,
-            pass: rPass || '',
+            pass: cleanPass,
             owner: isNewOwner ? (myName || 'USER') : 'USER',
             permanent: isPerm,
             last_active: new Date().toISOString()
         }]);
     } else {
+        const upd = { last_active: new Date().toISOString() };
+        // Если создатель/админ задаёт пароль через форму создания/редактирования — реально сохраняем пароль в БД!
+        if (isNewOwner && cleanRoom !== DEFAULT_ROOM && (isSuperAdmin || sameName(existing.owner, myName) || existing.owner === 'USER')) {
+            upd.pass = cleanPass;
+            if (myName && existing.owner === 'USER') upd.owner = myName.trim();
+        }
         await supabaseClient
             .from('fajr_rooms')
-            .update({ last_active: new Date().toISOString() })
+            .update(upd)
             .eq('name', cleanRoom);
     }
 }
@@ -3590,9 +3621,22 @@ window.switchModalTab = function(tabName) {
         document.getElementById('panelTabRooms').classList.add('active');
         fetchAllRoomsFromDb();
         renderSavedRoomsList();
-    } else if (tabName === 'create') {
+} else if (tabName === 'create') {
         document.getElementById('tabBtnCreate').classList.add('active');
         document.getElementById('panelTabCreate').classList.add('active');
+        // Показываем блок редактирования пароля текущей группы (если мы админ или владелец этой группы)
+        const editBox = document.getElementById('editCurrentRoomBox');
+        if (editBox) {
+            const canEditPass = !isGuest && (isSuperAdmin || (canAdmin() && currentRoom.trim() !== DEFAULT_ROOM));
+            editBox.style.display = canEditPass ? 'flex' : 'none';
+            const lblName = document.getElementById('lblEditCurrentRoomName');
+            if (lblName) lblName.innerText = currentRoom.trim();
+            const inpEditPass = document.getElementById('inpEditCurrentRoomPass');
+            if (inpEditPass) inpEditPass.value = roomPass || '';
+        }
+        // Поля «Создать новую группу» всегда оставляем ЧИСТЫМИ, чтобы не путать с редактированием текущей!
+        document.getElementById('inpRoomName').value = '';
+        document.getElementById('inpRoomPass').value = '';
         generateQR();
     } else if (tabName === 'sounds') {
         document.getElementById('tabBtnSounds').classList.add('active');
@@ -3627,24 +3671,22 @@ window.selectSavedRoom = async function(rName) {
     const room = roomsCache[rName];
     if (!room) return;
 
-    // Пароль спрашиваем только у человека: в кэше чужих паролей нет. Уже введённый ранее пароль
-    // своей группы берём из localStorage, чтобы не спрашивать повторно.
-    let passToUse = getSavedRoomPass(room.name);
-    if (room.hasPass && room.name !== currentRoom && !isSuperAdmin) {
-        // Сохранённый пароль мог устареть (админ группы сменил его) — проверяем на стороне БД.
-        if (passToUse && !(await canJoinRoom(room.name, passToUse))) {
+    // У наблюдателя (гостя) НЕ берём чужой сохранённый пароль из localStorage — всегда спрашиваем пароль!
+    let passToUse = isGuest ? '' : getSavedRoomPass(room.name);
+    if (room.hasPass && room.name !== currentRoom && (!isSuperAdmin || isGuest)) {
+        if (passToUse && !(await canJoinRoom(room.name, passToUse, true))) {
             rememberRoomPass(room.name, '');
             passToUse = '';
         }
         if (!passToUse) {
-            const entered = prompt(`Группа "${rName}" защищена паролем. Введите пароль:`);
+            const entered = prompt(`🔒 Группа "${rName}" закрыта паролем. Введите пароль:`);
             if (entered === null) return;
-            if (!(await canJoinRoom(room.name, entered))) {   // проверка на стороне БД, без сравнения с кэшем
+            if (!(await canJoinRoom(room.name, entered, true))) {
                 showToast('❌ Неверный пароль группы!');
                 return;
             }
             passToUse = entered.trim();
-            rememberRoomPass(room.name, passToUse);
+            if (!isGuest) rememberRoomPass(room.name, passToUse);
         }
     }
 
@@ -4616,16 +4658,59 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
     }
 });
 
+// Кнопка «СОХРАНИТЬ ПАРОЛЬ ЭТОЙ ГРУППЫ» (редактирование существующей группы)
+document.getElementById('btnUpdateCurrentRoomPass').addEventListener('click', async () => {
+    if (requireRegistration()) return;
+    if (!isSuperAdmin && !canAdmin()) {
+        showToast('❌ Только создатель группы или админ может менять пароль!');
+        return;
+    }
+    const newPass = document.getElementById('inpEditCurrentRoomPass').value.trim();
+    const targetRoom = currentRoom.trim();
+    if (!supabaseClient) return;
+
+    const { error } = await supabaseClient
+        .from('fajr_rooms')
+        .update({ pass: newPass, last_active: new Date().toISOString() })
+        .eq('name', targetRoom);
+
+    if (error) {
+        showToast('❌ Ошибка сохранения пароля: ' + error.message);
+        return;
+    }
+
+    roomPass = newPass;
+    localStorage.setItem('fajr_room_pass', roomPass);
+    rememberRoomPass(targetRoom, roomPass);
+    await fetchAllRoomsFromDb();
+    generateQR();
+    showToast(newPass ? `🔒 Группа «${targetRoom}» теперь закрыта паролем!` : `🌐 Группа «${targetRoom}» теперь открытая (без пароля)!`);
+});
+
+// Кнопка «СОЗДАТЬ НОВУЮ ГРУППУ»
 document.getElementById('btnSaveRoomOnly').addEventListener('click', async () => {
     if (requireRegistration()) return;      // создавать группы наблюдатель не может
-    const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
-    const rp = document.getElementById('inpRoomPass').value.trim() || '';
+    const r = document.getElementById('inpRoomName').value.trim();
+    const rp = document.getElementById('inpRoomPass').value.trim();
 
-    if (!(await canJoinRoom(r, rp))) { showToast('❌ Группа уже существует, пароль неверный!'); return; }
+    if (!r) {
+        showToast('Введите название для новой группы!');
+        return;
+    }
+
+    // Проверяем, не существует ли уже группа с таким именем
+    if (supabaseClient) {
+        const { data: existing } = await supabaseClient.from('fajr_rooms').select('name,owner,pass').eq('name', r).maybeSingle();
+        if (existing) {
+            showToast(`⚠️ Группа «${r}» уже существует! Выберите её в списке групп.`);
+            return;
+        }
+    }
+
     await ensureRoomExistsInDb(r, rp, true);
     await switchActiveRoom(r, rp);
     switchModalTab('rooms');
-    showToast(`Группа "${r}" создана!`);
+    showToast(rp ? `🔒 Закрытая группа «${r}» создана!` : `🌐 Открытая группа «${r}» создана!`);
 });
 
 document.getElementById('btnSaveProfileOnly').addEventListener('click', async () => {
