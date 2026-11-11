@@ -39,6 +39,7 @@
             color: var(--text-primary);
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -572,6 +573,7 @@
             width: 100%;
             max-width: 440px;
             max-height: 92vh;
+            max-height: 92dvh;
             background: linear-gradient(160deg, #072517 0%, #03130b 100%);
             border: 1px solid var(--emerald-border);
             border-radius: 24px;
@@ -581,7 +583,8 @@
             gap: 12px;
             position: relative;
             box-shadow: 0 24px 60px rgba(0,0,0,0.85);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .modal-close {
@@ -915,7 +918,7 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: radial-gradient(circle, #59040e 0%, #0d0103 100%);
-            z-index: 99999;
+            z-index: 250000;
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -1029,7 +1032,7 @@
             font-size: 12px;
             font-weight: 700;
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            z-index: 100000;
+            z-index: 260000;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center;
             max-width: 90%;
@@ -1049,7 +1052,7 @@
     <div class="offline-desc" id="txtOfflineDesc">
         Для работы сети будильника AL-FAJR требуется интернет. Пожалуйста, включите Wi-Fi или мобильные данные — экран разблокируется автоматически.
     </div>
-    <button class="btn-primary" onclick="checkInternetAndReconnect()">ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС</button>
+    <button class="btn-primary" id="txtOfflineBtn" onclick="checkInternetAndReconnect()">ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС</button>
 </div>
 
 <!-- ВСПЛЫВАЮЩИЙ ПЛЕЕР АЗАНА (ОТДЕЛЬНО ОТ БУДИЛЬНИКА) -->
@@ -1058,10 +1061,10 @@
         <span style="font-size:26px;">🕌</span>
         <div>
             <div style="font-size:13px; font-weight:800; color:var(--gold-accent);" id="adhanTitleText">ВРЕМЯ НАМАЗА (АЗАН)</div>
-            <div style="font-size:11px; color:#dcdde1;">Звучит призыв на молитву</div>
+            <div style="font-size:11px; color:#dcdde1;" id="adhanSubText">Звучит призыв на молитву</div>
         </div>
     </div>
-    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" onclick="stopAdhanPlayback()">СТОП</button>
+    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" id="adhanStopBtn" onclick="stopAdhanPlayback()">СТОП</button>
 </div>
 
 <!-- 0. ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ ПРИ ПЕРВОМ ВХОДЕ -->
@@ -1180,7 +1183,7 @@
         <div class="members-head">
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <button onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
                 <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
             </div>
@@ -1372,7 +1375,7 @@
     <div class="captcha-box">
         <div style="font-size: 11px; color: #ffccd5; margin-bottom: 4px;" id="txtCaptchaPrompt">Чтобы выключить звук, введите присланное слово:</div>
         <div class="captcha-challenge" id="lblTargetWord">ПРОСЫПАЙСЯ</div>
-        <input type="text" class="captcha-input" id="inpCaptchaAnswer" placeholder="..." autocomplete="off">
+        <input type="text" class="captcha-input" id="inpCaptchaAnswer" placeholder="..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
     </div>
 
     <button class="btn-confirm-awake" id="btnVerifyAwake">
@@ -1384,7 +1387,13 @@
 
 <script>
 (function () {
+    // Красная панель ошибок — только для отладки: открыть страницу с ?debug=1
+    // (или localStorage.fajr_debug = '1'). Обычным пользователям она не показывается.
+    var DEBUG = false;
+    try { DEBUG = /[?&]debug=1/.test(location.search) || localStorage.getItem('fajr_debug') === '1'; } catch (e) {}
     function show(msg) {
+        try { console.error('[fajr] ' + msg); } catch (e) {}
+        if (!DEBUG) return;
         try {
             var b = document.getElementById('fajrErrBar');
             if (!b) {
@@ -1470,6 +1479,39 @@ async function bootAfterReconnect() {
 function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+function sha256Hex(str) {
+    const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    const H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    const utf8 = unescape(encodeURIComponent(str));
+    const l = utf8.length;
+    const words = [];
+    for (let i = 0; i < l; i++) words[i >> 2] = (words[i >> 2] | 0) | (utf8.charCodeAt(i) << (24 - (i % 4) * 8));
+    words[l >> 2] = (words[l >> 2] | 0) | (0x80 << (24 - (l % 4) * 8));
+    words[(((l + 8) >> 6) + 1) * 16 - 1] = l * 8;
+    const w = new Array(64);
+    for (let j = 0; j < words.length; j += 16) {
+        let a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+        for (let i = 0; i < 64; i++) {
+            if (i < 16) w[i] = words[j + i] | 0;
+            else {
+                const x = w[i - 15], y = w[i - 2];
+                const s0 = ((x >>> 7) | (x << 25)) ^ ((x >>> 18) | (x << 14)) ^ (x >>> 3);
+                const s1 = ((y >>> 17) | (y << 15)) ^ ((y >>> 19) | (y << 13)) ^ (y >>> 10);
+                w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+            }
+            const S1 = ((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7));
+            const t1 = (h + S1 + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0;
+            const S0 = ((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10));
+            const t2 = (S0 + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+            h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+        }
+        H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0;
+        H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+}
+// Хеш одинаковый и с crypto.subtle, и без него (http://, старые WebView) — иначе проверка админа
+// на разных устройствах давала бы разные результаты.
 async function hashSecret(s) {
     if (!s) return '';
     try {
@@ -1478,8 +1520,12 @@ async function hashSecret(s) {
             return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
     } catch (e) {}
-    let x = 5381; for (let i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0;
-    return 'h' + x.toString(16);
+    return sha256Hex('fajr:' + s);
+}
+function validateUserName(n) {
+    if (/^user_/i.test(n)) return 'Имя не должно начинаться с «user_» — такие участники скрываются из списка';
+    if (n.length > 32) return 'Имя слишком длинное (максимум 32 символа)';
+    return '';
 }
 
 const DICTIONARY = {
@@ -1553,6 +1599,14 @@ const DICTIONARY = {
         callSending: 'Отправка сигнала...',
         callRinging: 'Звенит сирена! Ждем слово:',
         callReplied: 'Проснулся! Ответил:',
+        offlineTitle: 'НЕТ ПОДКЛЮЧЕНИЯ К ИНТЕРНЕТУ',
+        offlineDesc: 'Для работы сети будильника AL-FAJR требуется интернет. Включите Wi-Fi или мобильные данные — экран разблокируется автоматически.',
+        offlineBtn: 'ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС',
+        adhanTitle: 'ВРЕМЯ НАМАЗА', adhanSub: 'Звучит призыв на молитву', adhanStop: 'СТОП',
+        tabSounds: '🔊 ЗВУКИ', offlineBadge: 'НЕ В СЕТИ',
+        agoNow: 'только что', agoMin: '{n} мин назад', agoHour: '{n} ч назад', agoDay: '{n} дн назад', agoLong: 'давно',
+        noRooms: 'Группы не найдены', createdByMembers: 'Создана участниками',
+        refreshBtn: '🔄 Обновить', adminBtn: '👑 Админ',
         words: ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан']
     },
     ar: {
@@ -1625,6 +1679,14 @@ const DICTIONARY = {
         callSending: 'جاري إرسال الرنين...',
         callRinging: 'يرن المنبه الآن! الكلمة:',
         callReplied: 'استيقظ! رد بالكلمة:',
+        offlineTitle: 'لا يوجد اتصال بالإنترنت',
+        offlineDesc: 'يحتاج AL-FAJR إلى الإنترنت ليعمل. فعّل الواي فاي أو بيانات الجوال — وستُفتح الشاشة تلقائياً.',
+        offlineBtn: 'تحقق من الاتصال الآن',
+        adhanTitle: 'وقت الصلاة', adhanSub: 'يُرفع الآن الأذان', adhanStop: 'إيقاف',
+        tabSounds: '🔊 الأصوات', offlineBadge: 'غير متصل',
+        agoNow: 'الآن', agoMin: 'منذ {n} د', agoHour: 'منذ {n} س', agoDay: 'منذ {n} يوم', agoLong: 'منذ فترة طويلة',
+        noRooms: 'لم يتم العثور على مجموعات', createdByMembers: 'أنشأها الأعضاء',
+        refreshBtn: '🔄 تحديث', adminBtn: '👑 المشرف',
         words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
     },
     tr: {
@@ -1697,6 +1759,14 @@ const DICTIONARY = {
         callSending: 'Sinyal gönderiliyor...',
         callRinging: 'Alarm çalıyor! Kelime:',
         callReplied: 'Uyandı! Cevabı:',
+        offlineTitle: 'İNTERNET BAĞLANTISI YOK',
+        offlineDesc: 'AL-FAJR\'ın çalışması için internet gerekir. Wi-Fi veya mobil veriyi açın — ekran otomatik olarak açılır.',
+        offlineBtn: 'BAĞLANTIYI ŞİMDİ KONTROL ET',
+        adhanTitle: 'NAMAZ VAKTİ', adhanSub: 'Ezan okunuyor', adhanStop: 'DURDUR',
+        tabSounds: '🔊 SESLER', offlineBadge: 'ÇEVRİMDIŞI',
+        agoNow: 'az önce', agoMin: '{n} dk önce', agoHour: '{n} sa önce', agoDay: '{n} gün önce', agoLong: 'uzun zaman önce',
+        noRooms: 'Grup bulunamadı', createdByMembers: 'Üyeler tarafından oluşturuldu',
+        refreshBtn: '🔄 Yenile', adminBtn: '👑 Yönetici',
         words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
     },
     en: {
@@ -1769,6 +1839,14 @@ const DICTIONARY = {
         callSending: 'Sending signal...',
         callRinging: 'Siren ringing! Word:',
         callReplied: 'Woke up! Replied:',
+        offlineTitle: 'NO INTERNET CONNECTION',
+        offlineDesc: 'AL-FAJR needs internet to work. Turn on Wi-Fi or mobile data — the screen unlocks automatically.',
+        offlineBtn: 'CHECK CONNECTION NOW',
+        adhanTitle: 'PRAYER TIME', adhanSub: 'The call to prayer is playing', adhanStop: 'STOP',
+        tabSounds: '🔊 SOUNDS', offlineBadge: 'OFFLINE',
+        agoNow: 'just now', agoMin: '{n} min ago', agoHour: '{n} h ago', agoDay: '{n} d ago', agoLong: 'long ago',
+        noRooms: 'No groups found', createdByMembers: 'Created by members',
+        refreshBtn: '🔄 Refresh', adminBtn: '👑 Admin',
         words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
     }
 };
@@ -1778,7 +1856,13 @@ let realtimeChannel = null;
 const DEFAULT_ROOM = 'Idlib-Jamaat';
 
 let currentLang = localStorage.getItem('fajr_lang') || 'ru';
-let userCoords = JSON.parse(localStorage.getItem('fajr_coords')) || { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
+let userCoords = (() => {
+    try {
+        const c = JSON.parse(localStorage.getItem('fajr_coords'));
+        if (c && isFinite(c.lat) && isFinite(c.lng)) return c;
+    } catch (e) {}
+    return { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
+})();
 
 let savedName = (localStorage.getItem('fajr_user_name') || '').trim();
 if (savedName.toLowerCase().startsWith('user_')) {
@@ -1795,6 +1879,18 @@ try {
     if (st && Date.now() - st.t < 4 * 3600 * 1000 && ['sleep', 'awake', 'done'].includes(st.s)) myStatus = st.s;
 } catch (e) {}
 function saveMyStatus() { localStorage.setItem('fajr_my_status', JSON.stringify({ s: myStatus, t: Date.now() })); }
+// Единая точка смены статуса: сохраняет, сразу перерисовывает кнопки и отправляет в группу.
+function setMyStatus(next) {
+    myStatus = next;
+    saveMyStatus();
+    const extra = {};
+    const cs = userCallStates[myName];
+    if (cs && cs.state === 'replied') {            // убираем устаревшее «Проснулся! Ответил…»
+        extra.call_state = ''; extra.call_word = ''; extra.caller_name = '';
+        delete userCallStates[myName];
+    }
+    upsertMyPresenceInDb(extra);
+}
 let adhanTimeoutId = null;
 
 let targetCaptchaWord = '';
@@ -1828,6 +1924,9 @@ if (urlParams.has('room')) {
     roomPass = urlParams.get('pass') || '';
     localStorage.setItem('fajr_room_name', currentRoom);
     localStorage.setItem('fajr_room_pass', roomPass);
+    // убираем параметры из адреса (иначе пароль группы светится в адресной строке,
+    // а после смены группы перезагрузка вернула бы в старую)
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
 }
 
 /**
@@ -2125,7 +2224,7 @@ function startAdhanAudioPlayback(prayerName) {
     if (document.getElementById('alarmOverlay').classList.contains('active')) return;
     stopAllAudioPlayback();
 
-    document.getElementById('adhanTitleText').innerText = `ВРЕМЯ НАМАЗА: ${prayerName.toUpperCase()}`;
+    document.getElementById('adhanTitleText').innerText = `${DICTIONARY[currentLang].adhanTitle}: ${prayerName.toUpperCase()}`;
     document.getElementById('adhanOverlay').classList.add('active');
 
     if (adhanSoundType === 'custom_adhan' && customAdhanDataUrl) {
@@ -2151,7 +2250,7 @@ window.testSelectedAlarmSound = function() {
 };
 
 window.testSelectedAdhanSound = function() {
-    startAdhanAudioPlayback('ФАДЖР');
+    startAdhanAudioPlayback(DICTIONARY[currentLang].fajr);
 };
 
 document.getElementById('btnOpenSoundsQuick').addEventListener('click', () => {
@@ -2195,6 +2294,8 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
         showToast('Обязательно введите ваше имя и пароль!');
         return;
     }
+    const nameErr = validateUserName(uName);
+    if (nameErr) { showToast(nameErr); return; }
 
     if (!(await canJoinRoom(rName, rPass))) {
         showToast('❌ Неверный пароль группы!');
@@ -2229,6 +2330,7 @@ async function canJoinRoom(name, pass) {
 let regRooms = {};
 async function loadRegRooms() {
     const sel = document.getElementById('regRoomSelect');
+    const prev = sel.value;   // не сбрасываем выбор, если список перезагружается (например, после восстановления сети)
     regRooms = {};
     try {
         const { data } = await supabaseClient.from('fajr_rooms')
@@ -2240,12 +2342,18 @@ async function loadRegRooms() {
     if (!regRooms[DEFAULT_ROOM]) regRooms[DEFAULT_ROOM] = { name: DEFAULT_ROOM, pass: '' };
     sel.innerHTML = Object.values(regRooms).map(r =>
         `<option value="${esc(r.name)}">${r.pass ? '🔒 ' : '🌐 '}${esc(r.name)}</option>`).join('');
-    sel.value = regRooms[currentRoom] ? currentRoom : DEFAULT_ROOM;
+    sel.value = regRooms[prev] ? prev : (regRooms[currentRoom] ? currentRoom : DEFAULT_ROOM);
     onRegRoomChange();
+    // пришли по ссылке-приглашению с паролем — подставляем его, чтобы не вводить вручную
+    const rp = document.getElementById('regRoomPass');
+    if (!rp.value && roomPass && sel.value === currentRoom) rp.value = roomPass;
 }
 function onRegRoomChange() {
-    const r = regRooms[document.getElementById('regRoomSelect').value];
-    document.getElementById('regRoomPass').style.display = (r && r.pass) ? 'block' : 'none';
+    const name = document.getElementById('regRoomSelect').value;
+    const r = regRooms[name];
+    const rp = document.getElementById('regRoomPass');
+    rp.style.display = (r && r.pass) ? 'block' : 'none';
+    if (name !== currentRoom) rp.value = '';
 }
 document.getElementById('regRoomSelect').addEventListener('change', onRegRoomChange);
 
@@ -2263,6 +2371,18 @@ async function startOnlineSession() {
             currentRoom = DEFAULT_ROOM; roomPass = '';
             localStorage.setItem('fajr_room_name', currentRoom);
             localStorage.setItem('fajr_room_pass', '');
+        }
+        // Группа из прошлого сеанса могла быть удалена. Раньше ensureRoomExistsInDb молча создавал её заново
+        // «ничьей» — получалось, что удалить группу нельзя: она возвращалась при первом же запуске у любого участника.
+        // Исключение — вход по ссылке-приглашению: там группа создаётся на лету, как и задумано.
+        if (currentRoom.trim() !== DEFAULT_ROOM && !urlParams.has('room')) {
+            const chk = await supabaseClient.from('fajr_rooms').select('name').eq('name', currentRoom.trim()).maybeSingle();
+            if (!chk.error && !chk.data) {
+                showToast('⛔ Группа «' + currentRoom.trim() + '» больше не существует. Вы в основной группе');
+                currentRoom = DEFAULT_ROOM; roomPass = '';
+                localStorage.setItem('fajr_room_name', currentRoom);
+                localStorage.setItem('fajr_room_pass', '');
+            }
         }
         await ensureRoomExistsInDb(currentRoom, roomPass, false);
         await upsertMyPresenceInDb();
@@ -2307,11 +2427,10 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
 let isSyncingPresence = false;
 let pendingPresenceExtra = null;
 async function upsertMyPresenceInDb(extraFields = {}) {
-    saveMyStatus();
-    if (!myName || !supabaseClient || !navigator.onLine || isBanned) {
-        renderUI();
-        return;
-    }
+    // Раньше renderUI() вызывался только офлайн — онлайн кнопки «СТАТУС» и «НАМАЗ СОВЕРШЕН» не менялись.
+    if (myName && networkUsers[myName]) networkUsers[myName].status = myStatus;
+    renderUI();
+    if (!myName || !supabaseClient || !navigator.onLine || isBanned) return;
     if (isSyncingPresence) {
         pendingPresenceExtra = { ...(pendingPresenceExtra || {}), ...extraFields };
         return;
@@ -2327,8 +2446,8 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             user_name: cleanUser,
             user_pass: await hashSecret(userPass),
             status: myStatus,
-            lat: userCoords.lat,
-            lng: userCoords.lng,
+            lat: Math.round(userCoords.lat * 100) / 100,   // ~1 км: точные координаты в общую базу не отправляем
+            lng: Math.round(userCoords.lng * 100) / 100,
             last_seen: new Date().toISOString(),
             ...extraFields
         };
@@ -2414,6 +2533,13 @@ async function fetchAllRoomsFromDb() {
         });
         renderSavedRoomsList();
         updateRoomTtlBanner();
+
+        // Группу, в которой мы сидим, удалил админ/владелец — возвращаем в основную, а не оставляем «в пустоте»
+        const cur = currentRoom.trim();
+        if (data.length > 0 && !roomSwitchInProgress && cur !== DEFAULT_ROOM && !roomsCache[cur]) {
+            showToast('⛔ Группа «' + cur + '» удалена. Вы возвращены в основную группу');
+            await switchActiveRoom(DEFAULT_ROOM, '');
+        }
     }
 }
 
@@ -2525,9 +2651,23 @@ window.cancelWakeSignal = async function(targetUser) {
 /**
  * 7. ПЕРЕДАЧА ЧИСТО КАРТИНКИ QR-КОДА (БЕЗ ССЫЛОК) И ОТДЕЛЬНО ССЫЛКИ НА ПРОГРАММУ
  */
+function roomQrPayload() { return JSON.stringify({ room: currentRoom, pass: roomPass }); }
+
 async function sharePureQrImageOnly() {
-    const qrCanvas = document.querySelector('#qrContainer canvas');
-    const qrImg = document.querySelector('#qrContainer img');
+    if (!(await loadLib('qrcode', () => typeof QRCode !== 'undefined'))) {
+        showToast('⚠️ Не удалось загрузить генератор QR. Проверьте интернет');
+        return;
+    }
+    // Рисуем QR в натуральный размер 320×320 — раньше маленький 140×140 растягивался и расплывался,
+    // из-за чего такую картинку плохо считывал сканер.
+    const holder = document.createElement('div');
+    holder.style.cssText = 'position:fixed;left:-9999px;top:0;';
+    document.body.appendChild(holder);
+    let qrSource = null;
+    try {
+        new QRCode(holder, { text: roomQrPayload(), width: 320, height: 320, colorDark: '#020705', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+        qrSource = holder.querySelector('canvas') || holder.querySelector('img');
+    } catch (e) {}
 
     const outCanvas = document.createElement('canvas');
     outCanvas.width = 500;
@@ -2536,27 +2676,25 @@ async function sharePureQrImageOnly() {
 
     ctx.fillStyle = '#041f13';
     ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
-
     ctx.strokeStyle = '#2ed573';
     ctx.lineWidth = 6;
     ctx.strokeRect(14, 14, outCanvas.width - 28, outCanvas.height - 28);
 
+    ctx.textAlign = 'center';
     ctx.fillStyle = '#2ed573';
     ctx.font = 'bold 26px sans-serif';
-    ctx.textAlign = 'center';
     ctx.fillText('AL-FAJR AWAKE', 250, 62);
 
+    const title = `ГРУППА: ${currentRoom}`;
+    let px = 22;
+    do { ctx.font = `bold ${px}px sans-serif`; px--; } while (ctx.measureText(title).width > 440 && px > 11);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillText(`ГРУППА: ${currentRoom}`, 250, 98);
+    ctx.fillText(title, 250, 98);
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(70, 125, 360, 360);
-
-    const drawSource = qrCanvas || qrImg;
-    if (drawSource) {
-        ctx.drawImage(drawSource, 90, 145, 320, 320);
-    }
+    if (qrSource) ctx.drawImage(qrSource, 90, 145, 320, 320);
+    try { document.body.removeChild(holder); } catch (e) {}
 
     ctx.fillStyle = '#a4b0be';
     ctx.font = 'bold 15px sans-serif';
@@ -2564,20 +2702,21 @@ async function sharePureQrImageOnly() {
 
     outCanvas.toBlob(async (blob) => {
         if (!blob) return;
-        const file = new File([blob], `fajr-qr-${currentRoom}.png`, { type: 'image/png' });
+        const safeName = currentRoom.replace(/[\\/:*?"<>|\s]+/g, '_');
+        const file = new File([blob], `fajr-qr-${safeName}.png`, { type: 'image/png' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
-                await navigator.share({
-                    files: [file]
-                });
+                await navigator.share({ files: [file] });
                 return;
-            } catch (e) {}
+            } catch (e) {
+                if (e && e.name === 'AbortError') return;   // человек закрыл окно «Поделиться» — ничего не скачиваем
+            }
         }
 
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `fajr-qr-${currentRoom}.png`;
+        link.download = `fajr-qr-${safeName}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -2594,7 +2733,10 @@ function shareApkLink() {
             title: dict.shareApkTitle,
             text: msg,
             url: GITHUB_APK_URL
-        }).catch(() => copyTextFallback(GITHUB_APK_URL, dict.toastApkCopied));
+        }).catch((e) => {
+            if (e && e.name === 'AbortError') return;
+            copyTextFallback(GITHUB_APK_URL, dict.toastApkCopied);
+        });
     } else {
         copyTextFallback(GITHUB_APK_URL, dict.toastApkCopied);
     }
@@ -2626,7 +2768,7 @@ async function generateQR() {
     if (!(await loadLib('qrcode', () => typeof QRCode !== 'undefined'))) return;
     wrap.innerHTML = '';
     
-    const qrPayload = JSON.stringify({ room: currentRoom, pass: roomPass });
+    const qrPayload = roomQrPayload();
     
     try {
         new QRCode(wrap, {
@@ -2671,6 +2813,7 @@ window.deleteRoomByName = async function(rName, event) {
 
     if (supabaseClient) {
         await supabaseClient.from('fajr_rooms').delete().eq('name', rName);
+        try { await supabaseClient.from('fajr_members').delete().eq('room_name', rName); } catch (e) {}
     }
     delete roomsCache[rName];
 
@@ -2699,32 +2842,41 @@ window.selectSavedRoom = async function(rName) {
     document.getElementById('roomModal').classList.remove('open');
 };
 
+let roomSwitchInProgress = false;
 async function switchActiveRoom(newRoomName, newRoomPass) {
     const cleanNew = (newRoomName || DEFAULT_ROOM).trim();
-    if (supabaseClient && currentRoom && currentRoom !== cleanNew && myName) {
-        await supabaseClient
-            .from('fajr_members')
-            .delete()
-            .eq('room_name', currentRoom.trim())
-            .eq('user_name', myName.trim());
+    roomSwitchInProgress = true;
+    try {
+        if (supabaseClient && currentRoom && currentRoom !== cleanNew && myName) {
+            await supabaseClient
+                .from('fajr_members')
+                .delete()
+                .eq('room_name', currentRoom.trim())
+                .eq('user_name', myName.trim());
+        }
+
+        currentRoom = cleanNew;
+        roomPass = newRoomPass || '';
+        localStorage.setItem('fajr_room_name', currentRoom);
+        localStorage.setItem('fajr_room_pass', roomPass);
+        // Фоновый сервис в приложении слушает группу из сохранённой сессии — без этого после смены
+        // группы будильник приходил бы из старой группы, а не из новой.
+        nativeCall('saveSession', myName, currentRoom, SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.getElementById('inpRoomName').value = currentRoom;
+        document.getElementById('inpRoomPass').value = roomPass;
+
+        userCallStates = {};
+        await ensureRoomExistsInDb(currentRoom, roomPass, false);
+        await upsertMyPresenceInDb({ call_state: '', call_word: '', caller_name: '' });
+        await fetchAllRoomsFromDb();
+        await fetchRoomMembersFromDb();
+        generateQR();
+        renderUI();
+        showToast(`✓ Вы перешли в группу: ${currentRoom}`);
+    } finally {
+        roomSwitchInProgress = false;
     }
-
-    currentRoom = cleanNew;
-    roomPass = newRoomPass || '';
-    localStorage.setItem('fajr_room_name', currentRoom);
-    localStorage.setItem('fajr_room_pass', roomPass);
-
-    document.getElementById('inpRoomName').value = currentRoom;
-    document.getElementById('inpRoomPass').value = roomPass;
-
-    userCallStates = {};
-    await ensureRoomExistsInDb(currentRoom, roomPass, false);
-    await upsertMyPresenceInDb({ call_state: '', call_word: '', caller_name: '' });
-    await fetchAllRoomsFromDb();
-    await fetchRoomMembersFromDb();
-    generateQR();
-    renderUI();
-    showToast(`✓ Вы перешли в группу: ${currentRoom}`);
 }
 
 function renderSavedRoomsList() {
@@ -2749,7 +2901,7 @@ function renderSavedRoomsList() {
     const filtered = keys.filter(k => k.toLowerCase().includes(roomSearchFilter.toLowerCase()));
 
     if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">Группы не найдены</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:24px 10px; font-size:12px; color:var(--text-secondary);">${dict.noRooms}</div>`;
         return;
     }
 
@@ -2773,7 +2925,7 @@ function renderSavedRoomsList() {
                     ${statusBadge}
                 </div>
                 <div class="room-sub-meta">
-                    <span>${r.permanent ? dict.permanentRoom : 'Создана участниками'}</span>
+                    <span>${r.permanent ? dict.permanentRoom : dict.createdByMembers}</span>
                 </div>
             </div>
             <div class="room-actions-cell">
@@ -2813,13 +2965,14 @@ function isOnlineFn(n) {
 }
 
 function agoText(ts) {
-    if (!ts) return 'давно';
+    const d = DICTIONARY[currentLang];
+    if (!ts) return d.agoLong;
     const m = Math.floor((Date.now() - ts) / 60000);
-    if (m < 1) return 'только что';
-    if (m < 60) return m + ' мин назад';
-    if (m < 1440) return Math.floor(m / 60) + ' ч назад';
-    if (m < 43200) return Math.floor(m / 1440) + ' дн назад';
-    return 'давно';
+    if (m < 1) return d.agoNow;
+    if (m < 60) return d.agoMin.replace('{n}', m);
+    if (m < 1440) return d.agoHour.replace('{n}', Math.floor(m / 60));
+    if (m < 43200) return d.agoDay.replace('{n}', Math.floor(m / 1440));
+    return d.agoLong;
 }
 
 function isOwner() {
@@ -2833,18 +2986,13 @@ function canAdmin() {
 
 async function checkSuperAdmin() {
     isSuperAdmin = false;
-    if (!myName) return;
-    if (!supabaseClient || !userPass) {
-        showToast('🔎 Админ-проверка v2: ' + (!supabaseClient ? 'нет связи с базой' : 'в браузере не сохранён пароль — выйдите и войдите заново'));
-        return;
+    if (myName && supabaseClient && userPass) {
+        try {
+            const { data, error } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
+            if (error) console.error('fajr_is_admin:', error.message || error.code);
+            isSuperAdmin = data === true;
+        } catch (e) { console.error('fajr_is_admin:', e); }
     }
-    let dbg = '';
-    try {
-        const { data, error } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
-        isSuperAdmin = data === true;
-        dbg = error ? ('ошибка: ' + (error.message || error.code)) : ('ответ базы: ' + String(data));
-    } catch (e) { dbg = 'сбой: ' + e; }
-    showToast('🔎 Админ-проверка v2 · ' + dbg);
     updateRoomTtlBanner();
     renderSavedRoomsList();
 }
@@ -3132,6 +3280,8 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', async ()
 });
 
 async function triggerAlarm(senderName, incomingWord) {
+    // Один и тот же вызов может прийти дважды (realtime + нативный сервис) — не перезапускаем звук и не стираем введённое слово
+    if (document.getElementById('alarmOverlay').classList.contains('active')) return;
     const dict = DICTIONARY[currentLang];
     lastAlarmInitiator = senderName;
     targetCaptchaWord = incomingWord || dict.words[Math.floor(Math.random() * dict.words.length)];
@@ -3165,6 +3315,7 @@ async function verifyCaptchaAndStop() {
         nativeCall('stopAlarm');
         document.getElementById('alarmOverlay').classList.remove('active');
         myStatus = 'awake';
+        saveMyStatus();
 
         await upsertMyPresenceInDb({
             status: 'awake',
@@ -3260,6 +3411,15 @@ function setLanguage(lang) {
     document.getElementById('txtGeoBtn').innerText = dict.geoBtn;
     document.getElementById('txtSaveBtn').innerText = dict.saveBtn;
 
+    document.getElementById('txtOfflineTitle').innerText = dict.offlineTitle;
+    document.getElementById('txtOfflineDesc').innerText = dict.offlineDesc;
+    document.getElementById('txtOfflineBtn').innerText = dict.offlineBtn;
+    document.getElementById('adhanSubText').innerText = dict.adhanSub;
+    document.getElementById('adhanStopBtn').innerText = dict.adhanStop;
+    document.getElementById('tabBtnSounds').innerText = dict.tabSounds;
+    document.getElementById('btnRefreshMembers').innerText = dict.refreshBtn;
+    document.getElementById('btnAdminGroup').innerText = dict.adminBtn;
+
     updatePrayerCycle();
     updateRoomTtlBanner();
     renderSavedRoomsList();
@@ -3339,7 +3499,7 @@ function renderMembers() {
         let badgeTxt = dict.stateSleep;
         if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
-        if (!isOnline) { badgeClass = 'b-off'; badgeTxt = '⚫ НЕ В СЕТИ · ' + agoText(u.lastSeen); }
+        if (!isOnline) { badgeClass = 'b-off'; badgeTxt = '⚫ ' + dict.offlineBadge + ' · ' + agoText(u.lastSeen); }
 
         let actionBtnHtml = '';
         if (u.name !== myName) {
@@ -3386,25 +3546,23 @@ window.wakeIndividual = function(name) {
     openWakeWordSelector(name);
 };
 
+var toastTimer = null;
 function showToast(text) {
     const banner = document.getElementById('toastBanner');
     banner.innerText = text;
     banner.classList.add('show');
-    setTimeout(() => {
+    clearTimeout(toastTimer);   // раньше предыдущий таймер гасил новый тост раньше времени
+    toastTimer = setTimeout(() => {
         banner.classList.remove('show');
     }, 3500);
 }
 
 document.getElementById('btnToggleState').addEventListener('click', () => {
-    if (myStatus === 'sleep') myStatus = 'awake';
-    else if (myStatus === 'awake') myStatus = 'sleep';
-    else myStatus = 'sleep';
-    upsertMyPresenceInDb();
+    setMyStatus(myStatus === 'sleep' ? 'awake' : 'sleep');
 });
 
 document.getElementById('btnToggleDone').addEventListener('click', () => {
-    myStatus = (myStatus === 'done') ? 'awake' : 'done';
-    upsertMyPresenceInDb();
+    setMyStatus(myStatus === 'done' ? 'awake' : 'done');
 });
 
 document.getElementById('btnWakeAll').addEventListener('click', () => {
@@ -3437,9 +3595,10 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
                 showToast(dict.toastGeoSuccess);
                 updatePrayerCycle();
                 renderUI();
+                upsertMyPresenceInDb();
             },
             () => showToast(dict.toastGeoFail),
-            { maximumAge: Infinity, timeout: 10000 }
+            { enableHighAccuracy: false, maximumAge: 600000, timeout: 15000 }
         );
     } else {
         showToast(dict.toastGeoFail);
@@ -3466,6 +3625,8 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
         showToast('Пожалуйста, введите ваше имя!');
         return;
     }
+    const nameErr = validateUserName(n);
+    if (nameErr) { showToast(nameErr); return; }
 
     if (oldName && n !== oldName && supabaseClient) {
         await supabaseClient
@@ -3623,6 +3784,15 @@ function updatePrayerCycle() {
         }
     });
 }
+
+// Таймеры в свёрнутом приложении замедляются — при возвращении сразу синхронизируемся, не ждём 15 секунд
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    updatePrayerCycle();
+    if (!navigator.onLine) return;
+    if (!supabaseClient) { bootAfterReconnect(); return; }
+    if (myName && !isBanned) { upsertMyPresenceInDb(); fetchRoomMembersFromDb(); }
+});
 
 setLanguage(currentLang);
 updatePrayerCycle();
