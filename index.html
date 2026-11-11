@@ -431,6 +431,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
             margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             padding-bottom: 8px;
@@ -459,9 +461,10 @@
 
         .user-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 14px;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
             margin-bottom: 8px;
             border-radius: 16px;
             background: rgba(255, 255, 255, 0.025);
@@ -514,6 +517,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .u-meta {
+            min-width: 0;
+            flex: 1;
         }
 
         .u-avatar {
@@ -532,18 +542,26 @@
         }
 
         .u-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 13px;
             font-weight: 700;
             color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .u-badge {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
             font-size: 10px;
             font-weight: 600;
             letter-spacing: 0.4px;
-            padding: 3px 9px;
-            border-radius: 999px;
-            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 8px;
             margin-top: 3px;
         }
         .b-sleep { background: rgba(225, 29, 72, 0.14); color: #fda4af; border: 1px solid rgba(225, 29, 72, 0.32); }
@@ -565,33 +583,74 @@
             color: #6ee7b7;
         }
 
+        .u-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
         .btn-nudge {
-            background: linear-gradient(135deg, rgba(225, 29, 72, 0.22), rgba(136, 19, 55, 0.38));
-            border: 1px solid rgba(251, 113, 133, 0.45);
-            color: #ffd9c2;
-            padding: 8px 13px;
-            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            height: 32px;
+            padding: 0 11px;
+            border-radius: 10px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.22), rgba(136, 19, 55, 0.38));
+            border: 1px solid rgba(251, 113, 133, 0.45);
+            color: #ffd9c2;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 6px 16px -8px rgba(225, 29, 72, 0.6);
             transition: transform 0.16s ease, box-shadow 0.2s ease;
         }
         .btn-nudge:active { transform: scale(0.93); }
 
         .btn-cancel-nudge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            height: 32px;
+            padding: 0 11px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
             background: linear-gradient(135deg, #d99a2b, #8a5a10);
             border: 1px solid rgba(229, 193, 88, 0.6);
             color: #0a0805;
-            padding: 8px 13px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
             transition: transform 0.16s ease;
         }
         .btn-cancel-nudge:active { transform: scale(0.93); }
+
+        .btn-del-user {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border-radius: 9px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-del-user:hover,
+        .btn-del-user:active {
+            background: rgba(225, 29, 72, 0.12);
+            border-color: rgba(225, 29, 72, 0.5);
+            color: #fb7185;
+        }
 
         .u-online-dot {
             width: 7px;
@@ -1278,8 +1337,8 @@
         <div class="members-head">
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(212,175,55,0.14); border: 1px solid rgba(212,175,55,0.38); color: #f3d87d; border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
-                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #f3d87d; border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
+                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="height: 26px; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; background: rgba(212,175,55,0.14); border: 1px solid rgba(212,175,55,0.38); color: #f3d87d; border-radius: 999px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; height: 26px; padding: 0 9px; align-items: center; gap: 4px; white-space: nowrap; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #f3d87d; border-radius: 999px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
             </div>
         </div>
@@ -2411,9 +2470,10 @@ let currentRoom = (localStorage.getItem('fajr_room_name') || DEFAULT_ROOM).trim(
 let roomPass = localStorage.getItem('fajr_room_pass') || '';
 let myStatus = 'sleep';
 let lastNonDndStatus = 'sleep';   // статус, который был до включения «Не беспокоить»
+let lastManualStatusChangeAt = 0; // когда пользователь сам менял статус кнопкой (защита от гонки с БД)
 try {
     const st = JSON.parse(localStorage.getItem('fajr_my_status') || 'null');
-    if (st && Date.now() - st.t < 4 * 3600 * 1000 && ['sleep', 'awake', 'done', 'dnd'].includes(st.s)) {
+    if (st && Date.now() - st.t < 12 * 3600 * 1000 && ['sleep', 'awake', 'done', 'dnd'].includes(st.s)) {
         myStatus = st.s;
         if (['sleep', 'awake', 'done'].includes(st.prev)) lastNonDndStatus = st.prev;
     }
@@ -2478,6 +2538,7 @@ function registerIncomingWake(senderName) {
 // Единая точка смены статуса: сохраняет, сразу перерисовывает кнопки и отправляет в группу.
 function setMyStatus(next) {
     if (requireRegistration()) return;
+    lastManualStatusChangeAt = Date.now();
     myStatus = next;
     saveMyStatus();
     syncStatusToNative();
@@ -2494,7 +2555,7 @@ function setMyStatus(next) {
         const ao = document.getElementById('alarmOverlay');
         if (ao) ao.classList.remove('active');
     }
-    upsertMyPresenceInDb(extra);
+    upsertMyPresenceInDb(extra, true);
 }
 let adhanTimeoutId = null;
 
@@ -3068,7 +3129,8 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
 
 let isSyncingPresence = false;
 let pendingPresenceExtra = null;
-async function upsertMyPresenceInDb(extraFields = {}) {
+let pendingPresenceExplicit = false;
+async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = false) {
     // Раньше renderUI() вызывался только офлайн — онлайн кнопки «СТАТУС» и «НАМАЗ СОВЕРШЕН» не менялись.
     if (myName) { const myKey = keyOfName(networkUsers, myName); if (myKey) networkUsers[myKey].status = myStatus; }
     renderUI();
@@ -3077,6 +3139,7 @@ async function upsertMyPresenceInDb(extraFields = {}) {
     if (accountConflictLock) return;   // имя занято чужим паролем — ничего в базу не пишем
     if (isSyncingPresence) {
         pendingPresenceExtra = { ...(pendingPresenceExtra || {}), ...extraFields };
+        if (isExplicitStatusChange) pendingPresenceExplicit = true;
         return;
     }
     isSyncingPresence = true;
@@ -3131,6 +3194,11 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             }
             const upd = { ...payload };
             delete upd.user_name;   // имя строки не трогаем — иначе можно случайно слить/переименовать чужую запись
+            // При обычном фоновом пинге (раз в 15 сек) НЕ перезаписываем status в БД,
+            // чтобы второе устройство не перетирало статус, изменённый на телефоне!
+            if (!isExplicitStatusChange && !('status' in extraFields)) {
+                delete upd.status;
+            }
             let q = supabaseClient.from('fajr_members').update(upd)
                 .eq('room_name', cleanRoom).eq('user_name', mineRow.user_name);
             // Если старый пароль был пустым — обновление разрешаем (запись «до паролей»).
@@ -3144,8 +3212,10 @@ async function upsertMyPresenceInDb(extraFields = {}) {
         isSyncingPresence = false;
         if (pendingPresenceExtra) {
             const next = pendingPresenceExtra;
+            const nextExp = pendingPresenceExplicit;
             pendingPresenceExtra = null;
-            upsertMyPresenceInDb(next);
+            pendingPresenceExplicit = false;
+            upsertMyPresenceInDb(next, nextExp);
         }
     }
 }
@@ -3161,7 +3231,8 @@ async function fetchRoomMembersFromDb() {
     const { data, error } = await supabaseClient
         .from('fajr_members')
         .select('user_name,status,last_seen,call_state,call_word,caller_name')
-        .eq('room_name', cleanRoom);
+        .eq('room_name', cleanRoom)
+        .order('user_name', { ascending: true });
 
     if (!error && data) {
         // Склеиваем строки, отличающиеся только регистром/пробелами: иначе один и тот же
@@ -3191,6 +3262,17 @@ async function fetchRoomMembersFromDb() {
         networkUsers = {};
         userCallStates = {};
         Object.values(byKey).forEach(c => {
+            // Синхронизация своего статуса между устройствами: если я ничего не менял вручную
+            // уже больше 5 секунд, а в БД лежит другой статус — принимаем его как истинный.
+            if (sameName(c.name, myName)
+                && ['sleep', 'awake', 'done', 'dnd'].includes(c.status)
+                && c.status !== myStatus
+                && (Date.now() - lastManualStatusChangeAt > 5000)) {
+                myStatus = c.status;
+                saveMyStatus();
+                nativeCall('updateStatus', myStatus);
+                renderUI();
+            }
             networkUsers[c.name] = { name: c.name, status: c.status, lastSeen: c.lastSeen };
             if (c.callState) userCallStates[c.name] = { state: c.callState, word: c.callWord };
         });
@@ -3694,7 +3776,7 @@ document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
 
 function isOnlineFn(n) {
     const u = networkUsers[n];
-    return !!u && (Date.now() - (u.lastSeen || 0)) < 90000;
+    return !!u && (Date.now() - (u.lastSeen || 0)) < 120000;
 }
 
 function agoText(ts) {
@@ -3883,7 +3965,7 @@ function updateRoomTtlBanner() {
     const lbl = document.getElementById('lblCurrentRoomTtl');
     if (lbl) lbl.innerText = currentRoom;
     const adminBtn = document.getElementById('btnAdminGroup');
-    if (adminBtn) adminBtn.style.display = canAdmin() ? 'inline-block' : 'none';
+    if (adminBtn) adminBtn.style.display = canAdmin() ? 'inline-flex' : 'none';
     renderMembers();
 }
 
@@ -4135,6 +4217,7 @@ async function verifyCaptchaAndStop() {
         stopAllAudioPlayback();
         nativeCall('stopAlarm');
         document.getElementById('alarmOverlay').classList.remove('active');
+        lastManualStatusChangeAt = Date.now();
         myStatus = 'awake';
         saveMyStatus();
 
@@ -4143,7 +4226,7 @@ async function verifyCaptchaAndStop() {
             call_state: 'replied',
             call_word: targetCaptchaWord.toUpperCase(),
             caller_name: ''
-        });
+        }, true);
         await sendSupabaseSignal('WAKE_ACK', lastAlarmInitiator || 'ALL', targetCaptchaWord.toUpperCase());
     } else {
         document.getElementById('inpCaptchaAnswer').style.borderColor = '#e11d48';
@@ -4412,36 +4495,34 @@ function renderMembers() {
         if (u.status === 'dnd') { badgeClass = 'b-dnd'; badgeTxt = dict.stateDnd; }
         if (!isOnline) { badgeClass = 'b-off'; badgeTxt = '⚫ ' + dict.offlineBadge + ' · ' + agoText(u.lastSeen); }
 
-        // Кнопку «РАЗБУДИТЬ» показываем ТОЛЬКО спящим. Всем остальным — неактивная плашка,
-        // чтобы будильник нельзя было отправить тому, кто уже встал, помолился или включил «Не беспокоить».
-        let actionBtnHtml = '';
+        // Кнопка «РАЗБУДИТЬ» — ТОЛЬКО спящим. Для awake/done/dnd правая часть пуста
+        // (бейдж статуса слева уже показывает состояние), чтобы карточка не сжималась.
+        const actionButtons = [];
         if (!isMe && !isGuest) {
             if (isCurrentlyCalling) {
-                actionBtnHtml = `<button class="btn-cancel-nudge" data-cancel="${esc(u.name)}">🛑 ${dict.cancelNudgeBtn}</button>`;
+                actionButtons.push(`<button class="btn-cancel-nudge" data-cancel="${esc(u.name)}">🛑 ${dict.cancelNudgeBtn}</button>`);
             } else if (u.status === 'sleep') {
-                actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`;
-            } else if (u.status === 'awake') {
-                actionBtnHtml = `<span class="plaque-done" style="background:rgba(229,193,88,0.12); border-color:rgba(229,193,88,0.35); color:#e5c158;">${dict.nudgeBlockedAwake}</span>`;
-            } else if (u.status === 'done') {
-                actionBtnHtml = `<span class="plaque-done">${dict.nudgeBlockedDone}</span>`;
-            } else if (u.status === 'dnd') {
-                actionBtnHtml = `<span class="plaque-done" style="background:rgba(124,92,255,0.12); border-color:rgba(124,92,255,0.4); color:#a29bfe;">${dict.nudgeBlockedDnd}</span>`;
+                actionButtons.push(`<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`);
             }
         }
 
-        if (!isMe && canAdmin()) {
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#444; color:#fff; border-color:#666;" data-kick="${esc(u.name)}">⛔</button>`;
+        // Админская кнопка — ТОЛЬКО одна компактная корзина 🗑️ (без ⛔ и 🚫).
+        // Суперадмин: data-del-user (полное удаление через deleteUserPrompt).
+        // Владелец комнаты: data-kick (исключение из группы через kickMember).
+        if (!isMe && (isSuperAdmin || canAdmin())) {
+            const delAttr = isSuperAdmin ? 'data-del-user' : 'data-kick';
+            const delTitle = isSuperAdmin ? 'Удалить пользователя' : 'Исключить из группы';
+            actionButtons.push(`<button class="btn-del-user" title="${delTitle}" ${delAttr}="${esc(u.name)}">🗑️</button>`);
         }
 
-        if (!isMe && isSuperAdmin) {
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#7a0010; color:#fff; border-color:#b00020;" data-ban="${esc(u.name)}">🚫</button>`;
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#333; color:#fff; border-color:#666;" title="Удалить пользователя полностью" data-del-user="${esc(u.name)}">🗑️</button>`;
-        }
+        const actionsHtml = actionButtons.length
+            ? `<div class="u-actions">${actionButtons.join('')}</div>`
+            : '';
 
         row.innerHTML = `
             <div class="u-left">
                 <div class="u-avatar">${esc((Array.from(u.name)[0] || '?').toUpperCase())}</div>
-                <div>
+                <div class="u-meta">
                     <div class="u-name">
                         <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
                         ${esc(u.name)} ${isMe ? `<small style="color:#6ee7b7">${dict.youBadge}</small>` : ''}${devBadge}
@@ -4450,7 +4531,7 @@ function renderMembers() {
                     ${callStatusHtml}
                 </div>
             </div>
-            ${actionBtnHtml}
+            ${actionsHtml}
         `;
         container.appendChild(row);
     });
