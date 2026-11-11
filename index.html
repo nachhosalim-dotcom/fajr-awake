@@ -2392,6 +2392,7 @@ async function fetchMySessions() {
 
 // Выход, инициированный удалённым завершением сессии (без удаления строки в базе — её уже убрали).
 async function forceLogoutRemote() {
+    window.__wasInRoomDb = false;
     localStorage.removeItem('fajr_user_name');
     localStorage.removeItem('fajr_user_pass');
     localStorage.removeItem('fajr_guest');
@@ -2405,6 +2406,30 @@ async function forceLogoutRemote() {
     renderMySessions();
     document.getElementById('roomModal').classList.remove('open');
     showToast('🚪 Сессия завершена на другом устройстве');
+    await loadRegRooms();
+    document.getElementById('mandatoryAuthModal').classList.add('open');
+}
+
+// Полный сброс на втором устройстве, если пользователя удалили из базы:
+// чтобы он НИКОГДА не восстанавливался сам из памяти второго телефона/браузера!
+async function forceLogoutDeletedAccount() {
+    window.__wasInRoomDb = false;
+    stopAllAudioPlayback();
+    nativeCall('stopAlarm');
+    nativeCall('clearSession');
+    localStorage.removeItem('fajr_user_name');
+    localStorage.removeItem('fajr_user_pass');
+    localStorage.removeItem('fajr_guest');
+    localStorage.removeItem('fajr_my_status');
+    myName = '';
+    userPass = '';
+    isGuest = false;
+    isSuperAdmin = false;
+    mySessions = [];
+    mySessionConfirmed = false;
+    renderMySessions();
+    document.getElementById('roomModal').classList.remove('open');
+    showToast('🗑️ Ваш профиль был удалён из списка');
     await loadRegRooms();
     document.getElementById('mandatoryAuthModal').classList.add('open');
 }
@@ -3210,11 +3235,9 @@ async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = f
             variants = eqRes.data;
         }
 
-        const mineRow = (variants || []).find(v => v.user_name === cleanUser) || (variants || [])[0];
+const mineRow = (variants || []).find(v => v.user_name === cleanUser) || (variants || [])[0];
 
         if (mineRow) {
-            // Защита от угона: если на этом имени лежит другой пароль — сначала проверяем владельца по
-            // public.fajr_users (правильный пароль с другого устройства). Тогда просто выравниваем хэш.
             if (mineRow.user_pass && mineRow.user_pass !== myHash) {
                 const acc = userPass ? await verifyOrCreateUserInDb(cleanUser, userPass) : { ok: false };
                 if (!acc.ok) {
@@ -3224,19 +3247,59 @@ async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = f
                 mineRow.user_pass = myHash;
             }
             const upd = { ...payload };
-            delete upd.user_name;   // имя строки не трогаем — иначе можно случайно слить/переименовать чужую запись
-            // При обычном фоновом пинге (раз в 15 сек) НЕ перезаписываем status в БД,
-            // чтобы второе устройство не перетирало статус, изменённый на телефоне!
+            delete upd.user_name;
             if (!isExplicitStatusChange && !('status' in extraFields)) {
                 delete upd.status;
             }
             let q = supabaseClient.from('fajr_members').update(upd)
                 .eq('room_name', cleanRoom).eq('user_name', mineRow.user_name);
-            // Если старый пароль был пустым — обновление разрешаем (запись «до паролей»).
             if (mineRow.user_pass) q = q.eq('user_pass', myHash);
             await q;
+            window.__wasInRoomDb = true;
         } else {
+            // ПРОВЕРКА ПЕРЕД ВСТАВКОЙ: если нас удалил админ из fajr_users или выгнал из комнаты,
+            // НЕ ВОСКРЕШАЕМ запись автоматически из памяти другого устройства!
+            const { data: uExists } = await supabaseClient
+                .from('fajr_users')
+                .select('username')
+                .eq('username', cleanUser.toLowerCase())
+                .maybeSingle();
+
+            if (!uExists) {
+                // Аккаунт был удалён админом! Очищаем локальную память на этом устройстве и выходим:
+                await forceLogoutDeletedAccount();
+                return;
+            }
+
+            // Если мы уже были в этой комнате (window.__wasInRoomDb === true), а теперь нашей строки нет —
+            // значит нас исключили (кикнули) или удалили из списка! Не вставляем себя обратно!
+            if (window.__wasInRoomDb && !isExplicitStatusChange) {
+                window.__wasInRoomDb = false;
+                if (cleanRoom !== DEFAULT_ROOM) {
+                    showToast('⛔ Вы были исключены из группы или группа удалена');
+                    await switchActiveRoom(DEFAULT_ROOM, '');
+                } else {
+                    await forceLogoutDeletedAccount();
+                }
+                return;
+            }
+
+            // Также проверяем, существует ли ещё сама комната в fajr_rooms (если это не DEFAULT_ROOM):
+            if (cleanRoom !== DEFAULT_ROOM) {
+                const { data: rExists } = await supabaseClient
+                    .from('fajr_rooms')
+                    .select('name')
+                    .eq('name', cleanRoom)
+                    .maybeSingle();
+                if (!rExists) {
+                    showToast('⛔ Группа была удалена');
+                    await switchActiveRoom(DEFAULT_ROOM, '');
+                    return;
+                }
+            }
+
             await supabaseClient.from('fajr_members').insert([payload]);
+            window.__wasInRoomDb = true;
         }
     } catch (e) {
     } finally {
@@ -3409,16 +3472,20 @@ async function handleIncomingSignal(sig) {
         };
         renderMembers();
         showToast(`✓ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
-    } else if (sig.signal_type === 'KICK') {
-        if (sameName(sig.target, myName) && currentRoom.trim() !== DEFAULT_ROOM) {
-            showToast('⛔ Вас исключили из группы');
-            await switchActiveRoom(DEFAULT_ROOM, '');
+} else if (sig.signal_type === 'KICK') {
+        if (sameName(sig.target, myName)) {
+            window.__wasInRoomDb = false;
+            if (currentRoom.trim() !== DEFAULT_ROOM) {
+                showToast('⛔ Вас исключили из группы');
+                await switchActiveRoom(DEFAULT_ROOM, '');
+            } else {
+                await forceLogoutDeletedAccount();
+            }
         }
     } else if (sig.signal_type === 'USER_DELETED') {
         if (sameName(sig.target, myName)) {
             isBanned = false;
-            showToast('🗑️ Ваш профиль удалён администратором. Перезапуск…');
-            setTimeout(() => { try { location.reload(); } catch (e) {} }, 900);
+            await forceLogoutDeletedAccount();
         }
     }
 }
