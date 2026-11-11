@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AL-FAJR AWAKE вЂ” Global Prayer Network</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>рџЊ™</text></svg>">
+    <title>AL-FAJR AWAKE — Global Prayer Network</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -58,7 +58,7 @@
             gap: 14px;
         }
 
-        /* 1. Р‘Р›РћРљРР РћР’Р©РРљ Р­РљР РђРќРђ РџР Р РћРўРЎРЈРўРЎРўР’РР РРќРўР•Р РќР•РўРђ */
+        /* 1. БЛОКИРОВЩИК ЭКРАНА ПРИ ОТСУТСТВИИ ИНТЕРНЕТА */
         .offline-blocker {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -99,7 +99,7 @@
             margin-bottom: 22px;
         }
 
-        /* 2. РџР›РђРЁРљРђ РћРўРђ-РћР‘РќРћР’Р›Р•РќРРЇ (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK) */
+        /* 2. ПЛАШКА ОТА-ОБНОВЛЕНИЯ (БЕЗ СКАЧИВАНИЯ APK) */
         .ota-update-banner {
             background: linear-gradient(135deg, #d4af37, #b8860b);
             color: #020705;
@@ -998,7 +998,7 @@
             text-transform: uppercase;
         }
 
-        /* РћРІРµСЂР»РµР№ РђР·Р°РЅР° */
+        /* Оверлей Азана */
         .adhan-banner {
             position: fixed;
             top: 18px;
@@ -1045,75 +1045,75 @@
 </head>
 <body>
 
-<!-- Р‘Р›РћРљРР РћР’Р©РРљ Р­РљР РђРќРђ РќРђ Р’Р•РЎР¬ Р­РљР РђРќ РљРћР“Р”Рђ РќР•Рў РРќРўР•Р РќР•РўРђ -->
+<!-- БЛОКИРОВЩИК ЭКРАНА НА ВЕСЬ ЭКРАН КОГДА НЕТ ИНТЕРНЕТА -->
 <div class="offline-blocker" id="offlineBlocker">
-    <div class="offline-icon">рџ“Ў</div>
-    <div class="offline-title" id="txtOfflineTitle">РќР•Рў РџРћР”РљР›Р®Р§Р•РќРРЇ Рљ РРќРўР•Р РќР•РўРЈ</div>
+    <div class="offline-icon">📡</div>
+    <div class="offline-title" id="txtOfflineTitle">НЕТ ПОДКЛЮЧЕНИЯ К ИНТЕРНЕТУ</div>
     <div class="offline-desc" id="txtOfflineDesc">
-        Р”Р»СЏ СЂР°Р±РѕС‚С‹ СЃРµС‚Рё Р±СѓРґРёР»СЊРЅРёРєР° AL-FAJR С‚СЂРµР±СѓРµС‚СЃСЏ РёРЅС‚РµСЂРЅРµС‚. РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРєР»СЋС‡РёС‚Рµ Wi-Fi РёР»Рё РјРѕР±РёР»СЊРЅС‹Рµ РґР°РЅРЅС‹Рµ вЂ” СЌРєСЂР°РЅ СЂР°Р·Р±Р»РѕРєРёСЂСѓРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.
+        Для работы сети будильника AL-FAJR требуется интернет. Пожалуйста, включите Wi-Fi или мобильные данные — экран разблокируется автоматически.
     </div>
-    <button class="btn-primary" id="txtOfflineBtn" onclick="checkInternetAndReconnect()">РџР РћР’Р•Р РРўР¬ РЎР’РЇР—Р¬ РЎР•Р™Р§РђРЎ</button>
+    <button class="btn-primary" id="txtOfflineBtn" onclick="checkInternetAndReconnect()">ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС</button>
 </div>
 
-<!-- Р’РЎРџР›Р«Р’РђР®Р©РР™ РџР›Р•Р•Р  РђР—РђРќРђ (РћРўР”Р•Р›Р¬РќРћ РћРў Р‘РЈР”РР›Р¬РќРРљРђ) -->
+<!-- ВСПЛЫВАЮЩИЙ ПЛЕЕР АЗАНА (ОТДЕЛЬНО ОТ БУДИЛЬНИКА) -->
 <div class="adhan-banner" id="adhanOverlay">
     <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:26px;">рџ•Њ</span>
+        <span style="font-size:26px;">🕌</span>
         <div>
-            <div style="font-size:13px; font-weight:800; color:var(--gold-accent);" id="adhanTitleText">Р’Р Р•РњРЇ РќРђРњРђР—Рђ (РђР—РђРќ)</div>
-            <div style="font-size:11px; color:#dcdde1;" id="adhanSubText">Р—РІСѓС‡РёС‚ РїСЂРёР·С‹РІ РЅР° РјРѕР»РёС‚РІСѓ</div>
+            <div style="font-size:13px; font-weight:800; color:var(--gold-accent);" id="adhanTitleText">ВРЕМЯ НАМАЗА (АЗАН)</div>
+            <div style="font-size:11px; color:#dcdde1;" id="adhanSubText">Звучит призыв на молитву</div>
         </div>
     </div>
-    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" id="adhanStopBtn" onclick="stopAdhanPlayback()">РЎРўРћРџ</button>
+    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" id="adhanStopBtn" onclick="stopAdhanPlayback()">СТОП</button>
 </div>
 
-<!-- 0. РћР‘РЇР—РђРўР•Р›Р¬РќРђРЇ Р Р•Р“РРЎРўР РђР¦РРЇ РџР Р РџР•Р Р’РћРњ Р’РҐРћР”Р• -->
+<!-- 0. ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ ПРИ ПЕРВОМ ВХОДЕ -->
 <div class="modal-overlay" id="mandatoryAuthModal" style="z-index: 50000;">
     <div class="modal-body">
-        <h3 style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--emerald-accent); text-align: center;" id="txtAuthTitle">Р Р•Р“РРЎРўР РђР¦РРЇ / Р’РҐРћР”</h3>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 18px; color: var(--emerald-accent); text-align: center;" id="txtAuthTitle">РЕГИСТРАЦИЯ / ВХОД</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center; line-height: 1.4;" id="txtAuthDesc">
-            РЈРєР°Р¶РёС‚Рµ РІР°С€Рµ РёРјСЏ (Р»РѕРіРёРЅ) Рё РїР°СЂРѕР»СЊ. РљР°Р¶РґС‹Р№ СѓС‡Р°СЃС‚РЅРёРє РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РїРѕРґ СЃРІРѕРёРј РЅР°СЃС‚РѕСЏС‰РёРј РёРјРµРЅРµРј. Р Р°Р·СЂРµС€РµРЅРёСЏ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РѕРґРёРЅ СЂР°Р· РЅР°РІСЃРµРіРґР°.
+            Укажите ваше имя (логин) и пароль. Каждый участник отображается под своим настоящим именем. Разрешения сохраняются один раз навсегда.
         </p>
 
-        <div class="m-label" id="lblRegName">Р’РђРЁР• РРњРЇ / Р›РћР“РРќ</div>
-        <input type="text" class="m-input" id="regUserName" placeholder="РќР°РїСЂРёРјРµСЂ: РЎР°Р»РёРј">
+        <div class="m-label" id="lblRegName">ВАШЕ ИМЯ / ЛОГИН</div>
+        <input type="text" class="m-input" id="regUserName" placeholder="Например: Салим">
 
-        <div class="m-label" id="lblRegPass">РџРђР РћР›Р¬ РђРљРљРђРЈРќРўРђ</div>
-        <input type="password" class="m-input" id="regUserPass" placeholder="РџСЂРёРґСѓРјР°Р№С‚Рµ РёР»Рё РІРІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ">
+        <div class="m-label" id="lblRegPass">ПАРОЛЬ АККАУНТА</div>
+        <input type="password" class="m-input" id="regUserPass" placeholder="Придумайте или введите пароль">
 
-<div class="m-label" id="lblRegRoom">Р“Р РЈРџРџРђ Р”Р›РЇ Р’РҐРћР”Рђ</div>
+<div class="m-label" id="lblRegRoom">ГРУППА ДЛЯ ВХОДА</div>
 <select class="m-select" id="regRoomSelect"></select>
-<input type="password" class="m-input" id="regRoomPass" placeholder="РџР°СЂРѕР»СЊ РіСЂСѓРїРїС‹" style="display:none">
+<input type="password" class="m-input" id="regRoomPass" placeholder="Пароль группы" style="display:none">
 
         <button class="btn-primary" id="btnCompleteMandatoryAuth" style="margin-top: 6px;">
-            Р’РћР™РўР Р’ РџР РћР“Р РђРњРњРЈ
+            ВОЙТИ В ПРОГРАММУ
         </button>
         <button class="btn-primary" id="btnBrowseAsGuest" style="margin-top: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: #cfd8dc;">
-            рџ‘Ђ РЎРњРћРўР Р•РўР¬ Р‘Р•Р— Р Р•Р“РРЎРўР РђР¦РР
+            👀 СМОТРЕТЬ БЕЗ РЕГИСТРАЦИИ
         </button>
         <p style="font-size: 10px; color: var(--text-secondary); text-align: center; margin-top: 8px; line-height: 1.4;" id="txtGuestHint">
-            РќР°Р±Р»СЋРґР°С‚РµР»СЊ РІРёРґРёС‚, С‡С‚Рѕ РїСЂРѕРёСЃС…РѕРґРёС‚ РІ РіСЂСѓРїРїРµ, РЅРѕ РЅРµ РјРѕР¶РµС‚ РѕС‚РјРµС‡Р°С‚СЊ РЅР°РјР°Р·, РјРµРЅСЏС‚СЊ СЃС‚Р°С‚СѓСЃ РёР»Рё Р±СѓРґРёС‚СЊ СѓС‡Р°СЃС‚РЅРёРєРѕРІ вЂ” РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ.
+            Наблюдатель видит, что происходит в группе, но не может отмечать намаз, менять статус или будить участников — для этого нужно зарегистрироваться.
         </p>
     </div>
 </div>
 
 <div class="app-shell">
-    <!-- Р‘РђРќРќР•Р  РђР’РўРћ-РћР‘РќРћР’Р›Р•РќРРЇ РРќР”Р•РљРЎ-Р¤РђР™Р›Рђ РЎ GITHUB (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK) -->
+    <!-- БАННЕР АВТО-ОБНОВЛЕНИЯ ИНДЕКС-ФАЙЛА С GITHUB (БЕЗ СКАЧИВАНИЯ APK) -->
     <div class="ota-update-banner" id="otaUpdateBanner">
-        <span>вљЎ Р’С‹С€Р»Рѕ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° РїСЂРѕРіСЂР°РјРјС‹!</span>
-        <button class="btn-ota-apply" onclick="applyOtaUpdateNow()">РћР‘РќРћР’РРўР¬ Р РџР•Р Р•Р—РђРџРЈРЎРўРРўР¬</button>
+        <span>⚡ Вышло обновление кода программы!</span>
+        <button class="btn-ota-apply" onclick="applyOtaUpdateNow()">ОБНОВИТЬ И ПЕРЕЗАПУСТИТЬ</button>
     </div>
 
-    <!-- Р’РµСЂС…РЅСЏСЏ РїР°РЅРµР»СЊ -->
+    <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="lang-switch">
             <button class="btn-lang" onclick="setLanguage('tr')">TR</button>
-            <button class="btn-lang" onclick="setLanguage('ar')">Ш№Ш±ШЁЩЉ</button>
+            <button class="btn-lang" onclick="setLanguage('ar')">عربي</button>
             <button class="btn-lang" onclick="setLanguage('en')">EN</button>
             <button class="btn-lang active" onclick="setLanguage('ru')">RU</button>
         </div>
         <div class="top-actions">
-            <button class="btn-icon-top" id="btnOpenSoundsQuick" title="РќР°СЃС‚СЂРѕР№РєРё Р·РІСѓРєРѕРІ Рё РђР·Р°РЅР°">рџ”Љ</button>
+            <button class="btn-icon-top" id="btnOpenSoundsQuick" title="Настройки звуков и Азана">🔊</button>
             <button class="btn-room-badge" id="btnOpenRoom">
                 <span class="network-indicator" id="netIndicator"></span>
                 <span class="truncate" id="lblRoomBadge">IDLIB-JAMAAT</span>
@@ -1121,257 +1121,257 @@
         </div>
     </div>
 
-    <!-- РџР»Р°С€РєР° СЂРµР¶РёРјР° РЅР°Р±Р»СЋРґР°С‚РµР»СЏ -->
+    <!-- Плашка режима наблюдателя -->
     <div id="guestBanner" style="display: none; margin: 0 0 10px; padding: 9px 12px; border-radius: 12px; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.4); color: #d4af37; font-size: 11px; font-weight: 700; align-items: center; justify-content: space-between; gap: 8px;">
-        <span id="txtGuestBanner">рџ‘Ђ Р РµР¶РёРј РЅР°Р±Р»СЋРґР°С‚РµР»СЏ вЂ” С‚РѕР»СЊРєРѕ РїСЂРѕСЃРјРѕС‚СЂ</span>
-        <button id="btnGuestRegister" style="background: rgba(212,175,55,0.25); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 5px 10px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap;">Р—РђР Р•Р“РРЎРўР РР РћР’РђРўР¬РЎРЇ</button>
+        <span id="txtGuestBanner">👀 Режим наблюдателя — только просмотр</span>
+        <button id="btnGuestRegister" style="background: rgba(212,175,55,0.25); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 5px 10px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap;">ЗАРЕГИСТРИРОВАТЬСЯ</button>
     </div>
 
-    <!-- Р“Р»Р°РІРЅР°СЏ РєР°СЂС‚РѕС‡РєР° СЃР»РµРґСѓСЋС‰РµРіРѕ РЅР°РјР°Р·Р° -->
+    <!-- Главная карточка следующего намаза -->
     <div class="prayer-hero">
-        <div class="prayer-hero-tag" id="lblHeroSub">РЎР›Р•Р”РЈР®Р©РР™ РќРђРњРђР—</div>
-        <div class="prayer-hero-title" id="lblHeroName">Р¤РђР”Р–Р </div>
+        <div class="prayer-hero-tag" id="lblHeroSub">СЛЕДУЮЩИЙ НАМАЗ</div>
+        <div class="prayer-hero-title" id="lblHeroName">ФАДЖР</div>
         <div class="prayer-hero-time" id="lblHeroTime">04:45</div>
         <div class="meta-strip">
-            <div class="pill">рџ‘¤ <b id="lblMyNamePill">---</b></div>
-            <div class="pill">рџ“Ќ <b id="lblCityDisplay">35.93В°, 36.63В°</b></div>
-            <div class="pill"><span id="lblRemainingPrefix">РћСЃС‚Р°Р»РѕСЃСЊ:</span> <b id="lblCountdown">--:--:--</b></div>
+            <div class="pill">👤 <b id="lblMyNamePill">---</b></div>
+            <div class="pill">📍 <b id="lblCityDisplay">35.93°, 36.63°</b></div>
+            <div class="pill"><span id="lblRemainingPrefix">Осталось:</span> <b id="lblCountdown">--:--:--</b></div>
         </div>
     </div>
 
-    <!-- Р Р°СЃРїРёСЃР°РЅРёРµ 5 РЅР°РјР°Р·РѕРІ + РІРѕСЃС…РѕРґ -->
+    <!-- Расписание 5 намазов + восход -->
     <div class="timeline-grid">
         <div class="tl-box" id="box-fajr">
-            <div class="tl-name" id="tl-txt-fajr">Р¤Р°РґР¶СЂ</div>
+            <div class="tl-name" id="tl-txt-fajr">Фаджр</div>
             <div class="tl-time" id="t-fajr">--:--</div>
         </div>
         <div class="tl-box" id="box-sunrise">
-            <div class="tl-name" id="tl-txt-sunrise">Р’РѕСЃС…РѕРґ</div>
+            <div class="tl-name" id="tl-txt-sunrise">Восход</div>
             <div class="tl-time" id="t-sunrise">--:--</div>
         </div>
         <div class="tl-box" id="box-dhuhr">
-            <div class="tl-name" id="tl-txt-dhuhr">Р—СѓС…СЂ</div>
+            <div class="tl-name" id="tl-txt-dhuhr">Зухр</div>
             <div class="tl-time" id="t-dhuhr">--:--</div>
         </div>
         <div class="tl-box" id="box-asr">
-            <div class="tl-name" id="tl-txt-asr">РђСЃСЂ</div>
+            <div class="tl-name" id="tl-txt-asr">Аср</div>
             <div class="tl-time" id="t-asr">--:--</div>
         </div>
         <div class="tl-box" id="box-maghrib">
-            <div class="tl-name" id="tl-txt-maghrib">РњР°РіСЂРёР±</div>
+            <div class="tl-name" id="tl-txt-maghrib">Магриб</div>
             <div class="tl-time" id="t-maghrib">--:--</div>
         </div>
         <div class="tl-box" id="box-isha">
-            <div class="tl-name" id="tl-txt-isha">РС€Р°</div>
+            <div class="tl-name" id="tl-txt-isha">Иша</div>
             <div class="tl-time" id="t-isha">--:--</div>
         </div>
     </div>
 
-    <!-- РљРЅРѕРїРєРё СЃРјРµРЅС‹ СЃС‚Р°С‚СѓСЃР° Рё РѕР±С‰РµРіРѕ РІС‹Р·РѕРІР° -->
+    <!-- Кнопки смены статуса и общего вызова -->
     <div class="action-grid">
         <button class="btn-act btn-done-prayer" id="btnToggleDone">
-            <span id="txtDoneTitle">РћРўРњР•РўРРўР¬: РќРђРњРђР— РЎРћР’Р•Р РЁР•Рќ</span>
-            <small style="font-size: 9px; opacity: 0.8;" id="txtDoneSub">РЅР°Р¶РјРёС‚Рµ РґР»СЏ С„РёРєСЃР°С†РёРё</small>
+            <span id="txtDoneTitle">ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН</span>
+            <small style="font-size: 9px; opacity: 0.8;" id="txtDoneSub">нажмите для фиксации</small>
         </button>
 
         <button class="btn-act btn-my-state" id="btnToggleState">
-            <span><span id="txtStatusPrefix">РЎРўРђРўРЈРЎ:</span> <b id="lblMyState" style="color:#ffa502;">РЎРџР›Р®</b></span>
-            <small style="font-size: 9px; opacity: 0.7;" id="txtStateSub">РЅР°Р¶РјРёС‚Рµ С‡С‚РѕР±С‹ СЃРјРµРЅРёС‚СЊ</small>
+            <span><span id="txtStatusPrefix">СТАТУС:</span> <b id="lblMyState" style="color:#ffa502;">СПЛЮ</b></span>
+            <small style="font-size: 9px; opacity: 0.7;" id="txtStateSub">нажмите чтобы сменить</small>
         </button>
 
         <button class="btn-act btn-wake-jamaat" id="btnWakeAll">
-            <span>рџљЁ</span>
-            <span id="txtWakeAll">Р РђР—Р‘РЈР”РРўР¬ Р’РЎР•РҐ РЎРџРЇР©РРҐ Р’ Р“Р РЈРџРџР•</span>
+            <span>🚨</span>
+            <span id="txtWakeAll">РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ</span>
         </button>
 
         <button class="btn-act btn-cancel-all-calls" id="btnCancelAllCalls" onclick="cancelWakeSignal('ALL')">
-            <span>рџ›‘</span>
-            <span id="txtCancelAll">РћРўРњР•РќРРўР¬ Р’РЎР• Р’Р«Р—РћР’Р« Р‘РЈР”РР›Р¬РќРРљРђ</span>
+            <span>🛑</span>
+            <span id="txtCancelAll">ОТМЕНИТЬ ВСЕ ВЫЗОВЫ БУДИЛЬНИКА</span>
         </button>
     </div>
 
-    <!-- РЈС‡Р°СЃС‚РЅРёРєРё С‚РµРєСѓС‰РµР№ РєРѕРјРЅР°С‚С‹ -->
+    <!-- Участники текущей комнаты -->
     <div class="members-card">
         <div class="members-head">
-            <span class="members-title" id="txtMembersTitle">РЈР§РђРЎРўРќРРљР Р’ Р­РўРћР™ Р“Р РЈРџРџР•</span>
+            <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">рџ”„ РћР±РЅРѕРІРёС‚СЊ</button>
-                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">рџ‘‘ РђРґРјРёРЅ</button>
+                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
             </div>
         </div>
         <div class="room-ttl-banner" id="roomTtlBanner">
-            <span id="txtRoomTtlLabel">РђРєС‚РёРІРЅР°СЏ РіСЂСѓРїРїР°:</span>
+            <span id="txtRoomTtlLabel">Активная группа:</span>
             <b style="color: var(--emerald-accent);" id="lblCurrentRoomTtl">Idlib-Jamaat</b>
         </div>
         <div id="usersListContainer"></div>
     </div>
 </div>
 
-<!-- 1. РњРћР”РђР›Р¬РќРћР• РћРљРќРћ: Р’Р«Р‘РћР  РљРћРќРўР РћР›Р¬РќРћР“Рћ РЎР›РћР’Рђ Р”Р›РЇ Р‘РЈР”РР›Р¬РќРРљРђ -->
+<!-- 1. МОДАЛЬНОЕ ОКНО: ВЫБОР КОНТРОЛЬНОГО СЛОВА ДЛЯ БУДИЛЬНИКА -->
 <div class="modal-overlay" id="wakeWordModal">
     <div class="modal-body">
-        <button class="modal-close" id="btnCloseWakeModal">вњ•</button>
-        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">РћРўРџР РђР’РРўР¬ РЎР›РћР’Рћ РџР РћР‘РЈР–Р”Р•РќРРЇ</h3>
+        <button class="modal-close" id="btnCloseWakeModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center;" id="txtWakeModalDesc">
-            Р’С‹Р±РµСЂРёС‚Рµ РєРѕРЅС‚СЂРѕР»СЊРЅРѕРµ СЃР»РѕРІРѕ. РЈ Р°РґСЂРµСЃР°С‚Р° Р·Р°Р·РІРµРЅРёС‚ Р±СѓРґРёР»СЊРЅРёРє (Р±РµР· Р»РёС€РЅРµРіРѕ Р·РІСѓРєР° СѓРІРµРґРѕРјР»РµРЅРёР№), РїРѕРєР° РѕРЅ РЅРµ РЅР°РїРёС€РµС‚ СЌС‚Рѕ СЃР»РѕРІРѕ:
+            Выберите контрольное слово. У адресата зазвенит будильник (без лишнего звука уведомлений), пока он не напишет это слово:
         </p>
 
         <div class="words-grid" id="wakeWordsGrid"></div>
 
         <button class="btn-primary" id="btnConfirmSendWake" style="background: linear-gradient(135deg, #e71d36, #990011); color: #fff; margin-top: 6px;">
-            <span id="txtSendWakeBtn">РћРўРџР РђР’РРўР¬ Р’Р«Р—РћР’ Р Р’РљР›Р®Р§РРўР¬ Р‘РЈР”РР›Р¬РќРРљ</span>
+            <span id="txtSendWakeBtn">ОТПРАВИТЬ ВЫЗОВ И ВКЛЮЧИТЬ БУДИЛЬНИК</span>
         </button>
     </div>
 </div>
 
-<!-- 2. Р“Р›РђР’РќРћР• РњРћР”РђР›Р¬РќРћР• РћРљРќРћ: Р“Р РЈРџРџР« / QR / Р—Р’РЈРљР Р РђР—РђРќ / РџР РћР¤РР›Р¬ -->
+<!-- 2. ГЛАВНОЕ МОДАЛЬНОЕ ОКНО: ГРУППЫ / QR / ЗВУКИ И АЗАН / ПРОФИЛЬ -->
 <div class="modal-overlay" id="roomModal">
     <div class="modal-body">
-        <button class="modal-close" id="btnCloseModal">вњ•</button>
+        <button class="modal-close" id="btnCloseModal">✕</button>
         
         <div class="modal-tabs-header">
-            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">Р“Р РЈРџРџР«</button>
-            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">QR / РЎРЎР«Р›РљРђ</button>
-            <button class="modal-tab-btn" id="tabBtnSounds" onclick="switchModalTab('sounds')">рџ”Љ Р—Р’РЈРљР</button>
-            <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">РџР РћР¤РР›Р¬</button>
+            <button class="modal-tab-btn active" id="tabBtnRooms" onclick="switchModalTab('rooms')">ГРУППЫ</button>
+            <button class="modal-tab-btn" id="tabBtnCreate" onclick="switchModalTab('create')">QR / ССЫЛКА</button>
+            <button class="modal-tab-btn" id="tabBtnSounds" onclick="switchModalTab('sounds')">🔊 ЗВУКИ</button>
+            <button class="modal-tab-btn" id="tabBtnProfile" onclick="switchModalTab('profile')">ПРОФИЛЬ</button>
         </div>
 
-        <!-- Р’РєР»Р°РґРєР° 1: РЎРїРёСЃРѕРє РіСЂСѓРїРї -->
+        <!-- Вкладка 1: Список групп -->
         <div class="tab-content-panel active" id="panelTabRooms">
             <div class="search-room-wrapper">
-                <span class="search-room-icon">рџ”Ќ</span>
-                <input type="text" class="search-room-input" id="inpSearchRooms" placeholder="РџРѕРёСЃРє РіСЂСѓРїРїС‹ РїРѕ РЅР°Р·РІР°РЅРёСЋ...">
+                <span class="search-room-icon">🔍</span>
+                <input type="text" class="search-room-input" id="inpSearchRooms" placeholder="Поиск группы по названию...">
             </div>
             
             <div class="m-label" style="margin-top: 2px;">
-                <span id="lblSavedRoomsHeader">Р”РћРЎРўРЈРџРќР«Р• Р“Р РЈРџРџР«</span>
-                <span style="font-size: 11px; color: var(--text-secondary);" id="lblRoomsTotalCount">0 РіСЂСѓРїРї</span>
+                <span id="lblSavedRoomsHeader">ДОСТУПНЫЕ ГРУППЫ</span>
+                <span style="font-size: 11px; color: var(--text-secondary);" id="lblRoomsTotalCount">0 групп</span>
             </div>
 
             <div class="rooms-scroll-container" id="savedRoomsList"></div>
         </div>
 
-        <!-- Р’РєР»Р°РґРєР° 2: QR-РєРѕРґ (С‡РёСЃС‚Рѕ РєР°СЂС‚РёРЅРєР°) + РџРѕРґРµР»РёС‚СЊСЃСЏ РїСЂРѕРіСЂР°РјРјРѕР№ (СЃСЃС‹Р»РєР°) -->
+        <!-- Вкладка 2: QR-код (чисто картинка) + Поделиться программой (ссылка) -->
         <div class="tab-content-panel" id="panelTabCreate">
             <div class="qr-card-container">
                 <div class="qr-wrap" id="qrContainer"></div>
                 <div class="qr-actions-row">
                     <button class="btn-qr-action" id="btnOpenScanner">
-                        <span>рџ“·</span>
-                        <span id="txtScanCamBtn">РЎРєР°РЅРёСЂРѕРІР°С‚СЊ QR</span>
+                        <span>📷</span>
+                        <span id="txtScanCamBtn">Сканировать QR</span>
                     </button>
                     <label class="btn-qr-action" style="cursor: pointer; margin: 0;">
-                        <span>рџ–јпёЏ</span>
-                        <span id="txtScanGalleryBtn">РР· РіР°Р»РµСЂРµРё</span>
+                        <span>🖼️</span>
+                        <span id="txtScanGalleryBtn">Из галереи</span>
                         <input type="file" id="inpQrGallery" accept="image/*" style="display: none;">
                     </label>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
                     <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(46, 213, 115, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #7bed9f; padding: 11px;">
-                        рџ–јпёЏ <span id="txtShareRoomBtn">РћРўРџР РђР’РРўР¬ Р§РРЎРўРћ РљРђР РўРРќРљРЈ QR</span>
+                        🖼️ <span id="txtShareRoomBtn">ОТПРАВИТЬ ЧИСТО КАРТИНКУ QR</span>
                     </button>
                     <button class="btn-primary" id="btnShareApkLink" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(80, 60, 10, 0.5)); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 11px;">
-                        рџ“І <span id="txtShareApkBtn">РџРћР”Р•Р›РРўР¬РЎРЇ РџР РћР“Р РђРњРњРћР™ (РЎРЎР«Р›РљРђ APK)</span>
+                        📲 <span id="txtShareApkBtn">ПОДЕЛИТЬСЯ ПРОГРАММОЙ (ССЫЛКА APK)</span>
                     </button>
                 </div>
             </div>
 
-            <div class="m-label" id="lblCreateRoomHeader">РЎРћР—Р”РђРўР¬ РќРћР’РЈР® Р“Р РЈРџРџРЈ</div>
-            <input type="text" class="m-input" id="inpRoomName" placeholder="РРјСЏ РіСЂСѓРїРїС‹ (РЅР°РїСЂРёРјРµСЂ: РЎРµРјСЊСЏ-РќР°С€С…Рѕ)">
-            <input type="password" class="m-input" id="inpRoomPass" placeholder="РџР°СЂРѕР»СЊ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)">
+            <div class="m-label" id="lblCreateRoomHeader">СОЗДАТЬ НОВУЮ ГРУППУ</div>
+            <input type="text" class="m-input" id="inpRoomName" placeholder="Имя группы (например: Семья-Нашхо)">
+            <input type="password" class="m-input" id="inpRoomPass" placeholder="Пароль (необязательно)">
 
             <button class="btn-primary" id="btnSaveRoomOnly">
-                <span id="txtSaveBtn">РЎРћР—Р”РђРўР¬ Р РџРћР”РљР›Р®Р§РРўР¬РЎРЇ</span>
+                <span id="txtSaveBtn">СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ</span>
             </button>
         </div>
 
-        <!-- Р’РєР»Р°РґРєР° 3: РќРђРЎРўР РћР™РљРђ Р—Р’РЈРљРђ Р‘РЈР”РР›Р¬РќРРљРђ Р РђР—РђРќРђ -->
+        <!-- Вкладка 3: НАСТРОЙКА ЗВУКА БУДИЛЬНИКА И АЗАНА -->
         <div class="tab-content-panel" id="panelTabSounds">
-            <!-- Р‘Р»РѕРє 1: РњРµР»РѕРґРёСЏ Р‘СѓРґРёР»СЊРЅРёРєР° РїСЂРё РїСЂРѕР±СѓР¶РґРµРЅРёРё -->
+            <!-- Блок 1: Мелодия Будильника при пробуждении -->
             <div class="sound-card">
                 <div class="m-label">
-                    <span id="txtAlarmSoundHeader">рџљЁ РњР•Р›РћР”РРЇ Р‘РЈР”РР›Р¬РќРРљРђ (РџРћР‘РЈР”РљРђ)</span>
+                    <span id="txtAlarmSoundHeader">🚨 МЕЛОДИЯ БУДИЛЬНИКА (ПОБУДКА)</span>
                 </div>
                 <select class="m-select" id="selAlarmSoundType" onchange="saveSoundPreferences()">
-                    <option value="siren_fast" id="optAlarmSiren">Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: РњРѕС‰РЅР°СЏ СЃРёСЂРµРЅР° Р¤Р°РґР¶СЂ</option>
-                    <option value="beep_radar" id="optAlarmRadar">Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: Р Р°РґР°СЂ (РљРѕСЂРѕС‚РєРёРµ РёРјРїСѓР»СЊСЃС‹)</option>
-                    <option value="bell_chime" id="optAlarmChime">Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: РњСЏРіРєРёР№ РїРµСЂРµР·РІРѕРЅ</option>
-                    <option value="custom_alarm" id="optAlarmCustom">рџЋµ РњРѕР№ Р°СѓРґРёРѕС„Р°Р№Р» СЃ С‚РµР»РµС„РѕРЅР° (MP3/WAV)</option>
+                    <option value="siren_fast" id="optAlarmSiren">Встроенная: Мощная сирена Фаджр</option>
+                    <option value="beep_radar" id="optAlarmRadar">Встроенная: Радар (Короткие импульсы)</option>
+                    <option value="bell_chime" id="optAlarmChime">Встроенная: Мягкий перезвон</option>
+                    <option value="custom_alarm" id="optAlarmCustom">🎵 Мой аудиофайл с телефона (MP3/WAV)</option>
                 </select>
 
                 <label class="btn-qr-action" style="cursor: pointer; width: 100%;">
-                    <span id="txtChooseAlarmFile">рџ“‚ Р’С‹Р±СЂР°С‚СЊ СЃРІРѕР№ MP3 РґР»СЏ Р±СѓРґРёР»СЊРЅРёРєР°</span>
+                    <span id="txtChooseAlarmFile">📂 Выбрать свой MP3 для будильника</span>
                     <input type="file" id="inpCustomAlarmFile" accept="audio/*" style="display: none;">
                 </label>
-                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAlarmStatus">РЎРІРѕР№ С„Р°Р№Р»: РЅРµ РІС‹Р±СЂР°РЅ</div>
+                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAlarmStatus">Свой файл: не выбран</div>
 
                 <div style="display:flex; gap:8px;">
-                    <button class="btn-primary" style="flex:1; padding:9px;" id="btnTestAlarmSound" onclick="testSelectedAlarmSound()">в–¶пёЏ РџР РћРЎР›РЈРЁРђРўР¬</button>
-                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAlarmSound" onclick="stopAllAudioPlayback()">вЏ№пёЏ РЎРўРћРџ</button>
+                    <button class="btn-primary" style="flex:1; padding:9px;" id="btnTestAlarmSound" onclick="testSelectedAlarmSound()">▶️ ПРОСЛУШАТЬ</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAlarmSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
                 </div>
             </div>
 
-            <!-- Р‘Р»РѕРє 2: РђР·Р°РЅ РЅР° РІСЂРµРјСЏ РЅР°РјР°Р·Р° -->
+            <!-- Блок 2: Азан на время намаза -->
             <div class="sound-card">
                 <div class="m-label">
-                    <span id="txtAdhanHeader">рџ•Њ РђР—РђРќ РџР Р РќРђРЎРўРЈРџР›Р•РќРР РќРђРњРђР—Рђ</span>
+                    <span id="txtAdhanHeader">🕌 АЗАН ПРИ НАСТУПЛЕНИИ НАМАЗА</span>
                     <input type="checkbox" id="chkEnableAdhan" onchange="saveSoundPreferences()" checked style="width:18px; height:18px; accent-color:var(--emerald-accent);">
                 </div>
                 <select class="m-select" id="selAdhanSoundType" onchange="saveSoundPreferences()">
-                    <option value="makkah_synth" id="optAdhanSynth">Р’СЃС‚СЂРѕРµРЅРЅС‹Р№: РњРµР»РѕРґРёС‡РЅС‹Р№ СЃРёРіРЅР°Р» РђР·Р°РЅР°</option>
-                    <option value="custom_adhan" id="optAdhanCustom">рџЋµ РњРѕР№ С„Р°Р№Р» РђР·Р°РЅР° СЃ С‚РµР»РµС„РѕРЅР° (MP3)</option>
+                    <option value="makkah_synth" id="optAdhanSynth">Встроенный: Мелодичный сигнал Азана</option>
+                    <option value="custom_adhan" id="optAdhanCustom">🎵 Мой файл Азана с телефона (MP3)</option>
                 </select>
 
                 <label class="btn-qr-action" style="cursor: pointer; width: 100%;">
-                    <span id="txtChooseAdhanFile">рџ“‚ Р—Р°РіСЂСѓР·РёС‚СЊ СЃРІРѕР№ MP3 РђР·Р°РЅР° СЃ С‚РµР»РµС„РѕРЅР°</span>
+                    <span id="txtChooseAdhanFile">📂 Загрузить свой MP3 Азана с телефона</span>
                     <input type="file" id="inpCustomAdhanFile" accept="audio/*" style="display: none;">
                 </label>
-                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAdhanStatus">РЎРІРѕР№ С„Р°Р№Р» РђР·Р°РЅР°: РЅРµ РІС‹Р±СЂР°РЅ</div>
+                <div style="font-size: 10px; color: var(--text-secondary);" id="lblCustomAdhanStatus">Свой файл Азана: не выбран</div>
 
                 <div style="display:flex; gap:8px;">
-                    <button class="btn-primary" style="flex:1; padding:9px; background:var(--gold-accent);" id="btnTestAdhanSound" onclick="testSelectedAdhanSound()">в–¶пёЏ РџР РћР’Р•Р РРўР¬ РђР—РђРќ</button>
-                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAdhanSound" onclick="stopAllAudioPlayback()">вЏ№пёЏ РЎРўРћРџ</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:var(--gold-accent);" id="btnTestAdhanSound" onclick="testSelectedAdhanSound()">▶️ ПРОВЕРИТЬ АЗАН</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAdhanSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
                 </div>
             </div>
         </div>
 
-        <!-- Р’РєР»Р°РґРєР° 4: РџСЂРѕС„РёР»СЊ Рё РїСЂРѕРІРµСЂРєР° РѕР±РЅРѕРІР»РµРЅРёР№ СЃ GitHub -->
+        <!-- Вкладка 4: Профиль и проверка обновлений с GitHub -->
         <div class="tab-content-panel" id="panelTabProfile">
-            <div class="m-label" id="lblProfileHeader">РЈР§Р•РўРќР«Р• Р”РђРќРќР«Р•</div>
-            <input type="text" class="m-input" id="inpMyName" placeholder="Р’Р°С€Рµ РёРјСЏ / Р»РѕРіРёРЅ">
-            <input type="password" class="m-input" id="inpUserPass" placeholder="РџР°СЂРѕР»СЊ СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё">
+            <div class="m-label" id="lblProfileHeader">УЧЕТНЫЕ ДАННЫЕ</div>
+            <input type="text" class="m-input" id="inpMyName" placeholder="Ваше имя / логин">
+            <input type="password" class="m-input" id="inpUserPass" placeholder="Пароль учетной записи">
 
-            <div class="m-label" id="lblGeoUpdates">Р“Р•РћР›РћРљРђР¦РРЇ Р РћР‘РќРћР’Р›Р•РќРРЇ</div>
-            <button class="btn-geo" id="btnRequestGeo">рџ“Ќ <span id="txtGeoBtn">РћРїСЂРµРґРµР»РёС‚СЊ GPS-РєРѕРѕСЂРґРёРЅР°С‚С‹ (СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ РєСЌС€)</span></button>
+            <div class="m-label" id="lblGeoUpdates">ГЕОЛОКАЦИЯ И ОБНОВЛЕНИЯ</div>
+            <button class="btn-geo" id="btnRequestGeo">📍 <span id="txtGeoBtn">Определить GPS-координаты (сохраняются в кэш)</span></button>
             
             <button class="btn-geo" style="border-color: var(--gold-accent); color: var(--gold-accent);" onclick="checkForGithubIndexUpdate(true)">
-                рџ”„ <span id="txtCheckUpdateBtn">РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° СЃ GitHub (Р±РµР· СЃРєР°С‡РёРІР°РЅРёСЏ APK)</span>
+                🔄 <span id="txtCheckUpdateBtn">Проверить обновление кода с GitHub (без скачивания APK)</span>
             </button>
 
             <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 4px;">
-                РЎРћРҐР РђРќРРўР¬ РџР РћР¤РР›Р¬
+                СОХРАНИТЬ ПРОФИЛЬ
             </button>
             <button class="btn-primary" id="btnLogoutProfile" style="background: rgba(231,29,54,0.2); color: #ff6b81; border: 1px solid rgba(231,29,54,0.4);">
-                Р’Р«Р™РўР РР— РђРљРљРђРЈРќРўРђ
+                ВЫЙТИ ИЗ АККАУНТА
             </button>
 
-            <div class="m-label" id="lblSessions" style="margin-top: 6px;">рџ“± РђРљРўРР’РќР«Р• РЈРЎРўР РћР™РЎРўР’Рђ (РЎР•РЎРЎРР)</div>
+            <div class="m-label" id="lblSessions" style="margin-top: 6px;">📱 АКТИВНЫЕ УСТРОЙСТВА (СЕССИИ)</div>
             <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--emerald-border); border-radius: 12px; padding: 8px 10px;">
-                <div id="sessionsCount" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">вЂ”</div>
+                <div id="sessionsCount" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">—</div>
                 <div id="mySessionsList"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 3. РњРћР”РђР›Р¬РќРћР• РћРљРќРћ: РљРђРњР•Р Рђ РЎРљРђРќР•Р Рђ QR -->
+<!-- 3. МОДАЛЬНОЕ ОКНО: КАМЕРА СКАНЕРА QR -->
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-body" style="max-width: 390px;">
-        <button class="modal-close" id="btnCloseScannerModal">вњ•</button>
-        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">РЎРљРђРќРР РћР’РђРќРР• QR-РљРћР”Рђ</h3>
+        <button class="modal-close" id="btnCloseScannerModal">✕</button>
+        <h3 style="font-family: 'Cinzel', serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
         <p style="font-size: 11px; color: var(--text-secondary); text-align: center;" id="txtScannerModalDesc">
-            РќР°РІРµРґРёС‚Рµ РєР°РјРµСЂСѓ РЅР° QR-РєРѕРґ РєРѕРјРЅР°С‚С‹ РґР»СЏ РјРіРЅРѕРІРµРЅРЅРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
+            Наведите камеру на QR-код комнаты для мгновенного подключения
         </p>
 
         <div class="scanner-view-container">
@@ -1379,25 +1379,25 @@
         </div>
 
         <button class="btn-primary" id="btnStopScanner" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);">
-            <span id="txtCancelScannerBtn">Р—РђРљР Р«РўР¬</span>
+            <span id="txtCancelScannerBtn">ЗАКРЫТЬ</span>
         </button>
     </div>
 </div>
 <div id="qrFileTempReader" style="display:none;"></div>
 
-<!-- 4. РџРћР›РќРћР­РљР РђРќРќРђРЇ РўР Р•Р’РћР“Рђ Р‘РЈР”РР›Р¬РќРРљРђ -->
+<!-- 4. ПОЛНОЭКРАННАЯ ТРЕВОГА БУДИЛЬНИКА -->
 <div class="alarm-screen" id="alarmOverlay">
-    <div class="alarm-title" id="txtAlarmHeader">Р’РЎРўРђР’РђР™ РќРђ РќРђРњРђР—!</div>
-    <div class="alarm-sender" id="txtAlarmSender">Р’Р°СЃ Р±СѓРґРёС‚ СѓС‡Р°СЃС‚РЅРёРє РіСЂСѓРїРїС‹!</div>
+    <div class="alarm-title" id="txtAlarmHeader">ВСТАВАЙ НА НАМАЗ!</div>
+    <div class="alarm-sender" id="txtAlarmSender">Вас будит участник группы!</div>
 
     <div class="captcha-box">
-        <div style="font-size: 11px; color: #ffccd5; margin-bottom: 4px;" id="txtCaptchaPrompt">Р§С‚РѕР±С‹ РІС‹РєР»СЋС‡РёС‚СЊ Р·РІСѓРє, РІРІРµРґРёС‚Рµ РїСЂРёСЃР»Р°РЅРЅРѕРµ СЃР»РѕРІРѕ:</div>
-        <div class="captcha-challenge" id="lblTargetWord">РџР РћРЎР«РџРђР™РЎРЇ</div>
+        <div style="font-size: 11px; color: #ffccd5; margin-bottom: 4px;" id="txtCaptchaPrompt">Чтобы выключить звук, введите присланное слово:</div>
+        <div class="captcha-challenge" id="lblTargetWord">ПРОСЫПАЙСЯ</div>
         <input type="text" class="captcha-input" id="inpCaptchaAnswer" placeholder="..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
     </div>
 
     <button class="btn-confirm-awake" id="btnVerifyAwake">
-        <span id="txtVerifyBtn">РџРћР”РўР’Р•Р Р”РРўР¬ Р РћРўР’Р•РўРРўР¬</span>
+        <span id="txtVerifyBtn">ПОДТВЕРДИТЬ И ОТВЕТИТЬ</span>
     </button>
 </div>
 
@@ -1405,8 +1405,8 @@
 
 <script>
 (function () {
-    // РљСЂР°СЃРЅР°СЏ РїР°РЅРµР»СЊ РѕС€РёР±РѕРє вЂ” С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё: РѕС‚РєСЂС‹С‚СЊ СЃС‚СЂР°РЅРёС†Сѓ СЃ ?debug=1
-    // (РёР»Рё localStorage.fajr_debug = '1'). РћР±С‹С‡РЅС‹Рј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј РѕРЅР° РЅРµ РїРѕРєР°Р·С‹РІР°РµС‚СЃСЏ.
+    // Красная панель ошибок — только для отладки: открыть страницу с ?debug=1
+    // (или localStorage.fajr_debug = '1'). Обычным пользователям она не показывается.
     var DEBUG = false;
     try { DEBUG = /[?&]debug=1/.test(location.search) || localStorage.getItem('fajr_debug') === '1'; } catch (e) {}
     function show(msg) {
@@ -1424,7 +1424,7 @@
             b.textContent += msg + '\n';
         } catch (e) {}
     }
-    window.addEventListener('error', function (e) { show('JS: ' + e.message + ' (СЃС‚СЂРѕРєР° ' + e.lineno + ')'); });
+    window.addEventListener('error', function (e) { show('JS: ' + e.message + ' (строка ' + e.lineno + ')'); });
     window.addEventListener('unhandledrejection', function (e) { show('PROMISE: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
     window.fajrShowErr = show;
 })();
@@ -1477,7 +1477,7 @@ async function ensureSupabaseClient() {
                     }
                     return r;
                 } catch (e) {
-                    if (window.fajrShowErr) window.fajrShowErr('РЎР•РўР¬: ' + e.message);
+                    if (window.fajrShowErr) window.fajrShowErr('СЕТЬ: ' + e.message);
                     throw e;
                 }
             }
@@ -1497,19 +1497,19 @@ async function bootAfterReconnect() {
 function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-// Р•РґРёРЅРѕРµ СЃСЂР°РІРЅРµРЅРёРµ РёРјС‘РЅ вЂ” Р±РµР· СѓС‡С‘С‚Р° СЂРµРіРёСЃС‚СЂР° Рё РїСЂРѕР±РµР»РѕРІ. Р Р°РЅСЊС€Рµ В«РђР»РёВ» Рё В«Р°Р»РёВ» СЃС‡РёС‚Р°Р»РёСЃСЊ
-// СЂР°Р·РЅС‹РјРё Р»СЋРґСЊРјРё: РІ СЃРїРёСЃРєРµ РїРѕСЏРІР»СЏР»СЃСЏ С„Р°РЅС‚РѕРј-РґРІРѕР№РЅРёРє, РєРѕС‚РѕСЂРѕРіРѕ РїСЂРё СЌС‚РѕРј РЅРµР»СЊР·СЏ Р±С‹Р»Рѕ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ.
+// Единое сравнение имён — без учёта регистра и пробелов. Раньше «Али» и «али» считались
+// разными людьми: в списке появлялся фантом-двойник, которого при этом нельзя было заблокировать.
 function sameName(a, b) {
     return String(a == null ? '' : a).trim().toLowerCase() === String(b == null ? '' : b).trim().toLowerCase();
 }
-// РљР»СЋС‡ РѕР±СЉРµРєС‚Р°, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ РёРјРµРЅРё (СЃ СѓС‡С‘С‚РѕРј СЂРµРіРёСЃС‚СЂРѕРЅРµР·Р°РІРёСЃРёРјРѕРіРѕ СЃСЂР°РІРЅРµРЅРёСЏ).
+// Ключ объекта, соответствующий имени (с учётом регистронезависимого сравнения).
 function keyOfName(obj, name) {
     return Object.keys(obj).find(k => sameName(k, name));
 }
-// РќР°Р±Р»СЋРґР°С‚РµР»СЊ (Р±РµР· СЂРµРіРёСЃС‚СЂР°С†РёРё) РјРѕР¶РµС‚ С‚РѕР»СЊРєРѕ СЃРјРѕС‚СЂРµС‚СЊ. Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РґРµР№СЃС‚РІРёРµ Р·Р°РїСЂРµС‰РµРЅРѕ.
+// Наблюдатель (без регистрации) может только смотреть. Возвращает true, если действие запрещено.
 function requireRegistration() {
     if (!isGuest) return false;
-    showToast('рџ‘Ђ Р­С‚Рѕ РґРѕСЃС‚СѓРїРЅРѕ С‚РѕР»СЊРєРѕ СѓС‡Р°СЃС‚РЅРёРєР°Рј вЂ” Р·Р°СЂРµРіРёСЃС‚СЂРёСЂСѓР№С‚РµСЃСЊ');
+    showToast('👀 Это доступно только участникам — зарегистрируйтесь');
     return true;
 }
 function sha256Hex(str) {
@@ -1543,8 +1543,8 @@ function sha256Hex(str) {
     }
     return H.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
 }
-// РҐРµС€ РѕРґРёРЅР°РєРѕРІС‹Р№ Рё СЃ crypto.subtle, Рё Р±РµР· РЅРµРіРѕ (http://, СЃС‚Р°СЂС‹Рµ WebView) вЂ” РёРЅР°С‡Рµ РїСЂРѕРІРµСЂРєР° Р°РґРјРёРЅР°
-// РЅР° СЂР°Р·РЅС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІР°С… РґР°РІР°Р»Р° Р±С‹ СЂР°Р·РЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹.
+// Хеш одинаковый и с crypto.subtle, и без него (http://, старые WebView) — иначе проверка админа
+// на разных устройствах давала бы разные результаты.
 async function hashSecret(s) {
     if (!s) return '';
     try {
@@ -1556,13 +1556,13 @@ async function hashSecret(s) {
     return sha256Hex('fajr:' + s);
 }
 function validateUserName(n) {
-    if (/^user_/i.test(n)) return 'РРјСЏ РЅРµ РґРѕР»Р¶РЅРѕ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ В«user_В» вЂ” С‚Р°РєРёРµ СѓС‡Р°СЃС‚РЅРёРєРё СЃРєСЂС‹РІР°СЋС‚СЃСЏ РёР· СЃРїРёСЃРєР°';
-    if (n.length > 32) return 'РРјСЏ СЃР»РёС€РєРѕРј РґР»РёРЅРЅРѕРµ (РјР°РєСЃРёРјСѓРј 32 СЃРёРјРІРѕР»Р°)';
+    if (/^user_/i.test(n)) return 'Имя не должно начинаться с «user_» — такие участники скрываются из списка';
+    if (n.length > 32) return 'Имя слишком длинное (максимум 32 символа)';
     return '';
 }
 
-// РРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ РґСЂСѓРіРёРј СѓС‡Р°СЃС‚РЅРёРєРѕРј СЃ Р”Р РЈР“РРњ РїР°СЂРѕР»РµРј? (Р·Р°С‰РёС‚Р° РѕС‚ СѓРіРѕРЅР° Р°РєРєР°СѓРЅС‚Р°)
-// true вЂ” РёРјСЏ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃ СЌС‚РёРј РїР°СЂРѕР»РµРј; false вЂ” СЌС‚Рѕ С‡СѓР¶РѕР№ Р°РєРєР°СѓРЅС‚.
+// Имя уже занято другим участником с ДРУГИМ паролем? (защита от угона аккаунта)
+// true — имя можно использовать с этим паролем; false — это чужой аккаунт.
 async function isNameAllowedForPass(name, pass) {
     if (!supabaseClient) return true;
     const clean = String(name || '').trim();
@@ -1577,16 +1577,16 @@ async function isNameAllowedForPass(name, pass) {
     } else {
         rows = res.data;
     }
-    // РЎС‚Р°СЂС‹Рµ Р·Р°РїРёСЃРё СЃ РїСѓСЃС‚С‹Рј user_pass РЅРµ СЃС‡РёС‚Р°РµРј Р·Р°С…РІР°С‚РѕРј РёРјРµРЅРё вЂ” РёРЅР°С‡Рµ Р»СЋРґРё РЅРµ СЃРјРѕРіР»Рё Р±С‹ Р·Р°Р№С‚Рё РїРѕСЃР»Рµ РѕР±РЅРѕРІР»РµРЅРёСЏ.
+    // Старые записи с пустым user_pass не считаем захватом имени — иначе люди не смогли бы зайти после обновления.
     return !(rows || []).some(r => sameName(r.user_name, clean) && r.user_pass && r.user_pass !== myHash);
 }
 
-// РЎСЂР°Р±Р°С‚С‹РІР°РµС‚, РєРѕРіРґР° РІ Р±Р°Р·Рµ РЅР° РЅР°С€Рµ РёРјСЏ Р»РµР¶РёС‚ С‡СѓР¶РѕР№ РїР°СЂРѕР»СЊ: РЅРµ РґР°С‘Рј РїРёСЃР°С‚СЊ/РїРµСЂРµРёРјРµРЅРѕРІС‹РІР°С‚СЊ С‡СѓР¶СѓСЋ СЃС‚СЂРѕРєСѓ.
+// Срабатывает, когда в базе на наше имя лежит чужой пароль: не даём писать/переименовывать чужую строку.
 let accountConflictLock = false;
 function handleAccountConflict(name) {
     if (accountConflictLock) return;
     accountConflictLock = true;
-    showToast('вќЊ Р­С‚Рѕ РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ РґСЂСѓРіРёРј СѓС‡Р°СЃС‚РЅРёРєРѕРј (РЅРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ)!');
+    showToast('❌ Это имя уже занято другим участником (неверный пароль)!');
     try {
         document.getElementById('inpMyName').value = name || '';
         loadRegRooms();
@@ -1594,9 +1594,9 @@ function handleAccountConflict(name) {
     } catch (e) {}
 }
 
-// Р•РґРёРЅР°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РїРѕ public.fajr_users. Р’РѕР·РІСЂР°С‰Р°РµС‚ { ok: true } Р»РёР±Рѕ { ok: false }.
-// РџСЂРё СѓСЃРїРµС…Рµ СЃРёРЅС…СЂРѕРЅРёР·РёСЂСѓРµС‚ user_pass РІРѕ РІСЃРµС… СЃС‚СЂРѕРєР°С… fajr_members СЌС‚РѕРіРѕ РёРјРµРЅРё, С‡С‚РѕР±С‹ РІС…РѕРґ
-// СЃРѕ РІС‚РѕСЂРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР° (РЅРѕСѓС‚Р±СѓРє/С‚РµР»РµС„РѕРЅ) РЅРµ СѓРїРёСЂР°Р»СЃСЏ РІ СЃС‚Р°СЂС‹Р№ С…СЌС€ Рё handleAccountConflict.
+// Единая авторизация по public.fajr_users. Возвращает { ok: true } либо { ok: false }.
+// При успехе синхронизирует user_pass во всех строках fajr_members этого имени, чтобы вход
+// со второго устройства (ноутбук/телефон) не упирался в старый хэш и handleAccountConflict.
 async function verifyOrCreateUserInDb(name, pass) {
     const clean = String(name || '').trim();
     const cleanPass = String(pass || '').trim();
@@ -1615,7 +1615,7 @@ async function verifyOrCreateUserInDb(name, pass) {
             username, password: cleanPass, display_name: clean, created_at: new Date().toISOString()
         }]);
     } else {
-        // РџР°СЂРѕР»СЊ С…СЂР°РЅРёС‚СЃСЏ Рё РєР°Рє РѕР±С‹С‡РЅС‹Р№ С‚РµРєСЃС‚ (СЃС‚Р°СЂС‹Рµ Р·Р°РїРёСЃРё), Рё РєР°Рє С…СЌС€ вЂ” РїСЂРёРЅРёРјР°РµРј РѕР±Р° РІР°СЂРёР°РЅС‚Р°.
+        // Пароль хранится и как обычный текст (старые записи), и как хэш — принимаем оба варианта.
         const passOk = row.password === cleanPass || row.password === hash;
         if (!passOk) return { ok: false };
         if (row.display_name !== clean) {
@@ -1623,7 +1623,7 @@ async function verifyOrCreateUserInDb(name, pass) {
         }
     }
 
-    // Р’Рѕ РІСЃРµС… СЃС‚СЂРѕРєР°С… СѓС‡Р°СЃС‚РЅРёРєР° (РІРѕ РІСЃРµС… РєРѕРјРЅР°С‚Р°С…) РІС‹СЂР°РІРЅРёРІР°РµРј С…СЌС€ РїР°СЂРѕР»СЏ.
+    // Во всех строках участника (во всех комнатах) выравниваем хэш пароля.
     await supabaseClient
         .from('fajr_members')
         .update({ user_pass: hash })
@@ -1634,375 +1634,375 @@ async function verifyOrCreateUserInDb(name, pass) {
 
 const DICTIONARY = {
     ru: {
-        fajr: 'Р¤Р°РґР¶СЂ', sunrise: 'Р’РѕСЃС…РѕРґ', dhuhr: 'Р—СѓС…СЂ', asr: 'РђСЃСЂ', maghrib: 'РњР°РіСЂРёР±', isha: 'РС€Р°',
-        nextPrayer: 'РЎР›Р•Р”РЈР®Р©РР™ РќРђРњРђР—',
-        remaining: 'РћСЃС‚Р°Р»РѕСЃСЊ:',
-        doneTitle: 'РћРўРњР•РўРРўР¬: РќРђРњРђР— РЎРћР’Р•Р РЁР•Рќ',
-        doneSub: 'РЅР°Р¶РјРёС‚Рµ РґР»СЏ С„РёРєСЃР°С†РёРё',
-        doneConfirmed: 'вњ“ РќРђРњРђР— РЎРћР’Р•Р РЁР•Рќ',
-        statusPrefix: 'РЎРўРђРўРЈРЎ:',
-        stateSleep: 'РЎРџР›Р®', stateAwake: 'Р’РЎРўРђР›', stateDone: 'РџР РћР§РРўРђР›',
-        changeStatus: 'РЅР°Р¶РјРёС‚Рµ С‡С‚РѕР±С‹ СЃРјРµРЅРёС‚СЊ',
-        wakeAll: 'Р РђР—Р‘РЈР”РРўР¬ Р’РЎР•РҐ РЎРџРЇР©РРҐ Р’ Р“Р РЈРџРџР•',
-        cancelAllBtn: 'РћРўРњР•РќРРўР¬ Р’РЎР• Р’Р«Р—РћР’Р« Р‘РЈР”РР›Р¬РќРРљРђ',
-        members: 'РЈР§РђРЎРўРќРРљР Р’ Р­РўРћР™ Р“Р РЈРџРџР•',
-        peopleUnit: 'С‡РµР».',
-        roomsUnit: 'РіСЂСѓРїРї',
-        youBadge: '(Р’С‹)',
-        nudgeBtn: 'Р РђР—Р‘РЈР”РРўР¬',
-        cancelNudgeBtn: 'РћРўРњР•РќРРўР¬',
-        roomTtlLabel: 'РўРµРєСѓС‰Р°СЏ РіСЂСѓРїРїР°:',
-        permanentRoom: 'РћСЃРЅРѕРІРЅР°СЏ РіСЂСѓРїРїР°',
-        wakeModalTitle: 'РћРўРџР РђР’РРўР¬ РЎР›РћР’Рћ РџР РћР‘РЈР–Р”Р•РќРРЇ',
-        wakeModalDesc: 'Р’С‹Р±РµСЂРёС‚Рµ РїСЂРѕРІРµСЂРѕС‡РЅРѕРµ СЃР»РѕРІРѕ. РЈ С‡РµР»РѕРІРµРєР° РІРєР»СЋС‡РёС‚СЃСЏ С‚РѕР»СЊРєРѕ Р±СѓРґРёР»СЊРЅРёРє (Р±РµР· Р·РІСѓРєР° СѓРІРµРґРѕРјР»РµРЅРёСЏ), РїРѕРєР° РѕРЅ РЅРµ РЅР°РїРёС€РµС‚ СЌС‚Рѕ СЃР»РѕРІРѕ:',
-        sendWakeBtn: 'РћРўРџР РђР’РРўР¬ Р’Р«Р—РћР’',
-        wakeHeader: 'Р’РЎРўРђР’РђР™ РќРђ РќРђРњРђР—!',
-        wakeSenderPrefix: 'Р’Р°СЃ Р±СѓРґРёС‚:',
-        wakePrompt: 'Р§С‚РѕР±С‹ РІС‹РєР»СЋС‡РёС‚СЊ СЃРёСЂРµРЅСѓ, РІРІРµРґРёС‚Рµ РїСЂРёСЃР»Р°РЅРЅРѕРµ СЃР»РѕРІРѕ:',
-        inputWordPlaceholder: 'Р’РІРµРґРёС‚Рµ СЃР»РѕРІРѕ СЃСЋРґР°',
-        verifyBtn: 'РџРћР”РўР’Р•Р Р”РРўР¬ РџР РћР‘РЈР–Р”Р•РќРР•',
-        tabRooms: 'Р“Р РЈРџРџР«',
-        tabCreate: 'QR / РЎРЎР«Р›РљРђ',
-        tabProfile: 'РџР РћР¤РР›Р¬',
-        shareRoomBtn: 'РћРўРџР РђР’РРўР¬ Р§РРЎРўРћ РљРђР РўРРќРљРЈ QR',
-        shareApkBtn: 'РџРћР”Р•Р›РРўР¬РЎРЇ РџР РћР“Р РђРњРњРћР™ (РЎРЎР«Р›РљРђ APK)',
-        shareApkTitle: 'РЎРєР°С‡Р°С‚СЊ РїСЂРёР»РѕР¶РµРЅРёРµ AL-FAJR AWAKE',
-        shareApkText: 'РЈСЃС‚Р°РЅРѕРІРё РїСЂРёР»РѕР¶РµРЅРёРµ AL-FAJR AWAKE РїРѕ РїСЂСЏРјРѕР№ СЃСЃС‹Р»РєРµ:',
-        toastApkCopied: 'РЎСЃС‹Р»РєР° РЅР° РїСЂРѕРіСЂР°РјРјСѓ СЃРєРѕРїРёСЂРѕРІР°РЅР°!',
-        savedRoomsHeader: 'Р”РћРЎРўРЈРџРќР«Р• Р“Р РЈРџРџР«',
-        searchRoomsPlaceholder: 'РџРѕРёСЃРє РіСЂСѓРїРїС‹ РїРѕ РЅР°Р·РІР°РЅРёСЋ...',
-        profileHeader: 'РњРћР™ РџР РћР¤РР›Р¬ Р РљРћРћР Р”РРќРђРўР«',
-        createRoomHeader: 'РЎРћР—Р”РђРўР¬ РќРћР’РЈР® Р“Р РЈРџРџРЈ',
-        placeholderName: 'Р’Р°С€Рµ РёРјСЏ / Р»РѕРіРёРЅ',
-        placeholderUserPass: 'РџР°СЂРѕР»СЊ РїСЂРѕС„РёР»СЏ',
-        placeholderRoomName: 'РќР°Р·РІР°РЅРёРµ РіСЂСѓРїРїС‹ (РЅР°РїСЂ. РЎРµРјСЊСЏ)',
-        placeholderRoomPass: 'РџР°СЂРѕР»СЊ РіСЂСѓРїРїС‹ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)',
-        geoBtn: 'РћРїСЂРµРґРµР»РёС‚СЊ GPS-РєРѕРѕСЂРґРёРЅР°С‚С‹ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё',
-        geoUpdatesLabel: 'Р“Р•РћР›РћРљРђР¦РРЇ Р РћР‘РќРћР’Р›Р•РќРРЇ',
-        checkUpdateBtn: 'РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° СЃ GitHub (Р±РµР· СЃРєР°С‡РёРІР°РЅРёСЏ APK)',
-        saveProfileBtn: 'РЎРћРҐР РђРќРРўР¬ РџР РћР¤РР›Р¬',
-        logoutProfileBtn: 'Р’Р«Р™РўР РР— РђРљРљРђРЈРќРўРђ',
-        sessionsHeader: 'рџ“± РђРљРўРР’РќР«Р• РЈРЎРўР РћР™РЎРўР’Рђ (РЎР•РЎРЎРР)',
-        sessionsCount: 'РђРєС‚РёРІРЅРѕ: {n} Р°РїРї.',
-        sessionsThisDevice: 'Р­С‚Рѕ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ',
-        sessionsEnd: 'Р—Р°РІРµСЂС€РёС‚СЊ',
-        sessionsEmpty: 'РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С… Рѕ СЃРµСЃСЃРёСЏС…',
-        sessionOnline: 'РІ СЃРµС‚Рё',
-        saveBtn: 'РЎРћР—Р”РђРўР¬ Р РџРћР”РљР›Р®Р§РРўР¬РЎРЇ',
-        deleteBtn: 'РЈРґР°Р»РёС‚СЊ',
-        scanCamBtn: 'РЎРєР°РЅРёСЂРѕРІР°С‚СЊ QR',
-        scanGalleryBtn: 'РР· РіР°Р»РµСЂРµРё',
-        scannerModalTitle: 'РЎРљРђРќРР РћР’РђРќРР• QR-РљРћР”Рђ',
-        scannerModalDesc: 'РќР°РІРµРґРёС‚Рµ РєР°РјРµСЂСѓ РЅР° QR-РєРѕРґ РєРѕРјРЅР°С‚С‹ РґР»СЏ РјРіРЅРѕРІРµРЅРЅРѕРіРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ',
-        cancelScannerBtn: 'Р—РђРљР Р«РўР¬',
-        enterRoomBtn: 'Р’РѕР№С‚Рё',
-        activeRoomBadge: 'РђРєС‚РёРІРЅР°',
-        lockBadge: 'Р—Р°РєСЂС‹С‚Р°СЏ',
-        openBadge: 'РћС‚РєСЂС‹С‚Р°СЏ',
-        toastWakeSent: 'РЎРёРіРЅР°Р» Р±СѓРґРёР»СЊРЅРёРєР° СЃРѕ СЃР»РѕРІРѕРј РѕС‚РїСЂР°РІР»РµРЅ:',
-        toastWakeCancelled: 'Р’С‹Р·РѕРІ Р±СѓРґРёР»СЊРЅРёРєР° РѕС‚РјРµРЅРµРЅ!',
-        toastReplyReceived: 'РїРѕРґС‚РІРµСЂРґРёР» РїСЂРѕР±СѓР¶РґРµРЅРёРµ СЃР»РѕРІРѕРј:',
-        toastRoomDeleted: 'Р“СЂСѓРїРїР° СѓРґР°Р»РµРЅР° РёР· СЃРїРёСЃРєР°',
-        toastGeoSuccess: 'GPS РєРѕРѕСЂРґРёРЅР°С‚С‹ СЃРѕС…СЂР°РЅРµРЅС‹ РІ РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ РєСЌС€!',
-        toastGeoFail: 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґРѕСЃС‚СѓРї Рє GPS',
-        toastWrongWord: 'РќРµРІРµСЂРЅРѕРµ СЃР»РѕРІРѕ! Р’РІРµРґРёС‚Рµ С‚РѕС‡РЅРѕ РєР°Рє РЅР° СЌРєСЂР°РЅРµ.',
-        toastAudioReady: 'Р—РІСѓРє РїСЂРѕРІРµСЂРµРЅ Рё Р°РєС‚РёРІРµРЅ!',
-        toastQrScannedSuccess: 'РЈСЃРїРµС€РЅРѕ! РџРѕРґРєР»СЋС‡РµРЅРѕ Рє РіСЂСѓРїРїРµ:',
-        toastQrScanFailed: 'РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё QR-РєРѕРґ РЅР° РёР·РѕР±СЂР°Р¶РµРЅРёРё',
-        toastCamError: 'РћС€РёР±РєР° РґРѕСЃС‚СѓРїР° Рє РєР°РјРµСЂРµ СЃРјР°СЂС‚С„РѕРЅР°',
-        callSending: 'РћС‚РїСЂР°РІРєР° СЃРёРіРЅР°Р»Р°...',
-        callRinging: 'Р—РІРµРЅРёС‚ СЃРёСЂРµРЅР°! Р–РґРµРј СЃР»РѕРІРѕ:',
-        callReplied: 'РџСЂРѕСЃРЅСѓР»СЃСЏ! РћС‚РІРµС‚РёР»:',
-        offlineTitle: 'РќР•Рў РџРћР”РљР›Р®Р§Р•РќРРЇ Рљ РРќРўР•Р РќР•РўРЈ',
-        offlineDesc: 'Р”Р»СЏ СЂР°Р±РѕС‚С‹ СЃРµС‚Рё Р±СѓРґРёР»СЊРЅРёРєР° AL-FAJR С‚СЂРµР±СѓРµС‚СЃСЏ РёРЅС‚РµСЂРЅРµС‚. Р’РєР»СЋС‡РёС‚Рµ Wi-Fi РёР»Рё РјРѕР±РёР»СЊРЅС‹Рµ РґР°РЅРЅС‹Рµ вЂ” СЌРєСЂР°РЅ СЂР°Р·Р±Р»РѕРєРёСЂСѓРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.',
-        offlineBtn: 'РџР РћР’Р•Р РРўР¬ РЎР’РЇР—Р¬ РЎР•Р™Р§РђРЎ',
-        adhanTitle: 'Р’Р Р•РњРЇ РќРђРњРђР—Рђ', adhanSub: 'Р—РІСѓС‡РёС‚ РїСЂРёР·С‹РІ РЅР° РјРѕР»РёС‚РІСѓ', adhanStop: 'РЎРўРћРџ',
-        tabSounds: 'рџ”Љ Р—Р’РЈРљР', offlineBadge: 'РќР• Р’ РЎР•РўР',
-        agoNow: 'С‚РѕР»СЊРєРѕ С‡С‚Рѕ', agoMin: '{n} РјРёРЅ РЅР°Р·Р°Рґ', agoHour: '{n} С‡ РЅР°Р·Р°Рґ', agoDay: '{n} РґРЅ РЅР°Р·Р°Рґ', agoLong: 'РґР°РІРЅРѕ',
-        noRooms: 'Р“СЂСѓРїРїС‹ РЅРµ РЅР°Р№РґРµРЅС‹', createdByMembers: 'РЎРѕР·РґР°РЅР° СѓС‡Р°СЃС‚РЅРёРєР°РјРё',
-        refreshBtn: 'рџ”„ РћР±РЅРѕРІРёС‚СЊ', adminBtn: 'рџ‘‘ РђРґРјРёРЅ',
-        // Р›РѕРєР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° СЂРµРіРёСЃС‚СЂР°С†РёРё
-        authTitle: 'Р Р•Р“РРЎРўР РђР¦РРЇ / Р’РҐРћР”',
-        authDesc: 'РЈРєР°Р¶РёС‚Рµ РІР°С€Рµ РёРјСЏ (Р»РѕРіРёРЅ) Рё РїР°СЂРѕР»СЊ. РљР°Р¶РґС‹Р№ СѓС‡Р°СЃС‚РЅРёРє РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РїРѕРґ СЃРІРѕРёРј РЅР°СЃС‚РѕСЏС‰РёРј РёРјРµРЅРµРј. Р Р°Р·СЂРµС€РµРЅРёСЏ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РѕРґРёРЅ СЂР°Р· РЅР°РІСЃРµРіРґР°.',
-        authNameLabel: 'Р’РђРЁР• РРњРЇ / Р›РћР“РРќ',
-        authPassLabel: 'РџРђР РћР›Р¬ РђРљРљРђРЈРќРўРђ',
-        authRoomLabel: 'Р“Р РЈРџРџРђ Р”Р›РЇ Р’РҐРћР”Рђ',
-        authNamePh: 'РќР°РїСЂРёРјРµСЂ: РЎР°Р»РёРј',
-        authPassPh: 'РџСЂРёРґСѓРјР°Р№С‚Рµ РёР»Рё РІРІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ',
-        authRoomPassPh: 'РџР°СЂРѕР»СЊ РіСЂСѓРїРїС‹',
-        authEnterBtn: 'Р’РћР™РўР Р’ РџР РћР“Р РђРњРњРЈ',
-        authGuestBtn: 'рџ‘Ђ РЎРњРћРўР Р•РўР¬ Р‘Р•Р— Р Р•Р“РРЎРўР РђР¦РР',
-        authGuestHint: 'РќР°Р±Р»СЋРґР°С‚РµР»СЊ РІРёРґРёС‚, С‡С‚Рѕ РїСЂРѕРёСЃС…РѕРґРёС‚ РІ РіСЂСѓРїРїРµ, РЅРѕ РЅРµ РјРѕР¶РµС‚ РѕС‚РјРµС‡Р°С‚СЊ РЅР°РјР°Р·, РјРµРЅСЏС‚СЊ СЃС‚Р°С‚СѓСЃ РёР»Рё Р±СѓРґРёС‚СЊ СѓС‡Р°СЃС‚РЅРёРєРѕРІ вЂ” РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ.',
-        // Р›РѕРєР°Р»РёР·Р°С†РёСЏ СЂРµР¶РёРјР° РЅР°Р±Р»СЋРґР°С‚РµР»СЏ (РіРѕСЃС‚СЏ)
-        guestBanner: 'рџ‘Ђ Р РµР¶РёРј РЅР°Р±Р»СЋРґР°С‚РµР»СЏ вЂ” С‚РѕР»СЊРєРѕ РїСЂРѕСЃРјРѕС‚СЂ',
-        guestRegisterBtn: 'Р—РђР Р•Р“РРЎРўР РР РћР’РђРўР¬РЎРЇ',
-        guestPill: 'рџ‘Ђ РќР°Р±Р»СЋРґР°С‚РµР»СЊ',
-        // Р›РѕРєР°Р»РёР·Р°С†РёСЏ РІРєР»Р°РґРєРё РЅР°СЃС‚СЂРѕРµРє Р·РІСѓРєР°
-        alarmSoundHeader: 'рџљЁ РњР•Р›РћР”РРЇ Р‘РЈР”РР›Р¬РќРРљРђ (РџРћР‘РЈР”РљРђ)',
-        alarmOptSiren: 'Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: РњРѕС‰РЅР°СЏ СЃРёСЂРµРЅР° Р¤Р°РґР¶СЂ',
-        alarmOptRadar: 'Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: Р Р°РґР°СЂ (РљРѕСЂРѕС‚РєРёРµ РёРјРїСѓР»СЊСЃС‹)',
-        alarmOptChime: 'Р’СЃС‚СЂРѕРµРЅРЅР°СЏ: РњСЏРіРєРёР№ РїРµСЂРµР·РІРѕРЅ',
-        alarmOptCustom: 'рџЋµ РњРѕР№ Р°СѓРґРёРѕС„Р°Р№Р» СЃ С‚РµР»РµС„РѕРЅР° (MP3/WAV)',
-        chooseAlarmFile: 'рџ“‚ Р’С‹Р±СЂР°С‚СЊ СЃРІРѕР№ MP3 РґР»СЏ Р±СѓРґРёР»СЊРЅРёРєР°',
-        customAlarmStatus: 'РЎРІРѕР№ С„Р°Р№Р»: {n}',
-        customAlarmNone: 'РЎРІРѕР№ С„Р°Р№Р»: РЅРµ РІС‹Р±СЂР°РЅ',
-        testAlarmBtn: 'в–¶пёЏ РџР РћРЎР›РЈРЁРђРўР¬',
-        stopSoundBtn: 'вЏ№пёЏ РЎРўРћРџ',
-        adhanHeader: 'рџ•Њ РђР—РђРќ РџР Р РќРђРЎРўРЈРџР›Р•РќРР РќРђРњРђР—Рђ',
-        adhanOptSynth: 'Р’СЃС‚СЂРѕРµРЅРЅС‹Р№: РњРµР»РѕРґРёС‡РЅС‹Р№ СЃРёРіРЅР°Р» РђР·Р°РЅР°',
-        adhanOptCustom: 'рџЋµ РњРѕР№ С„Р°Р№Р» РђР·Р°РЅР° СЃ С‚РµР»РµС„РѕРЅР° (MP3)',
-        chooseAdhanFile: 'рџ“‚ Р—Р°РіСЂСѓР·РёС‚СЊ СЃРІРѕР№ MP3 РђР·Р°РЅР° СЃ С‚РµР»РµС„РѕРЅР°',
-        customAdhanStatus: 'РЎРІРѕР№ С„Р°Р№Р» РђР·Р°РЅР°: {n}',
-        customAdhanNone: 'РЎРІРѕР№ С„Р°Р№Р» РђР·Р°РЅР°: РЅРµ РІС‹Р±СЂР°РЅ',
-        testAdhanBtn: 'в–¶пёЏ РџР РћР’Р•Р РРўР¬ РђР—РђРќ',
-        words: ['РїСЂРѕСЃС‹РїР°Р№СЃСЏ', 'РїРѕРґСЉРµРј', 'СЂР°СЃСЃРІРµС‚', 'РЅР°РјР°Р·', 'РјРѕР»РёС‚РІР°', 'Р±РѕРґСЂРѕСЃС‚СЊ', 'РІСЃС‚Р°РІР°Р№', 'Р°Р·Р°РЅ']
+        fajr: 'Фаджр', sunrise: 'Восход', dhuhr: 'Зухр', asr: 'Аср', maghrib: 'Магриб', isha: 'Иша',
+        nextPrayer: 'СЛЕДУЮЩИЙ НАМАЗ',
+        remaining: 'Осталось:',
+        doneTitle: 'ОТМЕТИТЬ: НАМАЗ СОВЕРШЕН',
+        doneSub: 'нажмите для фиксации',
+        doneConfirmed: '✓ НАМАЗ СОВЕРШЕН',
+        statusPrefix: 'СТАТУС:',
+        stateSleep: 'СПЛЮ', stateAwake: 'ВСТАЛ', stateDone: 'ПРОЧИТАЛ',
+        changeStatus: 'нажмите чтобы сменить',
+        wakeAll: 'РАЗБУДИТЬ ВСЕХ СПЯЩИХ В ГРУППЕ',
+        cancelAllBtn: 'ОТМЕНИТЬ ВСЕ ВЫЗОВЫ БУДИЛЬНИКА',
+        members: 'УЧАСТНИКИ В ЭТОЙ ГРУППЕ',
+        peopleUnit: 'чел.',
+        roomsUnit: 'групп',
+        youBadge: '(Вы)',
+        nudgeBtn: 'РАЗБУДИТЬ',
+        cancelNudgeBtn: 'ОТМЕНИТЬ',
+        roomTtlLabel: 'Текущая группа:',
+        permanentRoom: 'Основная группа',
+        wakeModalTitle: 'ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ',
+        wakeModalDesc: 'Выберите проверочное слово. У человека включится только будильник (без звука уведомления), пока он не напишет это слово:',
+        sendWakeBtn: 'ОТПРАВИТЬ ВЫЗОВ',
+        wakeHeader: 'ВСТАВАЙ НА НАМАЗ!',
+        wakeSenderPrefix: 'Вас будит:',
+        wakePrompt: 'Чтобы выключить сирену, введите присланное слово:',
+        inputWordPlaceholder: 'Введите слово сюда',
+        verifyBtn: 'ПОДТВЕРДИТЬ ПРОБУЖДЕНИЕ',
+        tabRooms: 'ГРУППЫ',
+        tabCreate: 'QR / ССЫЛКА',
+        tabProfile: 'ПРОФИЛЬ',
+        shareRoomBtn: 'ОТПРАВИТЬ ЧИСТО КАРТИНКУ QR',
+        shareApkBtn: 'ПОДЕЛИТЬСЯ ПРОГРАММОЙ (ССЫЛКА APK)',
+        shareApkTitle: 'Скачать приложение AL-FAJR AWAKE',
+        shareApkText: 'Установи приложение AL-FAJR AWAKE по прямой ссылке:',
+        toastApkCopied: 'Ссылка на программу скопирована!',
+        savedRoomsHeader: 'ДОСТУПНЫЕ ГРУППЫ',
+        searchRoomsPlaceholder: 'Поиск группы по названию...',
+        profileHeader: 'МОЙ ПРОФИЛЬ И КООРДИНАТЫ',
+        createRoomHeader: 'СОЗДАТЬ НОВУЮ ГРУППУ',
+        placeholderName: 'Ваше имя / логин',
+        placeholderUserPass: 'Пароль профиля',
+        placeholderRoomName: 'Название группы (напр. Семья)',
+        placeholderRoomPass: 'Пароль группы (необязательно)',
+        geoBtn: 'Определить GPS-координаты автоматически',
+        geoUpdatesLabel: 'ГЕОЛОКАЦИЯ И ОБНОВЛЕНИЯ',
+        checkUpdateBtn: 'Проверить обновление кода с GitHub (без скачивания APK)',
+        saveProfileBtn: 'СОХРАНИТЬ ПРОФИЛЬ',
+        logoutProfileBtn: 'ВЫЙТИ ИЗ АККАУНТА',
+        sessionsHeader: '📱 АКТИВНЫЕ УСТРОЙСТВА (СЕССИИ)',
+        sessionsCount: 'Активно: {n} апп.',
+        sessionsThisDevice: 'Это устройство',
+        sessionsEnd: 'Завершить',
+        sessionsEmpty: 'Пока нет данных о сессиях',
+        sessionOnline: 'в сети',
+        saveBtn: 'СОЗДАТЬ И ПОДКЛЮЧИТЬСЯ',
+        deleteBtn: 'Удалить',
+        scanCamBtn: 'Сканировать QR',
+        scanGalleryBtn: 'Из галереи',
+        scannerModalTitle: 'СКАНИРОВАНИЕ QR-КОДА',
+        scannerModalDesc: 'Наведите камеру на QR-код комнаты для мгновенного подключения',
+        cancelScannerBtn: 'ЗАКРЫТЬ',
+        enterRoomBtn: 'Войти',
+        activeRoomBadge: 'Активна',
+        lockBadge: 'Закрытая',
+        openBadge: 'Открытая',
+        toastWakeSent: 'Сигнал будильника со словом отправлен:',
+        toastWakeCancelled: 'Вызов будильника отменен!',
+        toastReplyReceived: 'подтвердил пробуждение словом:',
+        toastRoomDeleted: 'Группа удалена из списка',
+        toastGeoSuccess: 'GPS координаты сохранены в постоянный кэш!',
+        toastGeoFail: 'Не удалось получить доступ к GPS',
+        toastWrongWord: 'Неверное слово! Введите точно как на экране.',
+        toastAudioReady: 'Звук проверен и активен!',
+        toastQrScannedSuccess: 'Успешно! Подключено к группе:',
+        toastQrScanFailed: 'Не удалось найти QR-код на изображении',
+        toastCamError: 'Ошибка доступа к камере смартфона',
+        callSending: 'Отправка сигнала...',
+        callRinging: 'Звенит сирена! Ждем слово:',
+        callReplied: 'Проснулся! Ответил:',
+        offlineTitle: 'НЕТ ПОДКЛЮЧЕНИЯ К ИНТЕРНЕТУ',
+        offlineDesc: 'Для работы сети будильника AL-FAJR требуется интернет. Включите Wi-Fi или мобильные данные — экран разблокируется автоматически.',
+        offlineBtn: 'ПРОВЕРИТЬ СВЯЗЬ СЕЙЧАС',
+        adhanTitle: 'ВРЕМЯ НАМАЗА', adhanSub: 'Звучит призыв на молитву', adhanStop: 'СТОП',
+        tabSounds: '🔊 ЗВУКИ', offlineBadge: 'НЕ В СЕТИ',
+        agoNow: 'только что', agoMin: '{n} мин назад', agoHour: '{n} ч назад', agoDay: '{n} дн назад', agoLong: 'давно',
+        noRooms: 'Группы не найдены', createdByMembers: 'Создана участниками',
+        refreshBtn: '🔄 Обновить', adminBtn: '👑 Админ',
+        // Локализация окна регистрации
+        authTitle: 'РЕГИСТРАЦИЯ / ВХОД',
+        authDesc: 'Укажите ваше имя (логин) и пароль. Каждый участник отображается под своим настоящим именем. Разрешения сохраняются один раз навсегда.',
+        authNameLabel: 'ВАШЕ ИМЯ / ЛОГИН',
+        authPassLabel: 'ПАРОЛЬ АККАУНТА',
+        authRoomLabel: 'ГРУППА ДЛЯ ВХОДА',
+        authNamePh: 'Например: Салим',
+        authPassPh: 'Придумайте или введите пароль',
+        authRoomPassPh: 'Пароль группы',
+        authEnterBtn: 'ВОЙТИ В ПРОГРАММУ',
+        authGuestBtn: '👀 СМОТРЕТЬ БЕЗ РЕГИСТРАЦИИ',
+        authGuestHint: 'Наблюдатель видит, что происходит в группе, но не может отмечать намаз, менять статус или будить участников — для этого нужно зарегистрироваться.',
+        // Локализация режима наблюдателя (гостя)
+        guestBanner: '👀 Режим наблюдателя — только просмотр',
+        guestRegisterBtn: 'ЗАРЕГИСТРИРОВАТЬСЯ',
+        guestPill: '👀 Наблюдатель',
+        // Локализация вкладки настроек звука
+        alarmSoundHeader: '🚨 МЕЛОДИЯ БУДИЛЬНИКА (ПОБУДКА)',
+        alarmOptSiren: 'Встроенная: Мощная сирена Фаджр',
+        alarmOptRadar: 'Встроенная: Радар (Короткие импульсы)',
+        alarmOptChime: 'Встроенная: Мягкий перезвон',
+        alarmOptCustom: '🎵 Мой аудиофайл с телефона (MP3/WAV)',
+        chooseAlarmFile: '📂 Выбрать свой MP3 для будильника',
+        customAlarmStatus: 'Свой файл: {n}',
+        customAlarmNone: 'Свой файл: не выбран',
+        testAlarmBtn: '▶️ ПРОСЛУШАТЬ',
+        stopSoundBtn: '⏹️ СТОП',
+        adhanHeader: '🕌 АЗАН ПРИ НАСТУПЛЕНИИ НАМАЗА',
+        adhanOptSynth: 'Встроенный: Мелодичный сигнал Азана',
+        adhanOptCustom: '🎵 Мой файл Азана с телефона (MP3)',
+        chooseAdhanFile: '📂 Загрузить свой MP3 Азана с телефона',
+        customAdhanStatus: 'Свой файл Азана: {n}',
+        customAdhanNone: 'Свой файл Азана: не выбран',
+        testAdhanBtn: '▶️ ПРОВЕРИТЬ АЗАН',
+        words: ['просыпайся', 'подъем', 'рассвет', 'намаз', 'молитва', 'бодрость', 'вставай', 'азан']
     },
     ar: {
-        fajr: 'Ш§Щ„ЩЃШ¬Ш±', sunrise: 'Ш§Щ„ШґШ±Щ€Щ‚', dhuhr: 'Ш§Щ„ШёЩ‡Ш±', asr: 'Ш§Щ„Ш№ШµШ±', maghrib: 'Ш§Щ„Щ…ШєШ±ШЁ', isha: 'Ш§Щ„Ш№ШґШ§ШЎ',
-        nextPrayer: 'Ш§Щ„ШµЩ„Ш§Ш© Ш§Щ„Щ‚Ш§ШЇЩ…Ш©',
-        remaining: 'Ш§Щ„Щ…ШЄШЁЩ‚ЩЉ:',
-        doneTitle: 'ШЄШЈЩѓЩЉШЇ: ШЄЩ…ШЄ Ш§Щ„ШµЩ„Ш§Ш©',
-        doneSub: 'Ш§Ш¶ШєШ· Щ„Щ„ШЄЩ€Ш«ЩЉЩ‚',
-        doneConfirmed: 'вњ“ ШЄЩ… ШЈШЇШ§ШЎ Ш§Щ„ШµЩ„Ш§Ш©',
-        statusPrefix: 'Ш§Щ„Ш­Ш§Щ„Ш©:',
-        stateSleep: 'Щ†Ш§Ш¦Щ…', stateAwake: 'Щ…ШіШЄЩЉЩ‚Шё', stateDone: 'ШµЩ„ЩЉШЄ',
-        changeStatus: 'Ш§Ш¶ШєШ· Щ„ШЄШєЩЉЩЉШ± Ш§Щ„Ш­Ш§Щ„Ш©',
-        wakeAll: 'ШҐЩЉЩ‚Ш§Шё Ш¬Щ…ЩЉШ№ Ш§Щ„Щ†Ш§Ш¦Щ…ЩЉЩ† ЩЃЩЉ Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш©',
-        cancelAllBtn: 'ШҐЩ„ШєШ§ШЎ Ш¬Щ…ЩЉШ№ Щ†ШЇШ§ШЎШ§ШЄ Ш§Щ„Щ…Щ†ШЁЩ‡',
-        members: 'ШЈШ№Ш¶Ш§ШЎ Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш©',
-        peopleUnit: 'ШЈШґШ®Ш§Шµ',
-        roomsUnit: 'ШєШ±ЩЃ',
-        youBadge: '(ШЈЩ†ШЄ)',
-        nudgeBtn: 'ШҐЩЉЩ‚Ш§Шё',
-        cancelNudgeBtn: 'ШҐЩ„ШєШ§ШЎ',
-        roomTtlLabel: 'Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш© Ш§Щ„Ш­Ш§Щ„ЩЉШ©:',
-        permanentRoom: 'Ш§Щ„ШєШ±ЩЃШ© Ш§Щ„Ш№Ш§Щ…Ш©',
-        wakeModalTitle: 'ШҐШ±ШіШ§Щ„ ЩѓЩ„Щ…Ш© Ш§Щ„Ш§ШіШЄЩЉЩ‚Ш§Шё',
-        wakeModalDesc: 'Ш§Ш®ШЄШ± ЩѓЩ„Щ…Ш© Ш§Щ„ШЄШ­Щ‚Щ‚. ШіЩЉШ±Щ† Ш§Щ„Щ…Щ†ШЁЩ‡ ЩЃЩ‚Ш· Щ„ШЇЩ‰ Ш§Щ„ШґШ®Шµ Ш­ШЄЩ‰ ЩЉЩѓШЄШЁ Щ†ЩЃШі Ш§Щ„ЩѓЩ„Щ…Ш©:',
-        sendWakeBtn: 'ШҐШ±ШіШ§Щ„ Ш§Щ„ШЄЩ†ШЁЩЉЩ‡ Ш§Щ„ШўЩ†',
-        wakeHeader: 'Ш§Щ„ШµЩ„Ш§Ш© Ш®ЩЉШ± Щ…Щ† Ш§Щ„Щ†Щ€Щ…!',
-        wakeSenderPrefix: 'ЩЉЩ€Щ‚ШёЩѓ Ш§Щ„ШўЩ†:',
-        wakePrompt: 'Щ„ШҐЩЉЩ‚Ш§ЩЃ Ш§Щ„Щ…Щ†ШЁЩ‡ШЊ Ш§ЩѓШЄШЁ Ш§Щ„ЩѓЩ„Щ…Ш© Ш§Щ„Щ…Ш±ШіЩ„Ш© ШЁШЇЩ‚Ш©:',
-        inputWordPlaceholder: 'Ш§ЩѓШЄШЁ Ш§Щ„ЩѓЩ„Щ…Ш© Щ‡Щ†Ш§',
-        verifyBtn: 'ШЄШЈЩѓЩЉШЇ Ш§Щ„Ш§ШіШЄЩЉЩ‚Ш§Шё Щ€Ш§Щ„Ш±ШЇ',
-        tabRooms: 'Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш§ШЄ',
-        tabCreate: 'QR / Щ…ШґШ§Ш±ЩѓШ©',
-        tabProfile: 'Ш­ШіШ§ШЁЩЉ',
-        shareRoomBtn: 'Щ…ШґШ§Ш±ЩѓШ© ШµЩ€Ш±Ш© Ш±Щ…ШІ QR ЩЃЩ‚Ш·',
-        shareApkBtn: 'Щ…ШґШ§Ш±ЩѓШ© Ш±Ш§ШЁШ· ШЄШ­Щ…ЩЉЩ„ Ш§Щ„ШЁШ±Щ†Ш§Щ…Ш¬ (APK)',
-        shareApkTitle: 'ШЄШ­Щ…ЩЉЩ„ ШЄШ·ШЁЩЉЩ‚ Fajr Awake',
-        shareApkText: 'Ш­Щ…Щ‘Щ„ ШЄШ·ШЁЩЉЩ‚ ШЈЩ†ШЇШ±Щ€ЩЉШЇ Щ…ШЁШ§ШґШ±Ш©:',
-        toastApkCopied: 'ШЄЩ… Щ†ШіШ® Ш±Ш§ШЁШ· ШЄШ­Щ…ЩЉЩ„ Ш§Щ„ШЄШ·ШЁЩЉЩ‚!',
-        savedRoomsHeader: 'Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш§ШЄ Ш§Щ„Щ…ШЄШ§Ш­Ш©',
-        searchRoomsPlaceholder: 'ШЁШ­Ш« Ш№Щ† Щ…Ш¬Щ…Щ€Ш№Ш© ШЁШ§Щ„Ш§ШіЩ…...',
-        profileHeader: 'Ш§Щ„Щ…Щ„ЩЃ Ш§Щ„ШґШ®ШµЩЉ Щ€Ш§Щ„Щ…Щ€Щ‚Ш№ Ш§Щ„Ш¬ШєШ±Ш§ЩЃЩЉ',
-        createRoomHeader: 'ШҐЩ†ШґШ§ШЎ ШєШ±ЩЃШ© Ш¬ШЇЩЉШЇШ©',
-        placeholderName: 'Ш§Щ„Ш§ШіЩ… / Ш§ШіЩ… Ш§Щ„Щ…ШіШЄШ®ШЇЩ…',
-        placeholderUserPass: 'ЩѓЩ„Щ…Ш© Щ…Ш±Щ€Ш± Ш§Щ„Ш­ШіШ§ШЁ',
-        placeholderRoomName: 'Ш§ШіЩ… Ш§Щ„ШєШ±ЩЃШ©',
-        placeholderRoomPass: 'ЩѓЩ„Щ…Ш© Щ…Ш±Щ€Ш± Ш§Щ„ШєШ±ЩЃШ©',
-        geoBtn: 'ШЄШ­ШЇЩЉШЇ Ш§Щ„Щ…Щ€Щ‚Ш№ ШЄЩ„Щ‚Ш§Ш¦ЩЉШ§Щ‹ Ш№ШЁШ± GPS',
-        geoUpdatesLabel: 'Ш§Щ„Щ…Щ€Щ‚Ш№ Ш§Щ„Ш¬ШєШ±Ш§ЩЃЩЉ Щ€Ш§Щ„ШЄШ­ШЇЩЉШ«Ш§ШЄ',
-        checkUpdateBtn: 'Ш§Щ„ШЄШ­Щ‚Щ‚ Щ…Щ† ШЄШ­ШЇЩЉШ« Ш§Щ„ЩѓЩ€ШЇ Щ…Щ† GitHub (ШЁШЇЩ€Щ† ШЄШ­Щ…ЩЉЩ„ APK)',
-        saveProfileBtn: 'Ш­ЩЃШё Ш§Щ„Щ…Щ„ЩЃ Ш§Щ„ШґШ®ШµЩЉ',
-        logoutProfileBtn: 'ШЄШіШ¬ЩЉЩ„ Ш§Щ„Ш®Ш±Щ€Ш¬ Щ…Щ† Ш§Щ„Ш­ШіШ§ШЁ',
-        sessionsHeader: 'рџ“± Ш§Щ„ШЈШ¬Щ‡ШІШ© Ш§Щ„Щ†ШґШ·Ш© (Ш§Щ„Ш¬Щ„ШіШ§ШЄ)',
-        sessionsCount: 'Щ†ШґШ·: {n} Ш¬Щ‡Ш§ШІ',
-        sessionsThisDevice: 'Щ‡Ш°Ш§ Ш§Щ„Ш¬Щ‡Ш§ШІ',
-        sessionsEnd: 'ШҐЩ†Щ‡Ш§ШЎ',
-        sessionsEmpty: 'Щ„Ш§ ШЄЩ€Ш¬ШЇ ШЁЩЉШ§Щ†Ш§ШЄ Ш¬Щ„ШіШ§ШЄ ШЁШ№ШЇ',
-        sessionOnline: 'Щ…ШЄШµЩ„',
-        saveBtn: 'Ш­ЩЃШё Щ€Ш§Щ„Ш§Щ†Ш¶Щ…Ш§Щ…',
-        deleteBtn: 'Ш­Ш°ЩЃ',
-        scanCamBtn: 'Щ…ШіШ­ QR ШЁШ§Щ„ЩѓШ§Щ…ЩЉШ±Ш§',
-        scanGalleryBtn: 'Щ…Щ† Ш§Щ„Ш§ШіШЄЩ€ШЇЩЉЩ€',
-        scannerModalTitle: 'Щ…ШіШ­ Ш±Щ…ШІ QR',
-        scannerModalDesc: 'Щ€Ш¬Щ‘Щ‡ Ш§Щ„ЩѓШ§Щ…ЩЉШ±Ш§ Щ†Ш­Щ€ Ш±Щ…ШІ QR Щ„Щ„Ш§Щ†Ш¶Щ…Ш§Щ… ЩЃЩ€Ш±Ш§Щ‹',
-        cancelScannerBtn: 'ШҐЩ„ШєШ§ШЎ',
-        enterRoomBtn: 'ШЇШ®Щ€Щ„',
-        activeRoomBadge: 'Щ†ШґШ·Ш©',
-        lockBadge: 'Ш®Ш§ШµШ©',
-        openBadge: 'Ш№Ш§Щ…Ш©',
-        toastWakeSent: 'ШЄЩ… ШҐШ±ШіШ§Щ„ Щ†ШЇШ§ШЎ Ш§Щ„Ш§ШіШЄЩЉЩ‚Ш§Шё ШЁЩѓЩ„Щ…Ш©:',
-        toastWakeCancelled: 'ШЄЩ… ШҐЩ„ШєШ§ШЎ Ш§Щ„Ш±Щ†ЩЉЩ†!',
-        toastReplyReceived: 'ШЈЩѓШЇ Ш§ШіШЄЩЉЩ‚Ш§ШёЩ‡ ШЁЩѓШЄШ§ШЁШ© Ш§Щ„ЩѓЩ„Щ…Ш©:',
-        toastRoomDeleted: 'ШЄЩ… Ш­Ш°ЩЃ Ш§Щ„ШєШ±ЩЃШ© ШЁЩ†Ш¬Ш§Ш­',
-        toastGeoSuccess: 'ШЄЩ… Ш­ЩЃШё ШҐШ­ШЇШ§Ш«ЩЉШ§ШЄ GPS!',
-        toastGeoFail: 'ШЄШ№Ш°Ш± Ш§Щ„Щ€ШµЩ€Щ„ ШҐЩ„Щ‰ Щ…Щ€Щ‚Ш№ GPS',
-        toastWrongWord: 'Ш§Щ„ЩѓЩ„Щ…Ш© ШєЩЉШ± ШµШ­ЩЉШ­Ш©!',
-        toastAudioReady: 'ШЄЩ… ЩЃШ­Шµ Ш§Щ„ШµЩ€ШЄ!',
-        toastQrScannedSuccess: 'ШЄЩ… Ш§Щ„Ш§Щ†Ш¶Щ…Ш§Щ… ШҐЩ„Щ‰:',
-        toastQrScanFailed: 'Щ„Щ… ЩЉШЄЩ… Ш§Щ„Ш№Ш«Щ€Ш± Ш№Щ„Щ‰ Ш±Щ…ШІ QR',
-        toastCamError: 'Ш®Ш·ШЈ ЩЃЩЉ Ш§Щ„ЩѓШ§Щ…ЩЉШ±Ш§',
-        callSending: 'Ш¬Ш§Ш±ЩЉ ШҐШ±ШіШ§Щ„ Ш§Щ„Ш±Щ†ЩЉЩ†...',
-        callRinging: 'ЩЉШ±Щ† Ш§Щ„Щ…Щ†ШЁЩ‡ Ш§Щ„ШўЩ†! Ш§Щ„ЩѓЩ„Щ…Ш©:',
-        callReplied: 'Ш§ШіШЄЩЉЩ‚Шё! Ш±ШЇ ШЁШ§Щ„ЩѓЩ„Щ…Ш©:',
-        offlineTitle: 'Щ„Ш§ ЩЉЩ€Ш¬ШЇ Ш§ШЄШµШ§Щ„ ШЁШ§Щ„ШҐЩ†ШЄШ±Щ†ШЄ',
-        offlineDesc: 'ЩЉШ­ШЄШ§Ш¬ AL-FAJR ШҐЩ„Щ‰ Ш§Щ„ШҐЩ†ШЄШ±Щ†ШЄ Щ„ЩЉШ№Щ…Щ„. ЩЃШ№Щ‘Щ„ Ш§Щ„Щ€Ш§ЩЉ ЩЃШ§ЩЉ ШЈЩ€ ШЁЩЉШ§Щ†Ш§ШЄ Ш§Щ„Ш¬Щ€Ш§Щ„ вЂ” Щ€ШіШЄЩЏЩЃШЄШ­ Ш§Щ„ШґШ§ШґШ© ШЄЩ„Щ‚Ш§Ш¦ЩЉШ§Щ‹.',
-        offlineBtn: 'ШЄШ­Щ‚Щ‚ Щ…Щ† Ш§Щ„Ш§ШЄШµШ§Щ„ Ш§Щ„ШўЩ†',
-        adhanTitle: 'Щ€Щ‚ШЄ Ш§Щ„ШµЩ„Ш§Ш©', adhanSub: 'ЩЉЩЏШ±ЩЃШ№ Ш§Щ„ШўЩ† Ш§Щ„ШЈШ°Ш§Щ†', adhanStop: 'ШҐЩЉЩ‚Ш§ЩЃ',
-        tabSounds: 'рџ”Љ Ш§Щ„ШЈШµЩ€Ш§ШЄ', offlineBadge: 'ШєЩЉШ± Щ…ШЄШµЩ„',
-        agoNow: 'Ш§Щ„ШўЩ†', agoMin: 'Щ…Щ†Ш° {n} ШЇ', agoHour: 'Щ…Щ†Ш° {n} Ші', agoDay: 'Щ…Щ†Ш° {n} ЩЉЩ€Щ…', agoLong: 'Щ…Щ†Ш° ЩЃШЄШ±Ш© Ш·Щ€ЩЉЩ„Ш©',
-        noRooms: 'Щ„Щ… ЩЉШЄЩ… Ш§Щ„Ш№Ш«Щ€Ш± Ш№Щ„Щ‰ Щ…Ш¬Щ…Щ€Ш№Ш§ШЄ', createdByMembers: 'ШЈЩ†ШґШЈЩ‡Ш§ Ш§Щ„ШЈШ№Ш¶Ш§ШЎ',
-        refreshBtn: 'рџ”„ ШЄШ­ШЇЩЉШ«', adminBtn: 'рџ‘‘ Ш§Щ„Щ…ШґШ±ЩЃ',
-        // Щ†Ш§ЩЃШ°Ш© Ш§Щ„ШЄШіШ¬ЩЉЩ„
-        authTitle: 'Ш§Щ„ШЄШіШ¬ЩЉЩ„ / Ш§Щ„ШЇШ®Щ€Щ„',
-        authDesc: 'ШЈШЇШ®Щ„ Ш§ШіЩ…Щѓ (Ш§ШіЩ… Ш§Щ„Щ…ШіШЄШ®ШЇЩ…) Щ€ЩѓЩ„Щ…Ш© Ш§Щ„Щ…Ш±Щ€Ш±. ЩЉШёЩ‡Ш± ЩѓЩ„ Щ…ШґШ§Ш±Щѓ ШЁШ§ШіЩ…Щ‡ Ш§Щ„Ш­Щ‚ЩЉЩ‚ЩЉШЊ Щ€ШЄЩЏШ­ЩЃШё Ш§Щ„ШЈШ°Щ€Щ†Ш§ШЄ Щ…Ш±Ш© Щ€Ш§Ш­ШЇШ© ШЁШґЩѓЩ„ ШЇШ§Ш¦Щ….',
-        authNameLabel: 'Ш§Щ„Ш§ШіЩ… / Ш§ШіЩ… Ш§Щ„Щ…ШіШЄШ®ШЇЩ…',
-        authPassLabel: 'ЩѓЩ„Щ…Ш© Щ…Ш±Щ€Ш± Ш§Щ„Ш­ШіШ§ШЁ',
-        authRoomLabel: 'Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш© Ш§Щ„Щ…Ш·Щ„Щ€ШЁ ШЇШ®Щ€Щ„Щ‡Ш§',
-        authNamePh: 'Щ…Ш«Ш§Щ„: ШіЩ„ЩЉЩ…',
-        authPassPh: 'ШЈЩ†ШґШ¦ ШЈЩ€ ШЈШЇШ®Щ„ ЩѓЩ„Щ…Ш© Ш§Щ„Щ…Ш±Щ€Ш±',
-        authRoomPassPh: 'ЩѓЩ„Щ…Ш© Щ…Ш±Щ€Ш± Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш©',
-        authEnterBtn: 'Ш§Щ„ШЇШ®Щ€Щ„ ШҐЩ„Щ‰ Ш§Щ„ШЁШ±Щ†Ш§Щ…Ш¬',
-        authGuestBtn: 'рџ‘Ђ Ш§Щ„Щ…ШґШ§Щ‡ШЇШ© ШЁШЇЩ€Щ† ШЄШіШ¬ЩЉЩ„',
-        authGuestHint: 'Ш§Щ„Щ…ШґШ§Щ‡ШЇ ЩЉШ±Щ‰ Щ…Ш§ ЩЉШ¬Ш±ЩЉ ЩЃЩЉ Ш§Щ„Щ…Ш¬Щ…Щ€Ш№Ш©ШЊ Щ„ЩѓЩ†Щ‡ Щ„Ш§ ЩЉШіШЄШ·ЩЉШ№ ШЄШіШ¬ЩЉЩ„ Ш§Щ„ШµЩ„Ш§Ш© ШЈЩ€ ШЄШєЩЉЩЉШ± Ш§Щ„Ш­Ш§Щ„Ш© ШЈЩ€ ШҐЩЉЩ‚Ш§Шё Ш§Щ„ШЈШ№Ш¶Ш§ШЎ вЂ” Щ„Ш°Щ„Щѓ ЩЉШ¬ШЁ Ш§Щ„ШЄШіШ¬ЩЉЩ„.',
-        // Щ€Ш¶Ш№ Ш§Щ„Щ…ШґШ§Щ‡ШЇШ©
-        guestBanner: 'рџ‘Ђ Щ€Ш¶Ш№ Ш§Щ„Щ…ШґШ§Щ‡ШЇШ© вЂ” Ш№Ш±Ш¶ ЩЃЩ‚Ш·',
-        guestRegisterBtn: 'Ш§Щ„ШЄШіШ¬ЩЉЩ„',
-        guestPill: 'рџ‘Ђ Щ…ШґШ§Щ‡ШЇ',
-        // ШҐШ№ШЇШ§ШЇШ§ШЄ Ш§Щ„ШµЩ€ШЄ
-        alarmSoundHeader: 'рџљЁ Щ†ШєЩ…Ш© Ш§Щ„Щ…Щ†ШЁЩ‡ (Ш§Щ„ШҐЩЉЩ‚Ш§Шё)',
-        alarmOptSiren: 'Щ…ШЇЩ…Ш¬: ШµШ§ЩЃШ±Ш© Ш§Щ„ЩЃШ¬Ш± Ш§Щ„Щ‚Щ€ЩЉШ©',
-        alarmOptRadar: 'Щ…ШЇЩ…Ш¬: Ш±Ш§ШЇШ§Ш± (Щ†ШЁШ¶Ш§ШЄ Щ‚ШµЩЉШ±Ш©)',
-        alarmOptChime: 'Щ…ШЇЩ…Ш¬: Ш±Щ†ЩЉЩ† Щ‡Ш§ШЇШ¦',
-        alarmOptCustom: 'рџЋµ Щ…Щ„ЩЃ ШµЩ€ШЄЩЉ Щ…Щ† Щ‡Ш§ШЄЩЃЩЉ (MP3/WAV)',
-        chooseAlarmFile: 'рџ“‚ Ш§Ш®ШЄШ± Щ…Щ„ЩЃ MP3 Щ„Щ„Щ…Щ†ШЁЩ‡',
-        customAlarmStatus: 'Щ…Щ„ЩЃЩЉ: {n}',
-        customAlarmNone: 'Щ…Щ„ЩЃЩЉ: Щ„Щ… ЩЉШЄЩ… Ш§Щ„Ш§Ш®ШЄЩЉШ§Ш±',
-        testAlarmBtn: 'в–¶пёЏ ШЄШ¬Ш±ШЁШ©',
-        stopSoundBtn: 'вЏ№пёЏ ШҐЩЉЩ‚Ш§ЩЃ',
-        adhanHeader: 'рџ•Њ Ш§Щ„ШЈШ°Ш§Щ† Ш№Щ†ШЇ ШЇШ®Щ€Щ„ Щ€Щ‚ШЄ Ш§Щ„ШµЩ„Ш§Ш©',
-        adhanOptSynth: 'Щ…ШЇЩ…Ш¬: Щ†ШєЩ…Ш© ШЈШ°Ш§Щ† Щ„Ш­Щ†ЩЉШ©',
-        adhanOptCustom: 'рџЋµ Щ…Щ„ЩЃ Ш§Щ„ШЈШ°Ш§Щ† Щ…Щ† Щ‡Ш§ШЄЩЃЩЉ (MP3)',
-        chooseAdhanFile: 'рџ“‚ ШЄШ­Щ…ЩЉЩ„ Щ…Щ„ЩЃ Ш§Щ„ШЈШ°Ш§Щ† Щ…Щ† Ш§Щ„Щ‡Ш§ШЄЩЃ',
-        customAdhanStatus: 'Щ…Щ„ЩЃ Ш§Щ„ШЈШ°Ш§Щ†: {n}',
-        customAdhanNone: 'Щ…Щ„ЩЃ Ш§Щ„ШЈШ°Ш§Щ†: Щ„Щ… ЩЉШЄЩ… Ш§Щ„Ш§Ш®ШЄЩЉШ§Ш±',
-        testAdhanBtn: 'в–¶пёЏ ЩЃШ­Шµ Ш§Щ„ШЈШ°Ш§Щ†',
-        words: ['Ш§ШіШЄЩЉЩ‚Шё', 'Ш§Щ„ЩЃШ¬Ш±', 'Ш§Щ„ШµЩ„Ш§Ш©', 'Ш§Щ„Щ†Щ‡Щ€Ш¶', 'Ш§Щ„ШЁШ±ЩѓШ©', 'Ш·Ш§Ш№Ш©', 'ЩЉЩ‚ШёШ©', 'ШЈШ°Ш§Щ†']
+        fajr: 'الفجر', sunrise: 'الشروق', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء',
+        nextPrayer: 'الصلاة القادمة',
+        remaining: 'المتبقي:',
+        doneTitle: 'تأكيد: تمت الصلاة',
+        doneSub: 'اضغط للتوثيق',
+        doneConfirmed: '✓ تم أداء الصلاة',
+        statusPrefix: 'الحالة:',
+        stateSleep: 'نائم', stateAwake: 'مستيقظ', stateDone: 'صليت',
+        changeStatus: 'اضغط لتغيير الحالة',
+        wakeAll: 'إيقاظ جميع النائمين في المجموعة',
+        cancelAllBtn: 'إلغاء جميع نداءات المنبه',
+        members: 'أعضاء المجموعة',
+        peopleUnit: 'أشخاص',
+        roomsUnit: 'غرف',
+        youBadge: '(أنت)',
+        nudgeBtn: 'إيقاظ',
+        cancelNudgeBtn: 'إلغاء',
+        roomTtlLabel: 'المجموعة الحالية:',
+        permanentRoom: 'الغرفة العامة',
+        wakeModalTitle: 'إرسال كلمة الاستيقاظ',
+        wakeModalDesc: 'اختر كلمة التحقق. سيرن المنبه فقط لدى الشخص حتى يكتب نفس الكلمة:',
+        sendWakeBtn: 'إرسال التنبيه الآن',
+        wakeHeader: 'الصلاة خير من النوم!',
+        wakeSenderPrefix: 'يوقظك الآن:',
+        wakePrompt: 'لإيقاف المنبه، اكتب الكلمة المرسلة بدقة:',
+        inputWordPlaceholder: 'اكتب الكلمة هنا',
+        verifyBtn: 'تأكيد الاستيقاظ والرد',
+        tabRooms: 'المجموعات',
+        tabCreate: 'QR / مشاركة',
+        tabProfile: 'حسابي',
+        shareRoomBtn: 'مشاركة صورة رمز QR فقط',
+        shareApkBtn: 'مشاركة رابط تحميل البرنامج (APK)',
+        shareApkTitle: 'تحميل تطبيق Fajr Awake',
+        shareApkText: 'حمّل تطبيق أندرويد مباشرة:',
+        toastApkCopied: 'تم نسخ رابط تحميل التطبيق!',
+        savedRoomsHeader: 'المجموعات المتاحة',
+        searchRoomsPlaceholder: 'بحث عن مجموعة بالاسم...',
+        profileHeader: 'الملف الشخصي والموقع الجغرافي',
+        createRoomHeader: 'إنشاء غرفة جديدة',
+        placeholderName: 'الاسم / اسم المستخدم',
+        placeholderUserPass: 'كلمة مرور الحساب',
+        placeholderRoomName: 'اسم الغرفة',
+        placeholderRoomPass: 'كلمة مرور الغرفة',
+        geoBtn: 'تحديد الموقع تلقائياً عبر GPS',
+        geoUpdatesLabel: 'الموقع الجغرافي والتحديثات',
+        checkUpdateBtn: 'التحقق من تحديث الكود من GitHub (بدون تحميل APK)',
+        saveProfileBtn: 'حفظ الملف الشخصي',
+        logoutProfileBtn: 'تسجيل الخروج من الحساب',
+        sessionsHeader: '📱 الأجهزة النشطة (الجلسات)',
+        sessionsCount: 'نشط: {n} جهاز',
+        sessionsThisDevice: 'هذا الجهاز',
+        sessionsEnd: 'إنهاء',
+        sessionsEmpty: 'لا توجد بيانات جلسات بعد',
+        sessionOnline: 'متصل',
+        saveBtn: 'حفظ والانضمام',
+        deleteBtn: 'حذف',
+        scanCamBtn: 'مسح QR بالكاميرا',
+        scanGalleryBtn: 'من الاستوديو',
+        scannerModalTitle: 'مسح رمز QR',
+        scannerModalDesc: 'وجّه الكاميرا نحو رمز QR للانضمام فوراً',
+        cancelScannerBtn: 'إلغاء',
+        enterRoomBtn: 'دخول',
+        activeRoomBadge: 'نشطة',
+        lockBadge: 'خاصة',
+        openBadge: 'عامة',
+        toastWakeSent: 'تم إرسال نداء الاستيقاظ بكلمة:',
+        toastWakeCancelled: 'تم إلغاء الرنين!',
+        toastReplyReceived: 'أكد استيقاظه بكتابة الكلمة:',
+        toastRoomDeleted: 'تم حذف الغرفة بنجاح',
+        toastGeoSuccess: 'تم حفظ إحداثيات GPS!',
+        toastGeoFail: 'تعذر الوصول إلى موقع GPS',
+        toastWrongWord: 'الكلمة غير صحيحة!',
+        toastAudioReady: 'تم فحص الصوت!',
+        toastQrScannedSuccess: 'تم الانضمام إلى:',
+        toastQrScanFailed: 'لم يتم العثور على رمز QR',
+        toastCamError: 'خطأ في الكاميرا',
+        callSending: 'جاري إرسال الرنين...',
+        callRinging: 'يرن المنبه الآن! الكلمة:',
+        callReplied: 'استيقظ! رد بالكلمة:',
+        offlineTitle: 'لا يوجد اتصال بالإنترنت',
+        offlineDesc: 'يحتاج AL-FAJR إلى الإنترنت ليعمل. فعّل الواي فاي أو بيانات الجوال — وستُفتح الشاشة تلقائياً.',
+        offlineBtn: 'تحقق من الاتصال الآن',
+        adhanTitle: 'وقت الصلاة', adhanSub: 'يُرفع الآن الأذان', adhanStop: 'إيقاف',
+        tabSounds: '🔊 الأصوات', offlineBadge: 'غير متصل',
+        agoNow: 'الآن', agoMin: 'منذ {n} د', agoHour: 'منذ {n} س', agoDay: 'منذ {n} يوم', agoLong: 'منذ فترة طويلة',
+        noRooms: 'لم يتم العثور على مجموعات', createdByMembers: 'أنشأها الأعضاء',
+        refreshBtn: '🔄 تحديث', adminBtn: '👑 المشرف',
+        // نافذة التسجيل
+        authTitle: 'التسجيل / الدخول',
+        authDesc: 'أدخل اسمك (اسم المستخدم) وكلمة المرور. يظهر كل مشارك باسمه الحقيقي، وتُحفظ الأذونات مرة واحدة بشكل دائم.',
+        authNameLabel: 'الاسم / اسم المستخدم',
+        authPassLabel: 'كلمة مرور الحساب',
+        authRoomLabel: 'المجموعة المطلوب دخولها',
+        authNamePh: 'مثال: سليم',
+        authPassPh: 'أنشئ أو أدخل كلمة المرور',
+        authRoomPassPh: 'كلمة مرور المجموعة',
+        authEnterBtn: 'الدخول إلى البرنامج',
+        authGuestBtn: '👀 المشاهدة بدون تسجيل',
+        authGuestHint: 'المشاهد يرى ما يجري في المجموعة، لكنه لا يستطيع تسجيل الصلاة أو تغيير الحالة أو إيقاظ الأعضاء — لذلك يجب التسجيل.',
+        // وضع المشاهدة
+        guestBanner: '👀 وضع المشاهدة — عرض فقط',
+        guestRegisterBtn: 'التسجيل',
+        guestPill: '👀 مشاهد',
+        // إعدادات الصوت
+        alarmSoundHeader: '🚨 نغمة المنبه (الإيقاظ)',
+        alarmOptSiren: 'مدمج: صافرة الفجر القوية',
+        alarmOptRadar: 'مدمج: رادار (نبضات قصيرة)',
+        alarmOptChime: 'مدمج: رنين هادئ',
+        alarmOptCustom: '🎵 ملف صوتي من هاتفي (MP3/WAV)',
+        chooseAlarmFile: '📂 اختر ملف MP3 للمنبه',
+        customAlarmStatus: 'ملفي: {n}',
+        customAlarmNone: 'ملفي: لم يتم الاختيار',
+        testAlarmBtn: '▶️ تجربة',
+        stopSoundBtn: '⏹️ إيقاف',
+        adhanHeader: '🕌 الأذان عند دخول وقت الصلاة',
+        adhanOptSynth: 'مدمج: نغمة أذان لحنية',
+        adhanOptCustom: '🎵 ملف الأذان من هاتفي (MP3)',
+        chooseAdhanFile: '📂 تحميل ملف الأذان من الهاتف',
+        customAdhanStatus: 'ملف الأذان: {n}',
+        customAdhanNone: 'ملف الأذان: لم يتم الاختيار',
+        testAdhanBtn: '▶️ فحص الأذان',
+        words: ['استيقظ', 'الفجر', 'الصلاة', 'النهوض', 'البركة', 'طاعة', 'يقظة', 'أذان']
     },
     tr: {
-        fajr: 'Fecr', sunrise: 'GГјneЕџ', dhuhr: 'Г–Дџle', asr: 'Д°kindi', maghrib: 'AkЕџam', isha: 'YatsД±',
-        nextPrayer: 'SIRADAKД° NAMAZ',
+        fajr: 'Fecr', sunrise: 'Güneş', dhuhr: 'Öğle', asr: 'İkindi', maghrib: 'Akşam', isha: 'Yatsı',
+        nextPrayer: 'SIRADAKİ NAMAZ',
         remaining: 'Kalan:',
-        doneTitle: 'NAMAZ KILINDI OLARAK Д°ЕћARETLE',
-        doneSub: 'kaydetmek iГ§in dokunun',
-        doneConfirmed: 'вњ“ NAMAZ KILINDI',
+        doneTitle: 'NAMAZ KILINDI OLARAK İŞARETLE',
+        doneSub: 'kaydetmek için dokunun',
+        doneConfirmed: '✓ NAMAZ KILINDI',
         statusPrefix: 'DURUM:',
         stateSleep: 'UYUYOR', stateAwake: 'UYANDI', stateDone: 'KILDI',
-        changeStatus: 'deДџiЕџtirmek iГ§in dokunun',
-        wakeAll: 'GRUPTAKД° TГњM UYUYANLARI UYANDIR',
-        cancelAllBtn: 'TГњM ALARMLARI Д°PTAL ET',
+        changeStatus: 'değiştirmek için dokunun',
+        wakeAll: 'GRUPTAKİ TÜM UYUYANLARI UYANDIR',
+        cancelAllBtn: 'TÜM ALARMLARI İPTAL ET',
         members: 'ODA KATILIMCILARI',
-        peopleUnit: 'kiЕџi',
+        peopleUnit: 'kişi',
         roomsUnit: 'grup',
         youBadge: '(Siz)',
         nudgeBtn: 'UYANDIR',
-        cancelNudgeBtn: 'Д°PTAL ET',
+        cancelNudgeBtn: 'İPTAL ET',
         roomTtlLabel: 'Aktif Grup:',
         permanentRoom: 'Ana Grup',
-        wakeModalTitle: 'UYANDIRMA KELД°MESД° GГ–NDER',
-        wakeModalDesc: 'Bir kontrol kelimesi seГ§in. KarЕџД± tarafД±n alarmД± aynД± kelimeyi yazana kadar Г§alacaktД±r:',
-        sendWakeBtn: 'Г‡AДћRIYI GГ–NDER',
+        wakeModalTitle: 'UYANDIRMA KELİMESİ GÖNDER',
+        wakeModalDesc: 'Bir kontrol kelimesi seçin. Karşı tarafın alarmı aynı kelimeyi yazana kadar çalacaktır:',
+        sendWakeBtn: 'ÇAĞRIYI GÖNDER',
         wakeHeader: 'NAMAZA KALK!',
-        wakeSenderPrefix: 'Sizi uyandД±ran:',
-        wakePrompt: 'AlarmД± kapatmak iГ§in gГ¶nderilen kelimeyi yazД±n:',
-        inputWordPlaceholder: 'Kelimeyi buraya yazД±n',
-        verifyBtn: 'UYANDIДћIMI ONAYLA',
+        wakeSenderPrefix: 'Sizi uyandıran:',
+        wakePrompt: 'Alarmı kapatmak için gönderilen kelimeyi yazın:',
+        inputWordPlaceholder: 'Kelimeyi buraya yazın',
+        verifyBtn: 'UYANDIĞIMI ONAYLA',
         tabRooms: 'GRUPLAR',
-        tabCreate: 'QR / PAYLAЕћ',
-        tabProfile: 'PROFД°L',
-        shareRoomBtn: 'SADECE QR RESMД°NД° PAYLAЕћ',
-        shareApkBtn: 'UYGULAMA LД°NKД°NД° PAYLAЕћ (APK)',
-        shareApkTitle: 'Fajr Awake UygulamasД±nД± Д°ndir',
-        shareApkText: 'Fajr Awake Android uygulamasД±nД± indir:',
-        toastApkCopied: 'APK baДџlantД±sД± kopyalandД±!',
+        tabCreate: 'QR / PAYLAŞ',
+        tabProfile: 'PROFİL',
+        shareRoomBtn: 'SADECE QR RESMİNİ PAYLAŞ',
+        shareApkBtn: 'UYGULAMA LİNKİNİ PAYLAŞ (APK)',
+        shareApkTitle: 'Fajr Awake Uygulamasını İndir',
+        shareApkText: 'Fajr Awake Android uygulamasını indir:',
+        toastApkCopied: 'APK bağlantısı kopyalandı!',
         savedRoomsHeader: 'MEVCUT GRUPLAR',
-        searchRoomsPlaceholder: 'Grup adД±na gГ¶re ara...',
-        profileHeader: 'PROFД°L VE KONUM',
-        createRoomHeader: 'ODA OLUЕћTUR',
-        placeholderName: 'AdД±nД±z / KullanД±cД± adД±nД±z',
-        placeholderUserPass: 'Hesap Еџifresi',
-        placeholderRoomName: 'Oda adД±',
-        placeholderRoomPass: 'Oda Еџifresi',
+        searchRoomsPlaceholder: 'Grup adına göre ara...',
+        profileHeader: 'PROFİL VE KONUM',
+        createRoomHeader: 'ODA OLUŞTUR',
+        placeholderName: 'Adınız / Kullanıcı adınız',
+        placeholderUserPass: 'Hesap şifresi',
+        placeholderRoomName: 'Oda adı',
+        placeholderRoomPass: 'Oda şifresi',
         geoBtn: 'GPS Konumunu Otomatik Belirle',
-        geoUpdatesLabel: 'KONUM VE GГњNCELLEMELER',
-        checkUpdateBtn: 'GitHub\'tan kod gГјncellemesini denetle (APK indirmeden)',
-        saveProfileBtn: 'PROFД°LД° KAYDET',
-        logoutProfileBtn: 'HESAPTAN Г‡IKIЕћ YAP',
-        sessionsHeader: 'рџ“± AKTД°F CД°HAZLAR (OTURUMLAR)',
+        geoUpdatesLabel: 'KONUM VE GÜNCELLEMELER',
+        checkUpdateBtn: 'GitHub\'tan kod güncellemesini denetle (APK indirmeden)',
+        saveProfileBtn: 'PROFİLİ KAYDET',
+        logoutProfileBtn: 'HESAPTAN ÇIKIŞ YAP',
+        sessionsHeader: '📱 AKTİF CİHAZLAR (OTURUMLAR)',
         sessionsCount: 'Aktif: {n} cihaz',
         sessionsThisDevice: 'Bu cihaz',
-        sessionsEnd: 'SonlandД±r',
-        sessionsEmpty: 'HenГјz oturum verisi yok',
-        sessionOnline: 'Г§evrimiГ§i',
-        saveBtn: 'KAYDET VE BAДћLAN',
+        sessionsEnd: 'Sonlandır',
+        sessionsEmpty: 'Henüz oturum verisi yok',
+        sessionOnline: 'çevrimiçi',
+        saveBtn: 'KAYDET VE BAĞLAN',
         deleteBtn: 'Sil',
         scanCamBtn: 'QR Tara',
-        scanGalleryBtn: 'Galeriden SeГ§',
+        scanGalleryBtn: 'Galeriden Seç',
         scannerModalTitle: 'QR KOD TARAMA',
-        scannerModalDesc: 'KamerayД± QR koda tutun',
+        scannerModalDesc: 'Kamerayı QR koda tutun',
         cancelScannerBtn: 'KAPAT',
-        enterRoomBtn: 'GiriЕџ',
+        enterRoomBtn: 'Giriş',
         activeRoomBadge: 'Aktif',
         lockBadge: 'Kilitli',
-        openBadge: 'AГ§Д±k',
-        toastWakeSent: 'UyandД±rma sinyali gГ¶nderildi:',
-        toastWakeCancelled: 'Alarm Г§aДџrД±sД± iptal edildi!',
-        toastReplyReceived: 'uyandД±ДџД±nД± onayladД±:',
+        openBadge: 'Açık',
+        toastWakeSent: 'Uyandırma sinyali gönderildi:',
+        toastWakeCancelled: 'Alarm çağrısı iptal edildi!',
+        toastReplyReceived: 'uyandığını onayladı:',
         toastRoomDeleted: 'Oda silindi',
-        toastGeoSuccess: 'GPS koordinatlarД± kaydedildi!',
-        toastGeoFail: 'GPS eriЕџilemedi',
-        toastWrongWord: 'YanlД±Еџ kelime!',
+        toastGeoSuccess: 'GPS koordinatları kaydedildi!',
+        toastGeoFail: 'GPS erişilemedi',
+        toastWrongWord: 'Yanlış kelime!',
         toastAudioReady: 'Ses aktif!',
-        toastQrScannedSuccess: 'Gruba baДџlanД±ldД±:',
-        toastQrScanFailed: 'QR kod bulunamadД±',
-        toastCamError: 'Kamera hatasД±',
-        callSending: 'Sinyal gГ¶nderiliyor...',
-        callRinging: 'Alarm Г§alД±yor! Kelime:',
-        callReplied: 'UyandД±! CevabД±:',
-        offlineTitle: 'Д°NTERNET BAДћLANTISI YOK',
-        offlineDesc: 'AL-FAJR\'Д±n Г§alД±ЕџmasД± iГ§in internet gerekir. Wi-Fi veya mobil veriyi aГ§Д±n вЂ” ekran otomatik olarak aГ§Д±lД±r.',
-        offlineBtn: 'BAДћLANTIYI ЕћД°MDД° KONTROL ET',
-        adhanTitle: 'NAMAZ VAKTД°', adhanSub: 'Ezan okunuyor', adhanStop: 'DURDUR',
-        tabSounds: 'рџ”Љ SESLER', offlineBadge: 'Г‡EVRД°MDIЕћI',
-        agoNow: 'az Г¶nce', agoMin: '{n} dk Г¶nce', agoHour: '{n} sa Г¶nce', agoDay: '{n} gГјn Г¶nce', agoLong: 'uzun zaman Г¶nce',
-        noRooms: 'Grup bulunamadД±', createdByMembers: 'Гњyeler tarafД±ndan oluЕџturuldu',
-        refreshBtn: 'рџ”„ Yenile', adminBtn: 'рџ‘‘ YГ¶netici',
-        // KayД±t penceresi
-        authTitle: 'KAYIT / GД°RД°Ећ',
-        authDesc: 'AdД±nД±zД± (kullanД±cД± adД±) ve Еџifrenizi girin. Her katД±lД±mcД± gerГ§ek adД±yla gГ¶rГјnГјr; izinler bir kez kalД±cД± olarak saklanД±r.',
+        toastQrScannedSuccess: 'Gruba bağlanıldı:',
+        toastQrScanFailed: 'QR kod bulunamadı',
+        toastCamError: 'Kamera hatası',
+        callSending: 'Sinyal gönderiliyor...',
+        callRinging: 'Alarm çalıyor! Kelime:',
+        callReplied: 'Uyandı! Cevabı:',
+        offlineTitle: 'İNTERNET BAĞLANTISI YOK',
+        offlineDesc: 'AL-FAJR\'ın çalışması için internet gerekir. Wi-Fi veya mobil veriyi açın — ekran otomatik olarak açılır.',
+        offlineBtn: 'BAĞLANTIYI ŞİMDİ KONTROL ET',
+        adhanTitle: 'NAMAZ VAKTİ', adhanSub: 'Ezan okunuyor', adhanStop: 'DURDUR',
+        tabSounds: '🔊 SESLER', offlineBadge: 'ÇEVRİMDIŞI',
+        agoNow: 'az önce', agoMin: '{n} dk önce', agoHour: '{n} sa önce', agoDay: '{n} gün önce', agoLong: 'uzun zaman önce',
+        noRooms: 'Grup bulunamadı', createdByMembers: 'Üyeler tarafından oluşturuldu',
+        refreshBtn: '🔄 Yenile', adminBtn: '👑 Yönetici',
+        // Kayıt penceresi
+        authTitle: 'KAYIT / GİRİŞ',
+        authDesc: 'Adınızı (kullanıcı adı) ve şifrenizi girin. Her katılımcı gerçek adıyla görünür; izinler bir kez kalıcı olarak saklanır.',
         authNameLabel: 'ADINIZ / KULLANICI ADI',
-        authPassLabel: 'HESAP ЕћД°FRESД°',
-        authRoomLabel: 'GД°RД°LECEK GRUP',
-        authNamePh: 'Г–rnek: Salim',
-        authPassPh: 'Bir Еџifre oluЕџturun veya girin',
-        authRoomPassPh: 'Grup Еџifresi',
-        authEnterBtn: 'PROGRAMA GД°R',
-        authGuestBtn: 'рџ‘Ђ KAYIT OLMADAN Д°ZLE',
-        authGuestHint: 'Д°zleyici grupta olup biteni gГ¶rГјr; ancak namaz iЕџaretleyemez, durum deДџiЕџtiremez veya Гјyeleri uyandД±ramaz вЂ” bunun iГ§in kayД±t olmalД±sД±nД±z.',
-        // Д°zleyici modu
-        guestBanner: 'рџ‘Ђ Д°zleyici modu вЂ” sadece gГ¶rГјntГјleme',
+        authPassLabel: 'HESAP ŞİFRESİ',
+        authRoomLabel: 'GİRİLECEK GRUP',
+        authNamePh: 'Örnek: Salim',
+        authPassPh: 'Bir şifre oluşturun veya girin',
+        authRoomPassPh: 'Grup şifresi',
+        authEnterBtn: 'PROGRAMA GİR',
+        authGuestBtn: '👀 KAYIT OLMADAN İZLE',
+        authGuestHint: 'İzleyici grupta olup biteni görür; ancak namaz işaretleyemez, durum değiştiremez veya üyeleri uyandıramaz — bunun için kayıt olmalısınız.',
+        // İzleyici modu
+        guestBanner: '👀 İzleyici modu — sadece görüntüleme',
         guestRegisterBtn: 'KAYIT OL',
-        guestPill: 'рџ‘Ђ Д°zleyici',
-        // Ses ayarlarД±
-        alarmSoundHeader: 'рџљЁ ALARM MELODД°SД° (UYANDIRMA)',
-        alarmOptSiren: 'Dahili: GГјГ§lГј Fecr sireni',
-        alarmOptRadar: 'Dahili: Radar (kД±sa darbeler)',
-        alarmOptChime: 'Dahili: YumuЕџak Г§Д±ngД±rak',
-        alarmOptCustom: 'рџЋµ Telefonumdan ses dosyasД± (MP3/WAV)',
-        chooseAlarmFile: 'рџ“‚ Alarm iГ§in MP3 seГ§',
+        guestPill: '👀 İzleyici',
+        // Ses ayarları
+        alarmSoundHeader: '🚨 ALARM MELODİSİ (UYANDIRMA)',
+        alarmOptSiren: 'Dahili: Güçlü Fecr sireni',
+        alarmOptRadar: 'Dahili: Radar (kısa darbeler)',
+        alarmOptChime: 'Dahili: Yumuşak çıngırak',
+        alarmOptCustom: '🎵 Telefonumdan ses dosyası (MP3/WAV)',
+        chooseAlarmFile: '📂 Alarm için MP3 seç',
         customAlarmStatus: 'Dosyam: {n}',
-        customAlarmNone: 'Dosyam: seГ§ilmedi',
-        testAlarmBtn: 'в–¶пёЏ DД°NLE',
-        stopSoundBtn: 'вЏ№пёЏ DURDUR',
-        adhanHeader: 'рџ•Њ NAMAZ VAKTД°NDE EZAN',
+        customAlarmNone: 'Dosyam: seçilmedi',
+        testAlarmBtn: '▶️ DİNLE',
+        stopSoundBtn: '⏹️ DURDUR',
+        adhanHeader: '🕌 NAMAZ VAKTİNDE EZAN',
         adhanOptSynth: 'Dahili: Melodik ezan sesi',
-        adhanOptCustom: 'рџЋµ Telefonumdan ezan dosyasД± (MP3)',
-        chooseAdhanFile: 'рџ“‚ Telefondan ezan MP3 yГјkle',
-        customAdhanStatus: 'Ezan dosyasД±: {n}',
-        customAdhanNone: 'Ezan dosyasД±: seГ§ilmedi',
-        testAdhanBtn: 'в–¶пёЏ EZANI KONTROL ET',
+        adhanOptCustom: '🎵 Telefonumdan ezan dosyası (MP3)',
+        chooseAdhanFile: '📂 Telefondan ezan MP3 yükle',
+        customAdhanStatus: 'Ezan dosyası: {n}',
+        customAdhanNone: 'Ezan dosyası: seçilmedi',
+        testAdhanBtn: '▶️ EZANI KONTROL ET',
         words: ['uyan', 'kalk', 'sabah', 'namaz', 'vakit', 'bereket', 'gayret', 'ezan']
     },
     en: {
@@ -2011,7 +2011,7 @@ const DICTIONARY = {
         remaining: 'Remaining:',
         doneTitle: 'MARK: PRAYER COMPLETED',
         doneSub: 'tap to confirm',
-        doneConfirmed: 'вњ“ PRAYER COMPLETED',
+        doneConfirmed: '✓ PRAYER COMPLETED',
         statusPrefix: 'STATUS:',
         stateSleep: 'ASLEEP', stateAwake: 'AWAKE', stateDone: 'PRAYED',
         changeStatus: 'tap to toggle',
@@ -2054,7 +2054,7 @@ const DICTIONARY = {
         checkUpdateBtn: 'Check code update from GitHub (without downloading APK)',
         saveProfileBtn: 'SAVE PROFILE',
         logoutProfileBtn: 'LOG OUT OF ACCOUNT',
-        sessionsHeader: 'рџ“± ACTIVE DEVICES (SESSIONS)',
+        sessionsHeader: '📱 ACTIVE DEVICES (SESSIONS)',
         sessionsCount: 'Active: {n} device(s)',
         sessionsThisDevice: 'This device',
         sessionsEnd: 'End',
@@ -2086,13 +2086,13 @@ const DICTIONARY = {
         callRinging: 'Siren ringing! Word:',
         callReplied: 'Woke up! Replied:',
         offlineTitle: 'NO INTERNET CONNECTION',
-        offlineDesc: 'AL-FAJR needs internet to work. Turn on Wi-Fi or mobile data вЂ” the screen unlocks automatically.',
+        offlineDesc: 'AL-FAJR needs internet to work. Turn on Wi-Fi or mobile data — the screen unlocks automatically.',
         offlineBtn: 'CHECK CONNECTION NOW',
         adhanTitle: 'PRAYER TIME', adhanSub: 'The call to prayer is playing', adhanStop: 'STOP',
-        tabSounds: 'рџ”Љ SOUNDS', offlineBadge: 'OFFLINE',
+        tabSounds: '🔊 SOUNDS', offlineBadge: 'OFFLINE',
         agoNow: 'just now', agoMin: '{n} min ago', agoHour: '{n} h ago', agoDay: '{n} d ago', agoLong: 'long ago',
         noRooms: 'No groups found', createdByMembers: 'Created by members',
-        refreshBtn: 'рџ”„ Refresh', adminBtn: 'рџ‘‘ Admin',
+        refreshBtn: '🔄 Refresh', adminBtn: '👑 Admin',
         // Sign-up window
         authTitle: 'SIGN UP / LOG IN',
         authDesc: 'Enter your name (login) and password. Every member appears under their real name; permissions are stored permanently.',
@@ -2103,30 +2103,30 @@ const DICTIONARY = {
         authPassPh: 'Create or enter a password',
         authRoomPassPh: 'Group password',
         authEnterBtn: 'ENTER THE APP',
-        authGuestBtn: 'рџ‘Ђ WATCH WITHOUT SIGNING UP',
-        authGuestHint: 'A viewer sees what happens in the group, but cannot mark prayers, change status or wake members вЂ” sign up for that.',
+        authGuestBtn: '👀 WATCH WITHOUT SIGNING UP',
+        authGuestHint: 'A viewer sees what happens in the group, but cannot mark prayers, change status or wake members — sign up for that.',
         // Viewer (guest) mode
-        guestBanner: 'рџ‘Ђ Viewer mode вЂ” read only',
+        guestBanner: '👀 Viewer mode — read only',
         guestRegisterBtn: 'SIGN UP',
-        guestPill: 'рџ‘Ђ Viewer',
+        guestPill: '👀 Viewer',
         // Sound settings tab
-        alarmSoundHeader: 'рџљЁ ALARM MELODY (WAKE-UP)',
+        alarmSoundHeader: '🚨 ALARM MELODY (WAKE-UP)',
         alarmOptSiren: 'Built-in: Powerful Fajr siren',
         alarmOptRadar: 'Built-in: Radar (short pulses)',
         alarmOptChime: 'Built-in: Soft chime',
-        alarmOptCustom: 'рџЋµ My audio file from phone (MP3/WAV)',
-        chooseAlarmFile: 'рџ“‚ Choose my MP3 for the alarm',
+        alarmOptCustom: '🎵 My audio file from phone (MP3/WAV)',
+        chooseAlarmFile: '📂 Choose my MP3 for the alarm',
         customAlarmStatus: 'My file: {n}',
         customAlarmNone: 'My file: not selected',
-        testAlarmBtn: 'в–¶пёЏ PREVIEW',
-        stopSoundBtn: 'вЏ№пёЏ STOP',
-        adhanHeader: 'рџ•Њ ADHAN AT PRAYER TIME',
+        testAlarmBtn: '▶️ PREVIEW',
+        stopSoundBtn: '⏹️ STOP',
+        adhanHeader: '🕌 ADHAN AT PRAYER TIME',
         adhanOptSynth: 'Built-in: Melodic adhan tone',
-        adhanOptCustom: 'рџЋµ My adhan file from phone (MP3)',
-        chooseAdhanFile: 'рџ“‚ Upload my adhan MP3 from phone',
+        adhanOptCustom: '🎵 My adhan file from phone (MP3)',
+        chooseAdhanFile: '📂 Upload my adhan MP3 from phone',
         customAdhanStatus: 'My adhan file: {n}',
         customAdhanNone: 'My adhan file: not selected',
-        testAdhanBtn: 'в–¶пёЏ CHECK ADHAN',
+        testAdhanBtn: '▶️ CHECK ADHAN',
         words: ['wakeup', 'sunrise', 'prayer', 'fajr', 'vigilance', 'alert', 'arise', 'adhan']
     }
 };
@@ -2135,7 +2135,7 @@ let supabaseClient = null;
 let realtimeChannel = null;
 const DEFAULT_ROOM = 'Idlib-Jamaat';
 
-// РЈС‡С‘С‚ СѓСЃС‚СЂРѕР№СЃС‚РІ: Сѓ РєР°Р¶РґРѕРіРѕ Р±СЂР°СѓР·РµСЂР°/Р°РїРїР°СЂР°С‚Р° СЃРІРѕР№ РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ session_id.
+// Учёт устройств: у каждого браузера/аппарата свой постоянный session_id.
 let deviceId = (() => {
     try {
         let id = localStorage.getItem('fajr_device_id');
@@ -2144,7 +2144,7 @@ let deviceId = (() => {
     } catch (e) { return 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
 })();
 
-// РџРѕРЅСЏС‚РЅРѕРµ РёРјСЏ Р°РїРїР°СЂР°С‚Р° РїРѕ UA/РїР»Р°С‚С„РѕСЂРјРµ + Р±СЂР°СѓР·РµСЂ.
+// Понятное имя аппарата по UA/платформе + браузер.
 function getDeviceLabel() {
     const ua = navigator.userAgent || '';
     const plat = navigator.platform || '';
@@ -2152,19 +2152,19 @@ function getDeviceLabel() {
     if (/Android/i.test(ua)) {
         const m = ua.match(/Android[^;]*;\s*([^;)]+)/i);
         let model = m ? m[1].replace(/\s+Build.*$/i, '').trim() : '';
-        device = model ? 'рџ“± ' + model : 'рџ“± Android';
+        device = model ? '📱 ' + model : '📱 Android';
     } else if (/iPad/i.test(ua)) {
-        device = 'рџ“± iPad';
+        device = '📱 iPad';
     } else if (/iPhone|iPod/i.test(ua)) {
-        device = 'рџ“± iPhone';
+        device = '📱 iPhone';
     } else if (/Windows/i.test(ua) || /Win/i.test(plat)) {
-        device = 'рџ’» Windows PC';
+        device = '💻 Windows PC';
     } else if (/Macintosh|Mac OS X/i.test(ua) || /Mac/i.test(plat)) {
-        device = 'рџ’» Mac';
+        device = '💻 Mac';
     } else if (/Linux/i.test(ua) || /Linux/i.test(plat)) {
-        device = 'рџђ§ Linux';
+        device = '🐧 Linux';
     } else {
-        device = 'рџ–ҐпёЏ ' + (plat || 'РЈСЃС‚СЂРѕР№СЃС‚РІРѕ');
+        device = '🖥️ ' + (plat || 'Устройство');
     }
     let browser = '';
     if (/Android/i.test(ua) && /;\s*wv\)/i.test(ua)) browser = 'APK WebView';
@@ -2173,13 +2173,13 @@ function getDeviceLabel() {
     else if (/Firefox\//i.test(ua)) browser = 'Firefox';
     else if (/Chrome\//i.test(ua)) browser = 'Chrome';
     else if (/Safari\//i.test(ua)) browser = 'Safari';
-    return browser ? device + ' В· ' + browser : device;
+    return browser ? device + ' · ' + browser : device;
 }
 
-let mySessions = [];       // СЃРµСЃСЃРёРё С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ (С‚Р°Р±Р»РёС†Р° fajr_sessions)
-let deviceCounts = {};     // username(РЅРёР¶РЅРёР№ СЂРµРіРёСЃС‚СЂ) -> С‡РёСЃР»Рѕ Р°РєС‚РёРІРЅС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІ (РґР»СЏ Р±РµР№РґР¶Р° РІ СЃРїРёСЃРєРµ)
+let mySessions = [];       // сессии текущего пользователя (таблица fajr_sessions)
+let deviceCounts = {};     // username(нижний регистр) -> число активных устройств (для бейджа в списке)
 let isSyncingSession = false;
-let mySessionConfirmed = false;   // РЅР°С€Р° СЃРµСЃСЃРёСЏ СѓР¶Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅР° РІ Р±Р°Р·Рµ (Р·Р°С‰РёС‚Р° РѕС‚ Р»РѕР¶РЅРѕРіРѕ РІС‹С…РѕРґР°)
+let mySessionConfirmed = false;   // наша сессия уже подтверждена в базе (защита от ложного выхода)
 
 async function upsertMySession() {
     if (!supabaseClient || !navigator.onLine || !myName || isGuest) return;
@@ -2205,15 +2205,15 @@ async function fetchMySessions() {
         .from('fajr_sessions')
         .select('session_id,device_name,room_name,last_seen')
         .eq('username', myName.trim().toLowerCase());
-    if (error) return;                       // РѕС€РёР±РєР° СЃРµС‚Рё/С‚Р°Р±Р»РёС†С‹ вЂ” РЅРµ С‚СЂРѕРіР°РµРј СЃРѕСЃС‚РѕСЏРЅРёРµ
+    if (error) return;                       // ошибка сети/таблицы — не трогаем состояние
     mySessions = data || [];
     const hasMine = mySessions.some(s => s.session_id === deviceId);
     if (hasMine) { mySessionConfirmed = true; return; }
-    // РќР°С€Сѓ СЃРµСЃСЃРёСЋ Р·Р°РІРµСЂС€РёР»Рё СЃ РґСЂСѓРіРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР° (РІ СЃРїРёСЃРєРµ РµСЃС‚СЊ С‡СѓР¶РёРµ, Р° РЅР°С€РµР№ РЅРµС‚) в†’ РІС‹С…РѕРґРёРј РёР· Р°РєРєР°СѓРЅС‚Р°.
+    // Нашу сессию завершили с другого устройства (в списке есть чужие, а нашей нет) → выходим из аккаунта.
     if (mySessionConfirmed && mySessions.length > 0) await forceLogoutRemote();
 }
 
-// Р’С‹С…РѕРґ, РёРЅРёС†РёРёСЂРѕРІР°РЅРЅС‹Р№ СѓРґР°Р»С‘РЅРЅС‹Рј Р·Р°РІРµСЂС€РµРЅРёРµРј СЃРµСЃСЃРёРё (Р±РµР· СѓРґР°Р»РµРЅРёСЏ СЃС‚СЂРѕРєРё РІ Р±Р°Р·Рµ вЂ” РµС‘ СѓР¶Рµ СѓР±СЂР°Р»Рё).
+// Выход, инициированный удалённым завершением сессии (без удаления строки в базе — её уже убрали).
 async function forceLogoutRemote() {
     localStorage.removeItem('fajr_user_name');
     localStorage.removeItem('fajr_user_pass');
@@ -2227,7 +2227,7 @@ async function forceLogoutRemote() {
     nativeCall('clearSession');
     renderMySessions();
     document.getElementById('roomModal').classList.remove('open');
-    showToast('рџљЄ РЎРµСЃСЃРёСЏ Р·Р°РІРµСЂС€РµРЅР° РЅР° РґСЂСѓРіРѕРј СѓСЃС‚СЂРѕР№СЃС‚РІРµ');
+    showToast('🚪 Сессия завершена на другом устройстве');
     await loadRegRooms();
     document.getElementById('mandatoryAuthModal').classList.add('open');
 }
@@ -2247,14 +2247,14 @@ function renderMySessions() {
         const ts = new Date(s.last_seen).getTime();
         const online = (Date.now() - ts) < 90000;
         const statusTxt = online
-            ? `<span style="color:#2ed573;font-weight:700;">в—Џ ${esc(d.sessionOnline)}</span>`
+            ? `<span style="color:#2ed573;font-weight:700;">● ${esc(d.sessionOnline)}</span>`
             : `<span style="color:#a4b0be;">${esc(agoText(ts))}</span>`;
         return `<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-top:1px solid rgba(255,255,255,0.06);">
             <div style="min-width:0;">
-                <div style="font-size:12px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.device_name || 'вЂ”')} ${isThis ? `<small style="color:#7bed9f;">(${esc(d.sessionsThisDevice)})</small>` : ''}</div>
-                <div style="font-size:10px; color:var(--text-secondary);">${statusTxt} В· рџЊђ ${esc(s.room_name || '')}</div>
+                <div style="font-size:12px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.device_name || '—')} ${isThis ? `<small style="color:#7bed9f;">(${esc(d.sessionsThisDevice)})</small>` : ''}</div>
+                <div style="font-size:10px; color:var(--text-secondary);">${statusTxt} · 🌐 ${esc(s.room_name || '')}</div>
             </div>
-            ${isThis ? '' : `<button data-end-session="${esc(s.session_id)}" style="background:rgba(231,29,54,0.2); color:#ff6b81; border:1px solid rgba(231,29,54,0.4); border-radius:8px; padding:4px 8px; font-size:10px; font-weight:700; cursor:pointer;">вњ• ${esc(d.sessionsEnd)}</button>`}
+            ${isThis ? '' : `<button data-end-session="${esc(s.session_id)}" style="background:rgba(231,29,54,0.2); color:#ff6b81; border:1px solid rgba(231,29,54,0.4); border-radius:8px; padding:4px 8px; font-size:10px; font-weight:700; cursor:pointer;">✕ ${esc(d.sessionsEnd)}</button>`}
         </div>`;
     }).join('');
 }
@@ -2266,7 +2266,7 @@ window.endMySession = async function (sessionId) {
     renderMySessions();
 };
 
-// РЎРєРѕР»СЊРєРѕ Р°РєС‚РёРІРЅС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІ Сѓ РєР°Р¶РґРѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР° РєРѕРјРЅР°С‚С‹ (РґР»СЏ Р±РµР№РґР¶Р° РІ СЃРїРёСЃРєРµ РіСЂСѓРїРїС‹).
+// Сколько активных устройств у каждого участника комнаты (для бейджа в списке группы).
 async function fetchSessionCounts() {
     if (!supabaseClient || !navigator.onLine || !currentRoom) { deviceCounts = {}; return; }
     const { data } = await supabaseClient
@@ -2275,7 +2275,7 @@ async function fetchSessionCounts() {
         .eq('room_name', currentRoom.trim());
     const counts = {};
     (data || []).forEach(s => {
-        if (new Date(s.last_seen).getTime() < Date.now() - 120000) return;   // Р°РєС‚РёРІРЅС‹Рµ Р·Р° РїРѕСЃР»РµРґРЅРёРµ 2 РјРёРЅСѓС‚С‹
+        if (new Date(s.last_seen).getTime() < Date.now() - 120000) return;   // активные за последние 2 минуты
         const u = (s.username || '').toLowerCase();
         counts[u] = (counts[u] || 0) + 1;
     });
@@ -2288,7 +2288,7 @@ let userCoords = (() => {
         const c = JSON.parse(localStorage.getItem('fajr_coords'));
         if (c && isFinite(c.lat) && isFinite(c.lng)) return c;
     } catch (e) {}
-    return { lat: 35.9306, lng: 36.6339, label: '35.93В°, 36.63В°' };
+    return { lat: 35.9306, lng: 36.6339, label: '35.93°, 36.63°' };
 })();
 
 let savedName = (localStorage.getItem('fajr_user_name') || '').trim();
@@ -2298,8 +2298,8 @@ if (savedName.toLowerCase().startsWith('user_')) {
 }
 let myName = savedName;
 let userPass = localStorage.getItem('fajr_user_pass') || '';
-// Р РµР¶РёРј РЅР°Р±Р»СЋРґР°С‚РµР»СЏ: Р±РµР· РёРјРµРЅРё/СЂРµРіРёСЃС‚СЂР°С†РёРё С‡РµР»РѕРІРµРє С‚РѕР»СЊРєРѕ СЃРјРѕС‚СЂРёС‚. РЈС‡Р°СЃС‚РІРѕРІР°С‚СЊ (СЃС‚Р°С‚СѓСЃ, Р±СѓРґРёР»СЊРЅРёРєРё,
-// РѕС‚РјРµС‚РєРё РЅР°РјР°Р·Р°) РЅРµР»СЊР·СЏ вЂ” РґР»СЏ СЌС‚РѕРіРѕ РЅСѓР¶РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ.
+// Режим наблюдателя: без имени/регистрации человек только смотрит. Участвовать (статус, будильники,
+// отметки намаза) нельзя — для этого нужно зарегистрироваться.
 let isGuest = !myName && localStorage.getItem('fajr_guest') === '1';
 let currentRoom = (localStorage.getItem('fajr_room_name') || DEFAULT_ROOM).trim();
 let roomPass = localStorage.getItem('fajr_room_pass') || '';
@@ -2309,7 +2309,7 @@ try {
     if (st && Date.now() - st.t < 4 * 3600 * 1000 && ['sleep', 'awake', 'done'].includes(st.s)) myStatus = st.s;
 } catch (e) {}
 function saveMyStatus() { localStorage.setItem('fajr_my_status', JSON.stringify({ s: myStatus, t: Date.now() })); }
-// Р•РґРёРЅР°СЏ С‚РѕС‡РєР° СЃРјРµРЅС‹ СЃС‚Р°С‚СѓСЃР°: СЃРѕС…СЂР°РЅСЏРµС‚, СЃСЂР°Р·Сѓ РїРµСЂРµСЂРёСЃРѕРІС‹РІР°РµС‚ РєРЅРѕРїРєРё Рё РѕС‚РїСЂР°РІР»СЏРµС‚ РІ РіСЂСѓРїРїСѓ.
+// Единая точка смены статуса: сохраняет, сразу перерисовывает кнопки и отправляет в группу.
 function setMyStatus(next) {
     if (requireRegistration()) return;
     myStatus = next;
@@ -2317,8 +2317,8 @@ function setMyStatus(next) {
     const extra = {};
     const myCallKey = keyOfName(userCallStates, myName);
     const myCall = myCallKey ? userCallStates[myCallKey] : null;
-    // Р СѓС‡РЅР°СЏ СЃРјРµРЅР° СЃС‚Р°С‚СѓСЃР° = С‡РµР»РѕРІРµРє РїСЂРѕСЃРЅСѓР»СЃСЏ/РѕС‚РјРµС‚РёР» РЅР°РјР°Р·: СЃРЅРёРјР°РµРј Р›Р®Р‘РћР™ Р°РєС‚РёРІРЅС‹Р№ РІС‹Р·РѕРІ
-    // (calling / ringing / replied) Рё РіР°СЃРёРј СЃРёСЂРµРЅСѓ, РёРЅР°С‡Рµ Р·РІРѕРЅРѕРє В«Р·Р°Р»РёРїР°Р»В» Рё РІРёСЃРµР» РІ СЃРїРёСЃРєРµ.
+    // Ручная смена статуса = человек проснулся/отметил намаз: снимаем ЛЮБОЙ активный вызов
+    // (calling / ringing / replied) и гасим сирену, иначе звонок «залипал» и висел в списке.
     if (myCall && ['calling', 'ringing', 'replied'].includes(myCall.state)) {
         extra.call_state = ''; extra.call_word = ''; extra.caller_name = '';
         delete userCallStates[myCallKey];
@@ -2339,7 +2339,7 @@ let alarmInterval = null;
 let audioCtx = null;
 let activeHtmlAudio = null;
 
-// РќР°СЃС‚СЂРѕР№РєРё Р·РІСѓРєРѕРІ Рё РђР·Р°РЅР°
+// Настройки звуков и Азана
 let alarmSoundType = localStorage.getItem('fajr_alarm_sound_type') || 'siren_fast';
 let adhanSoundType = localStorage.getItem('fajr_adhan_sound_type') || 'makkah_synth';
 let adhanEnabled = localStorage.getItem('fajr_adhan_enabled') !== 'false';
@@ -2348,7 +2348,7 @@ let customAdhanDataUrl = null;
 let customAlarmFileName = '';
 let customAdhanFileName = '';
 
-// РџРѕРґРїРёСЃРё РІС‹Р±СЂР°РЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёС… Р·РІСѓРєРѕРІ (Р»РѕРєР°Р»РёР·РѕРІР°РЅС‹, РёРјСЏ С„Р°Р№Р»Р° РїРѕРґСЃС‚Р°РІР»СЏРµС‚СЃСЏ РІРјРµСЃС‚Рѕ {n})
+// Подписи выбранных пользовательских звуков (локализованы, имя файла подставляется вместо {n})
 function refreshCustomSoundLabels() {
     const d = DICTIONARY[currentLang];
     const la = document.getElementById('lblCustomAlarmStatus');
@@ -2364,27 +2364,27 @@ let roomSearchFilter = '';
 let isSuperAdmin = false;
 let isBanned = false;
 let html5QrScanner = null;
-let isScannerStarting = false;   // Р·Р°С‰РёС‚Р° РѕС‚ РґРІРѕР№РЅРѕРіРѕ Р·Р°РїСѓСЃРєР° РєР°РјРµСЂС‹ (РґРІР° РїРѕС‚РѕРєР° + В«РєР°РјРµСЂР° Р·Р°РЅСЏС‚Р°В»)
-let fileQrScanner = null;        // РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ СЃРєР°РЅРµСЂР° РєР°СЂС‚РёРЅРєРё РёР· РіР°Р»РµСЂРµРё
+let isScannerStarting = false;   // защита от двойного запуска камеры (два потока + «камера занята»)
+let fileQrScanner = null;        // единственный экземпляр сканера картинки из галереи
 let pendingOtaHtmlContent = null;
 
-// РџСЂРѕРІРµСЂРєР° СЃСЃС‹Р»РєРё РїСЂРёРіР»Р°С€РµРЅРёСЏ ?room=...
+// Проверка ссылки приглашения ?room=...
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('room')) {
     currentRoom = (urlParams.get('room') || DEFAULT_ROOM).trim();
     roomPass = urlParams.get('pass') || '';
     localStorage.setItem('fajr_room_name', currentRoom);
     localStorage.setItem('fajr_room_pass', roomPass);
-    // Р—Р°РїРѕРјРёРЅР°РµРј РїСЂРёРіР»Р°С€С‘РЅРЅСѓСЋ РіСЂСѓРїРїСѓ РЅР° РІСЂРµРјСЏ СЃРµР°РЅСЃР°: РїРѕСЃР»Рµ replaceState РїР°СЂР°РјРµС‚СЂС‹ РёР· Р°РґСЂРµСЃР°
-    // РёСЃС‡РµР·Р°СЋС‚, Р° РїСЂРёРіР»Р°С€РµРЅРёРµ РґРѕР»Р¶РЅРѕ РїРµСЂРµР¶РёС‚СЊ Р·Р°С…РѕРґ РіРѕСЃС‚РµРј Рё РїРµСЂРµР·Р°РіСЂСѓР·РєСѓ РЅР° СЌРєСЂР°РЅРµ СЂРµРіРёСЃС‚СЂР°С†РёРё.
+    // Запоминаем приглашённую группу на время сеанса: после replaceState параметры из адреса
+    // исчезают, а приглашение должно пережить заход гостем и перезагрузку на экране регистрации.
     try { sessionStorage.setItem('fajr_invited_room', currentRoom); } catch (e) {}
-    // СѓР±РёСЂР°РµРј РїР°СЂР°РјРµС‚СЂС‹ РёР· Р°РґСЂРµСЃР° (РёРЅР°С‡Рµ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹ СЃРІРµС‚РёС‚СЃСЏ РІ Р°РґСЂРµСЃРЅРѕР№ СЃС‚СЂРѕРєРµ,
-    // Р° РїРѕСЃР»Рµ СЃРјРµРЅС‹ РіСЂСѓРїРїС‹ РїРµСЂРµР·Р°РіСЂСѓР·РєР° РІРµСЂРЅСѓР»Р° Р±С‹ РІ СЃС‚Р°СЂСѓСЋ)
+    // убираем параметры из адреса (иначе пароль группы светится в адресной строке,
+    // а после смены группы перезагрузка вернула бы в старую)
     try { history.replaceState(null, '', location.pathname); } catch (e) {}
 }
 
 /**
- * 1. РљРћРќРўР РћР›Р¬ РРќРўР•Р РќР•РўРђ (Р‘Р›РћРљРР РћР’РљРђ Р­РљР РђРќРђ РќРђ Р’Р•РЎР¬ Р­РљР РђРќ Р•РЎР›Р РќР•Рў РЎР•РўР)
+ * 1. КОНТРОЛЬ ИНТЕРНЕТА (БЛОКИРОВКА ЭКРАНА НА ВЕСЬ ЭКРАН ЕСЛИ НЕТ СЕТИ)
  */
 function updateOfflineBlockerState(isOnline) {
     const blocker = document.getElementById('offlineBlocker');
@@ -2407,7 +2407,7 @@ window.addEventListener('online', () => {
 window.checkInternetAndReconnect = async function() {
     if (!navigator.onLine) {
         updateOfflineBlockerState(false);
-        showToast('РРЅС‚РµСЂРЅРµС‚ РІСЃС‘ РµС‰С‘ РѕС‚РєР»СЋС‡РµРЅ!');
+        showToast('Интернет всё ещё отключен!');
         return;
     }
     try {
@@ -2419,25 +2419,25 @@ window.checkInternetAndReconnect = async function() {
         if (res && res.status >= 0) {
             updateOfflineBlockerState(true);
             await bootAfterReconnect();
-            showToast('вњ“ РЎРѕРµРґРёРЅРµРЅРёРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРѕ!');
+            showToast('✓ Соединение восстановлено!');
         } else {
             updateOfflineBlockerState(false);
         }
     } catch (e) {
         updateOfflineBlockerState(false);
-        showToast('РЎРµСЂРІРµСЂ РЅРµРґРѕСЃС‚СѓРїРµРЅ. РџСЂРѕРІРµСЂСЊС‚Рµ РёРЅС‚РµСЂРЅРµС‚!');
+        showToast('Сервер недоступен. Проверьте интернет!');
     }
 };
 
 /**
- * 2. OTA РћР‘РќРћР’Р›Р•РќРР• РРќР”Р•РљРЎ-Р¤РђР™Р›Рђ РЎ GITHUB (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK Р Р‘Р•Р— РЎР‘Р РћРЎРђ Р РђР—Р Р•РЁР•РќРР™)
+ * 2. OTA ОБНОВЛЕНИЕ ИНДЕКС-ФАЙЛА С GITHUB (БЕЗ СКАЧИВАНИЯ APK И БЕЗ СБРОСА РАЗРЕШЕНИЙ)
  */
 async function checkForGithubIndexUpdate(manualNotify = false) {
     if (!navigator.onLine) return;
     try {
         const resp = await fetch(`${GITHUB_INDEX_URL}?t=${Date.now()}`, { cache: 'no-store' });
         if (!resp.ok) {
-            if (manualNotify) showToast('РќРµ СѓРґР°Р»РѕСЃСЊ СЃРІСЏР·Р°С‚СЊСЃСЏ СЃ GitHub');
+            if (manualNotify) showToast('Не удалось связаться с GitHub');
             return;
         }
         const remoteHtml = await resp.text();
@@ -2449,19 +2449,19 @@ async function checkForGithubIndexUpdate(manualNotify = false) {
 
         if (!savedHash) {
             localStorage.setItem('fajr_ota_index_hash', remoteHash);
-            if (manualNotify) showToast('вњ“ РЈ РІР°СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅР° СЃР°РјР°СЏ СЃРІРµР¶Р°СЏ РІРµСЂСЃРёСЏ!');
+            if (manualNotify) showToast('✓ У вас установлена самая свежая версия!');
             return;
         }
 
         if (savedHash !== remoteHash) {
             pendingOtaHtmlContent = { html: remoteHtml, hash: remoteHash };
             document.getElementById('otaUpdateBanner').classList.add('show');
-            if (manualNotify) showToast('вљЎ РќР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ! РќР°Р¶РјРёС‚Рµ Р¶РµР»С‚СѓСЋ РєРЅРѕРїРєСѓ СЃРІРµСЂС…Сѓ.');
+            if (manualNotify) showToast('⚡ Найдено обновление! Нажмите желтую кнопку сверху.');
         } else if (manualNotify) {
-            showToast('вњ“ РћР±РЅРѕРІР»РµРЅРёР№ РЅРµС‚, Сѓ РІР°СЃ Р°РєС‚СѓР°Р»СЊРЅР°СЏ РІРµСЂСЃРёСЏ!');
+            showToast('✓ Обновлений нет, у вас актуальная версия!');
         }
     } catch (e) {
-        if (manualNotify) showToast('РџСЂРѕРІРµСЂРєР° РѕР±РЅРѕРІР»РµРЅРёР№ СЃРµР№С‡Р°СЃ РЅРµРґРѕСЃС‚СѓРїРЅР°');
+        if (manualNotify) showToast('Проверка обновлений сейчас недоступна');
     }
 }
 
@@ -2475,8 +2475,8 @@ window.applyOtaUpdateNow = function() {
     targetUrl.searchParams.set('ota_reload', Date.now());
     const urlStr = targetUrl.toString();
 
-    // Р’РЅСѓС‚СЂРё APK СЃС‚СЂР°РЅРёС†Р° РѕС‚РєСЂС‹С‚Р° РїРѕ file:// вЂ” WebView РјРѕР¶РµС‚ Р·Р°РїСЂРµС‚РёС‚СЊ РІРЅРµС€РЅСЋСЋ РЅР°РІРёРіР°С†РёСЋ
-    // РёР»Рё РїРѕС‚РµСЂСЏС‚СЊ РЅР°С‚РёРІРЅС‹Р№ РјРѕСЃС‚. РЎРЅР°С‡Р°Р»Р° РїСЂРѕСЃРёРј РѕР±РѕР»РѕС‡РєСѓ Р·Р°РіСЂСѓР·РёС‚СЊ Р°РґСЂРµСЃ, Рё С‚РѕР»СЊРєРѕ РїРѕС‚РѕРј СЂРµРґРёСЂРµРєС‚.
+    // Внутри APK страница открыта по file:// — WebView может запретить внешнюю навигацию
+    // или потерять нативный мост. Сначала просим оболочку загрузить адрес, и только потом редирект.
     if (location.protocol === 'file:') {
         const bridge = window.AndroidBridge || window.Android || window.AlarmBridge || window.AndroidAlarm;
         if (bridge && typeof bridge.loadUpdateUrl === 'function') {
@@ -2487,7 +2487,7 @@ window.applyOtaUpdateNow = function() {
 };
 
 /**
- * 3. РҐР РђРќРР›РР©Р• INDEXED-DB Р”Р›РЇ РџРћР›Р¬Р—РћР’РђРўР•Р›Р¬РЎРљРРҐ MP3 Р—Р’РЈРљРћР’ Р‘РЈР”РР›Р¬РќРРљРђ Р РђР—РђРќРђ
+ * 3. ХРАНИЛИЩЕ INDEXED-DB ДЛЯ ПОЛЬЗОВАТЕЛЬСКИХ MP3 ЗВУКОВ БУДИЛЬНИКА И АЗАНА
  */
 function openAudioDb() {
     return new Promise((resolve, reject) => {
@@ -2550,8 +2550,8 @@ document.getElementById('inpCustomAlarmFile').addEventListener('change', (e) => 
         localStorage.setItem('fajr_alarm_sound_type', 'custom_alarm');
         customAlarmFileName = file.name;
         refreshCustomSoundLabels();
-        if (!(await saveCustomAudioToDb('custom_alarm', customAlarmDataUrl, file.name))) { showToast('вљ пёЏ РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р» (СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РѕР№?). Р‘СѓРґРµС‚ РёРіСЂР°С‚СЊ РґРѕ РїРµСЂРµР·Р°РїСѓСЃРєР°'); return; }
-        showToast(`вњ“ РњРµР»РѕРґРёСЏ Р±СѓРґРёР»СЊРЅРёРєР° "${file.name}" СЃРѕС…СЂР°РЅРµРЅР°!`);
+        if (!(await saveCustomAudioToDb('custom_alarm', customAlarmDataUrl, file.name))) { showToast('⚠️ Не удалось сохранить файл (слишком большой?). Будет играть до перезапуска'); return; }
+        showToast(`✓ Мелодия будильника "${file.name}" сохранена!`);
     };
     reader.readAsDataURL(file);
 });
@@ -2567,8 +2567,8 @@ document.getElementById('inpCustomAdhanFile').addEventListener('change', (e) => 
         localStorage.setItem('fajr_adhan_sound_type', 'custom_adhan');
         customAdhanFileName = file.name;
         refreshCustomSoundLabels();
-        if (!(await saveCustomAudioToDb('custom_adhan', customAdhanDataUrl, file.name))) { showToast('вљ пёЏ РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р» (СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РѕР№?). Р‘СѓРґРµС‚ РёРіСЂР°С‚СЊ РґРѕ РїРµСЂРµР·Р°РїСѓСЃРєР°'); return; }
-        showToast(`вњ“ РђР·Р°РЅ "${file.name}" СЃРѕС…СЂР°РЅРµРЅ!`);
+        if (!(await saveCustomAudioToDb('custom_adhan', customAdhanDataUrl, file.name))) { showToast('⚠️ Не удалось сохранить файл (слишком большой?). Будет играть до перезапуска'); return; }
+        showToast(`✓ Азан "${file.name}" сохранен!`);
     };
     reader.readAsDataURL(file);
 });
@@ -2584,7 +2584,7 @@ window.saveSoundPreferences = function() {
 };
 
 /**
- * 4. Р РђР—Р”Р•Р›Р¬РќРђРЇ РђРЈР”РРћ-РЎРРЎРўР•РњРђ: Р‘РЈР”РР›Р¬РќРРљ Р РђР—РђРќ
+ * 4. РАЗДЕЛЬНАЯ АУДИО-СИСТЕМА: БУДИЛЬНИК И АЗАН
  */
 function ensureAudioContext() {
     if (!audioCtx) {
@@ -2727,7 +2727,7 @@ document.getElementById('btnOpenSoundsQuick').addEventListener('click', () => {
 });
 
 /**
- * 5. РРќРР¦РРђР›РР—РђР¦РРЇ SUPABASE Р РћР‘РЇР—РђРўР•Р›Р¬РќРђРЇ Р Р•Р“РРЎРўР РђР¦РРЇ
+ * 5. ИНИЦИАЛИЗАЦИЯ SUPABASE И ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ
  */
 async function initSupabase() {
     updateOfflineBlockerState(navigator.onLine);
@@ -2759,22 +2759,22 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     const rPass = document.getElementById('regRoomPass').value.trim();
 
     if (!uName || !uPass) {
-        showToast('РћР±СЏР·Р°С‚РµР»СЊРЅРѕ РІРІРµРґРёС‚Рµ РІР°С€Рµ РёРјСЏ Рё РїР°СЂРѕР»СЊ!');
+        showToast('Обязательно введите ваше имя и пароль!');
         return;
     }
     const nameErr = validateUserName(uName);
     if (nameErr) { showToast(nameErr); return; }
 
     if (!(await canJoinRoom(rName, rPass))) {
-        showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹!');
+        showToast('❌ Неверный пароль группы!');
         return;
     }
 
-    // Р•РґРёРЅР°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РїРѕ public.fajr_users: Р°РєРєР°СѓРЅС‚ СЃРѕР·РґР°С‘С‚СЃСЏ РїСЂРё РїРµСЂРІРѕРј РІС…РѕРґРµ, РїР°СЂРѕР»СЊ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ
-    // РЅР° РїРѕРІС‚РѕСЂРЅС‹С…. Р—РґРµСЃСЊ Р¶Рµ РІС‹СЂР°РІРЅРёРІР°РµС‚СЃСЏ user_pass РІ fajr_members, РїРѕСЌС‚РѕРјСѓ СѓСЃС‚Р°СЂРµРІС€РёР№ С…СЌС€ РІ РєРѕРјРЅР°С‚Р°С…
-    // Р±РѕР»СЊС€Рµ РЅРµ Р±Р»РѕРєРёСЂСѓРµС‚ РІС…РѕРґ РІР»Р°РґРµР»СЊС†Р° СЃ РґСЂСѓРіРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР°.
+    // Единая авторизация по public.fajr_users: аккаунт создаётся при первом входе, пароль проверяется
+    // на повторных. Здесь же выравнивается user_pass в fajr_members, поэтому устаревший хэш в комнатах
+    // больше не блокирует вход владельца с другого устройства.
     if (!(await verifyOrCreateUserInDb(uName, uPass)).ok) {
-        showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РѕС‚ СЌС‚РѕРіРѕ Р°РєРєР°СѓРЅС‚Р° (РёР»Рё РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ)!');
+        showToast('❌ Неверный пароль от этого аккаунта (или имя уже занято)!');
         document.getElementById('mandatoryAuthModal').classList.add('open');
         return;
     }
@@ -2783,7 +2783,7 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     userPass = uPass;
     currentRoom = rName;
     roomPass = rPass;
-    isGuest = false;                       // РІС‹С€Р»Рё РёР· СЂРµР¶РёРјР° РЅР°Р±Р»СЋРґР°С‚РµР»СЏ вЂ” С‚РµРїРµСЂСЊ РјРѕР¶РЅРѕ СѓС‡Р°СЃС‚РІРѕРІР°С‚СЊ
+    isGuest = false;                       // вышли из режима наблюдателя — теперь можно участвовать
     accountConflictLock = false;
     mySessionConfirmed = false;
     localStorage.removeItem('fajr_guest');
@@ -2797,16 +2797,16 @@ document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', as
     document.getElementById('inpRoomName').value = currentRoom;
     document.getElementById('mandatoryAuthModal').classList.remove('open');
     await startOnlineSession();
-    showToast(`Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ, ${myName}!`);
+    showToast(`Добро пожаловать, ${myName}!`);
 });
 
-// Р’С…РѕРґ Р±РµР· СЂРµРіРёСЃС‚СЂР°С†РёРё вЂ” С‚РѕР»СЊРєРѕ СЃРјРѕС‚СЂРµС‚СЊ. РЈС‡Р°СЃС‚РёРµ (СЃС‚Р°С‚СѓСЃ, Р±СѓРґРёР»СЊРЅРёРєРё, РѕС‚РјРµС‚РєРё) РЅРµРґРѕСЃС‚СѓРїРЅРѕ.
+// Вход без регистрации — только смотреть. Участие (статус, будильники, отметки) недоступно.
 document.getElementById('btnBrowseAsGuest').addEventListener('click', async () => {
     isGuest = true;
     localStorage.setItem('fajr_guest', '1');
     document.getElementById('mandatoryAuthModal').classList.remove('open');
     await startOnlineSession();
-    showToast('рџ‘Ђ Р РµР¶РёРј РЅР°Р±Р»СЋРґР°С‚РµР»СЏ. Р§С‚РѕР±С‹ СѓС‡Р°СЃС‚РІРѕРІР°С‚СЊ вЂ” Р·Р°СЂРµРіРёСЃС‚СЂРёСЂСѓР№С‚РµСЃСЊ.');
+    showToast('👀 Режим наблюдателя. Чтобы участвовать — зарегистрируйтесь.');
 });
 
 async function canJoinRoom(name, pass) {
@@ -2817,8 +2817,8 @@ async function canJoinRoom(name, pass) {
     return data.pass === (pass || '');
 }
 
-// РџР°СЂРѕР»Рё РіСЂСѓРїРї, РєРѕС‚РѕСЂС‹Рµ С‡РµР»РѕРІРµРє СѓР¶Рµ РІРІРѕРґРёР» СЃР°Рј, С…СЂР°РЅРёРј С‚РѕР»СЊРєРѕ Сѓ РЅРµРіРѕ РІ localStorage вЂ”
-// РІ roomsCache С‡СѓР¶РёРµ РїР°СЂРѕР»Рё РІ РѕС‚РєСЂС‹С‚РѕРј РІРёРґРµ Р±РѕР»СЊС€Рµ РЅРµ Р»РµР¶Р°С‚.
+// Пароли групп, которые человек уже вводил сам, храним только у него в localStorage —
+// в roomsCache чужие пароли в открытом виде больше не лежат.
 function getSavedRoomPasses() {
     try { return JSON.parse(localStorage.getItem('fajr_saved_room_passes')) || {}; } catch (e) { return {}; }
 }
@@ -2836,25 +2836,25 @@ function rememberRoomPass(rName, pass) {
 let regRooms = {};
 async function loadRegRooms() {
     const sel = document.getElementById('regRoomSelect');
-    const prev = sel.value;   // РЅРµ СЃР±СЂР°СЃС‹РІР°РµРј РІС‹Р±РѕСЂ, РµСЃР»Рё СЃРїРёСЃРѕРє РїРµСЂРµР·Р°РіСЂСѓР¶Р°РµС‚СЃСЏ (РЅР°РїСЂРёРјРµСЂ, РїРѕСЃР»Рµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ СЃРµС‚Рё)
+    const prev = sel.value;   // не сбрасываем выбор, если список перезагружается (например, после восстановления сети)
     regRooms = {};
     try {
         const { data } = await supabaseClient.from('fajr_rooms')
             .select('name,pass,permanent')
             .order('permanent', { ascending: false })
             .order('last_active', { ascending: false });
-        // РЎР°Рј РїР°СЂРѕР»СЊ РЅРµ РґРµСЂР¶РёРј: Р·Р°РїРѕРјРёРЅР°РµРј С‚РѕР»СЊРєРѕ В«РіСЂСѓРїРїР° Р·Р°РєСЂС‹С‚Р°В» вЂ” РїР°СЂРѕР»СЊ СЃРїСЂР°С€РёРІР°РµРј Сѓ С‡РµР»РѕРІРµРєР°.
+        // Сам пароль не держим: запоминаем только «группа закрыта» — пароль спрашиваем у человека.
         (data || []).forEach(r => regRooms[r.name] = { name: r.name, hasPass: !!r.pass, permanent: !!r.permanent });
     } catch (e) {}
     if (!regRooms[DEFAULT_ROOM]) regRooms[DEFAULT_ROOM] = { name: DEFAULT_ROOM, hasPass: false, permanent: true };
-    // Р“СЂСѓРїРїР° РёР· СЃСЃС‹Р»РєРё-РїСЂРёРіР»Р°С€РµРЅРёСЏ РјРѕР¶РµС‚ РµС‰С‘ РЅРµ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ РІ Р±Р°Р·Рµ вЂ” РёРЅР°С‡Рµ РїСЂРё СЂРµРіРёСЃС‚СЂР°С†РёРё
-    // РІС‹Р±РѕСЂ СЃР±СЂРѕСЃРёР»СЃСЏ Р±С‹ РЅР° РѕСЃРЅРѕРІРЅСѓСЋ РіСЂСѓРїРїСѓ Рё РїСЂРёРіР»Р°С€РµРЅРёРµ С‚РµСЂСЏР»РѕСЃСЊ.
+    // Группа из ссылки-приглашения может ещё не существовать в базе — иначе при регистрации
+    // выбор сбросился бы на основную группу и приглашение терялось.
     if (currentRoom && !regRooms[currentRoom]) regRooms[currentRoom] = { name: currentRoom, hasPass: !!roomPass, permanent: false };
     sel.innerHTML = Object.values(regRooms).map(r =>
-        `<option value="${esc(r.name)}">${r.hasPass ? 'рџ”’ ' : 'рџЊђ '}${esc(r.name)}</option>`).join('');
+        `<option value="${esc(r.name)}">${r.hasPass ? '🔒 ' : '🌐 '}${esc(r.name)}</option>`).join('');
     sel.value = regRooms[prev] ? prev : (regRooms[currentRoom] ? currentRoom : DEFAULT_ROOM);
     onRegRoomChange();
-    // РїСЂРёС€Р»Рё РїРѕ СЃСЃС‹Р»РєРµ-РїСЂРёРіР»Р°С€РµРЅРёСЋ СЃ РїР°СЂРѕР»РµРј вЂ” РїРѕРґСЃС‚Р°РІР»СЏРµРј РµРіРѕ, С‡С‚РѕР±С‹ РЅРµ РІРІРѕРґРёС‚СЊ РІСЂСѓС‡РЅСѓСЋ
+    // пришли по ссылке-приглашению с паролем — подставляем его, чтобы не вводить вручную
     const rp = document.getElementById('regRoomPass');
     if (!rp.value && roomPass && sel.value === currentRoom) rp.value = roomPass;
 }
@@ -2876,36 +2876,36 @@ async function startOnlineSession() {
         renderUI();
         if (!isGuest) {
             if (await enforceBan()) return;
-            // РџСЂРѕРІРµСЂСЏРµРј РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ Р°РєРєР°СѓРЅС‚ РІ public.fajr_users (СЃРѕР·РґР°С‘С‚СЃСЏ РїСЂРё РїРµСЂРІРѕРј РІС…РѕРґРµ).
+            // Проверяем постоянный аккаунт в public.fajr_users (создаётся при первом входе).
             if (!(await verifyOrCreateUserInDb(myName, userPass)).ok) {
-                showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РѕС‚ СЌС‚РѕРіРѕ Р°РєРєР°СѓРЅС‚Р° (РёР»Рё РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ)!');
+                showToast('❌ Неверный пароль от этого аккаунта (или имя уже занято)!');
                 document.getElementById('mandatoryAuthModal').classList.add('open');
                 return;
             }
             await checkSuperAdmin();
             if (!(await canJoinRoom(currentRoom, roomPass))) {
-                showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹!');
+                showToast('❌ Неверный пароль группы!');
                 currentRoom = DEFAULT_ROOM; roomPass = '';
                 localStorage.setItem('fajr_room_name', currentRoom);
                 localStorage.setItem('fajr_room_pass', '');
             }
         }
-        // Р“СЂСѓРїРїР° РёР· РїСЂРѕС€Р»РѕРіРѕ СЃРµР°РЅСЃР° РјРѕРіР»Р° Р±С‹С‚СЊ СѓРґР°Р»РµРЅР°. Р Р°РЅСЊС€Рµ ensureRoomExistsInDb РјРѕР»С‡Р° СЃРѕР·РґР°РІР°Р» РµС‘ Р·Р°РЅРѕРІРѕ
-        // В«РЅРёС‡СЊРµР№В» вЂ” РїРѕР»СѓС‡Р°Р»РѕСЃСЊ, С‡С‚Рѕ СѓРґР°Р»РёС‚СЊ РіСЂСѓРїРїСѓ РЅРµР»СЊР·СЏ: РѕРЅР° РІРѕР·РІСЂР°С‰Р°Р»Р°СЃСЊ РїСЂРё РїРµСЂРІРѕРј Р¶Рµ Р·Р°РїСѓСЃРєРµ Сѓ Р»СЋР±РѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР°.
-        // РСЃРєР»СЋС‡РµРЅРёРµ вЂ” РІС…РѕРґ РїРѕ СЃСЃС‹Р»РєРµ-РїСЂРёРіР»Р°С€РµРЅРёСЋ: С‚Р°Рј РіСЂСѓРїРїР° СЃРѕР·РґР°С‘С‚СЃСЏ РЅР° Р»РµС‚Сѓ, РєР°Рє Рё Р·Р°РґСѓРјР°РЅРѕ.
+        // Группа из прошлого сеанса могла быть удалена. Раньше ensureRoomExistsInDb молча создавал её заново
+        // «ничьей» — получалось, что удалить группу нельзя: она возвращалась при первом же запуске у любого участника.
+        // Исключение — вход по ссылке-приглашению: там группа создаётся на лету, как и задумано.
         let invitedRoom = '';
         try { invitedRoom = sessionStorage.getItem('fajr_invited_room') || ''; } catch (e) {}
         const isInvitedRoom = urlParams.has('room') || (!!invitedRoom && sameName(invitedRoom, currentRoom));
         if (currentRoom.trim() !== DEFAULT_ROOM && !isInvitedRoom) {
             const chk = await supabaseClient.from('fajr_rooms').select('name').eq('name', currentRoom.trim()).maybeSingle();
             if (!chk.error && !chk.data) {
-                showToast(isGuest ? 'в›” Р“СЂСѓРїРїР° В«' + currentRoom.trim() + 'В» Р±РѕР»СЊС€Рµ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚' : 'в›” Р“СЂСѓРїРїР° В«' + currentRoom.trim() + 'В» Р±РѕР»СЊС€Рµ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. Р’С‹ РІ РѕСЃРЅРѕРІРЅРѕР№ РіСЂСѓРїРїРµ');
+                showToast(isGuest ? '⛔ Группа «' + currentRoom.trim() + '» больше не существует' : '⛔ Группа «' + currentRoom.trim() + '» больше не существует. Вы в основной группе');
                 currentRoom = DEFAULT_ROOM; roomPass = '';
                 localStorage.setItem('fajr_room_name', currentRoom);
                 localStorage.setItem('fajr_room_pass', '');
             }
         }
-        // РќР°Р±Р»СЋРґР°С‚РµР»СЊ РЅРёС‡РµРіРѕ РЅРµ СЃРѕР·РґР°С‘С‚ Рё РЅРµ РѕС‚РјРµС‡Р°РµС‚СЃСЏ РІ Р±Р°Р·Рµ вЂ” РѕРЅ С‚РѕР»СЊРєРѕ С‡РёС‚Р°РµС‚ РїСЂРѕРёСЃС…РѕРґСЏС‰РµРµ.
+        // Наблюдатель ничего не создаёт и не отмечается в базе — он только читает происходящее.
         if (!isGuest) {
             await ensureRoomExistsInDb(currentRoom, roomPass, false);
             await upsertMyPresenceInDb();
@@ -2920,7 +2920,7 @@ async function startOnlineSession() {
         if (!isGuest) nativeCall('saveSession', myName, currentRoom.trim(), SUPABASE_URL, SUPABASE_ANON_KEY);
         updateOfflineBlockerState(true);
     } catch (err) {
-        if (window.fajrShowErr) window.fajrShowErr('РЎР•РЎРЎРРЇ: ' + (err && err.message ? err.message : err));
+        if (window.fajrShowErr) window.fajrShowErr('СЕССИЯ: ' + (err && err.message ? err.message : err));
         updateOfflineBlockerState(navigator.onLine);
     }
 }
@@ -2955,11 +2955,11 @@ async function ensureRoomExistsInDb(rName, rPass, isNewOwner = false) {
 let isSyncingPresence = false;
 let pendingPresenceExtra = null;
 async function upsertMyPresenceInDb(extraFields = {}) {
-    // Р Р°РЅСЊС€Рµ renderUI() РІС‹Р·С‹РІР°Р»СЃСЏ С‚РѕР»СЊРєРѕ РѕС„Р»Р°Р№РЅ вЂ” РѕРЅР»Р°Р№РЅ РєРЅРѕРїРєРё В«РЎРўРђРўРЈРЎВ» Рё В«РќРђРњРђР— РЎРћР’Р•Р РЁР•РќВ» РЅРµ РјРµРЅСЏР»РёСЃСЊ.
+    // Раньше renderUI() вызывался только офлайн — онлайн кнопки «СТАТУС» и «НАМАЗ СОВЕРШЕН» не менялись.
     if (myName) { const myKey = keyOfName(networkUsers, myName); if (myKey) networkUsers[myKey].status = myStatus; }
     renderUI();
     if (!myName || !supabaseClient || !navigator.onLine || isBanned) return;
-    if (accountConflictLock) return;   // РёРјСЏ Р·Р°РЅСЏС‚Рѕ С‡СѓР¶РёРј РїР°СЂРѕР»РµРј вЂ” РЅРёС‡РµРіРѕ РІ Р±Р°Р·Сѓ РЅРµ РїРёС€РµРј
+    if (accountConflictLock) return;   // имя занято чужим паролем — ничего в базу не пишем
     if (isSyncingPresence) {
         pendingPresenceExtra = { ...(pendingPresenceExtra || {}), ...extraFields };
         return;
@@ -2976,14 +2976,14 @@ async function upsertMyPresenceInDb(extraFields = {}) {
             user_name: cleanUser,
             user_pass: myHash,
             status: myStatus,
-            lat: Math.round(userCoords.lat * 100) / 100,   // ~1 РєРј: С‚РѕС‡РЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РІ РѕР±С‰СѓСЋ Р±Р°Р·Сѓ РЅРµ РѕС‚РїСЂР°РІР»СЏРµРј
+            lat: Math.round(userCoords.lat * 100) / 100,   // ~1 км: точные координаты в общую базу не отправляем
             lng: Math.round(userCoords.lng * 100) / 100,
             last_seen: new Date().toISOString(),
             ...extraFields
         };
 
-        // РС‰РµРј СЃРІРѕСЋ СЃС‚СЂРѕРєСѓ Р±РµР· СѓС‡С‘С‚Р° СЂРµРіРёСЃС‚СЂР°: РёРЅР°С‡Рµ В«РђР»РёВ» Рё В«Р°Р»РёВ» Р·Р°РІРѕРґРёР»Рё РґРІРµ Р·Р°РїРёСЃРё,
-        // Рё РІС‚РѕСЂР°СЏ РІРёСЃРµР»Р° РІ СЃРїРёСЃРєРµ В«С„Р°РЅС‚РѕРјРѕРјВ», РєРѕС‚РѕСЂС‹Р№ РµС‰С‘ Рё РЅРµР»СЊР·СЏ Р±С‹Р»Рѕ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ.
+        // Ищем свою строку без учёта регистра: иначе «Али» и «али» заводили две записи,
+        // и вторая висела в списке «фантомом», который ещё и нельзя было заблокировать.
         const likeUser = cleanUser.replace(/[\\%_]/g, '\\$&');
         const likeRes = await supabaseClient
             .from('fajr_members')
@@ -3004,8 +3004,8 @@ async function upsertMyPresenceInDb(extraFields = {}) {
         const mineRow = (variants || []).find(v => v.user_name === cleanUser) || (variants || [])[0];
 
         if (mineRow) {
-            // Р—Р°С‰РёС‚Р° РѕС‚ СѓРіРѕРЅР°: РµСЃР»Рё РЅР° СЌС‚РѕРј РёРјРµРЅРё Р»РµР¶РёС‚ РґСЂСѓРіРѕР№ РїР°СЂРѕР»СЊ вЂ” СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµРј РІР»Р°РґРµР»СЊС†Р° РїРѕ
-            // public.fajr_users (РїСЂР°РІРёР»СЊРЅС‹Р№ РїР°СЂРѕР»СЊ СЃ РґСЂСѓРіРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР°). РўРѕРіРґР° РїСЂРѕСЃС‚Рѕ РІС‹СЂР°РІРЅРёРІР°РµРј С…СЌС€.
+            // Защита от угона: если на этом имени лежит другой пароль — сначала проверяем владельца по
+            // public.fajr_users (правильный пароль с другого устройства). Тогда просто выравниваем хэш.
             if (mineRow.user_pass && mineRow.user_pass !== myHash) {
                 const acc = userPass ? await verifyOrCreateUserInDb(cleanUser, userPass) : { ok: false };
                 if (!acc.ok) {
@@ -3015,10 +3015,10 @@ async function upsertMyPresenceInDb(extraFields = {}) {
                 mineRow.user_pass = myHash;
             }
             const upd = { ...payload };
-            delete upd.user_name;   // РёРјСЏ СЃС‚СЂРѕРєРё РЅРµ С‚СЂРѕРіР°РµРј вЂ” РёРЅР°С‡Рµ РјРѕР¶РЅРѕ СЃР»СѓС‡Р°Р№РЅРѕ СЃР»РёС‚СЊ/РїРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ С‡СѓР¶СѓСЋ Р·Р°РїРёСЃСЊ
+            delete upd.user_name;   // имя строки не трогаем — иначе можно случайно слить/переименовать чужую запись
             let q = supabaseClient.from('fajr_members').update(upd)
                 .eq('room_name', cleanRoom).eq('user_name', mineRow.user_name);
-            // Р•СЃР»Рё СЃС‚Р°СЂС‹Р№ РїР°СЂРѕР»СЊ Р±С‹Р» РїСѓСЃС‚С‹Рј вЂ” РѕР±РЅРѕРІР»РµРЅРёРµ СЂР°Р·СЂРµС€Р°РµРј (Р·Р°РїРёСЃСЊ В«РґРѕ РїР°СЂРѕР»РµР№В»).
+            // Если старый пароль был пустым — обновление разрешаем (запись «до паролей»).
             if (mineRow.user_pass) q = q.eq('user_pass', myHash);
             await q;
         } else {
@@ -3049,8 +3049,8 @@ async function fetchRoomMembersFromDb() {
         .eq('room_name', cleanRoom);
 
     if (!error && data) {
-        // РЎРєР»РµРёРІР°РµРј СЃС‚СЂРѕРєРё, РѕС‚Р»РёС‡Р°СЋС‰РёРµСЃСЏ С‚РѕР»СЊРєРѕ СЂРµРіРёСЃС‚СЂРѕРј/РїСЂРѕР±РµР»Р°РјРё: РёРЅР°С‡Рµ РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ
-        // С‡РµР»РѕРІРµРє В«РґРІРѕРёР»СЃСЏВ» РІ СЃРїРёСЃРєРµ, Р° СЃРІРѕСЋ Р¶Рµ РєРѕРїРёСЋ РїСЂРёР»РѕР¶РµРЅРёРµ СЃС‡РёС‚Р°Р»Рѕ С‡СѓР¶РѕР№ Рё РЅРµ РґР°РІР°Р»Рѕ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ.
+        // Склеиваем строки, отличающиеся только регистром/пробелами: иначе один и тот же
+        // человек «двоился» в списке, а свою же копию приложение считало чужой и не давало заблокировать.
         const byKey = {};
         data.forEach(m => {
             const raw = (m.user_name || '').trim();
@@ -3065,7 +3065,7 @@ async function fetchRoomMembersFromDb() {
             const key = raw.toLowerCase();
             const prev = byKey[key];
             if (!prev) { byKey[key] = cand; return; }
-            // РїСЂРёРѕСЂРёС‚РµС‚: Р·Р°РїРёСЃСЊ СЂРѕРІРЅРѕ СЃ РЅР°С€РёРј РЅР°РїРёСЃР°РЅРёРµРј РёРјРµРЅРё, Р·Р°С‚РµРј вЂ” Р±РѕР»РµРµ СЃРІРµР¶Р°СЏ
+            // приоритет: запись ровно с нашим написанием имени, затем — более свежая
             const prevIsMe = sameName(prev.name, myName);
             const candIsMe = sameName(cand.name, myName);
             if (candIsMe && !prevIsMe) { byKey[key] = cand; return; }
@@ -3096,7 +3096,7 @@ async function fetchAllRoomsFromDb() {
         data.forEach(row => {
             roomsCache[row.name] = {
                 name: row.name,
-                // РџР°СЂРѕР»СЊ С‡СѓР¶РѕР№ РіСЂСѓРїРїС‹ РІ РѕС‚РєСЂС‹С‚РѕРј РІРёРґРµ РЅРµ С…СЂР°РЅРёРј вЂ” С‚РѕР»СЊРєРѕ РїСЂРёР·РЅР°Рє В«Р·Р°РєСЂС‹С‚Р°СЏВ».
+                // Пароль чужой группы в открытом виде не храним — только признак «закрытая».
                 hasPass: !!row.pass,
                 owner: row.owner || '',
                 permanent: row.permanent || row.name === DEFAULT_ROOM,
@@ -3106,17 +3106,17 @@ async function fetchAllRoomsFromDb() {
         renderSavedRoomsList();
         updateRoomTtlBanner();
 
-        // Р“СЂСѓРїРїСѓ, РІ РєРѕС‚РѕСЂРѕР№ РјС‹ СЃРёРґРёРј, СѓРґР°Р»РёР» Р°РґРјРёРЅ/РІР»Р°РґРµР»РµС† вЂ” РІРѕР·РІСЂР°С‰Р°РµРј РІ РѕСЃРЅРѕРІРЅСѓСЋ, Р° РЅРµ РѕСЃС‚Р°РІР»СЏРµРј В«РІ РїСѓСЃС‚РѕС‚РµВ»
+        // Группу, в которой мы сидим, удалил админ/владелец — возвращаем в основную, а не оставляем «в пустоте»
         const cur = currentRoom.trim();
         if (data.length > 0 && !roomSwitchInProgress && cur !== DEFAULT_ROOM && !roomsCache[cur]) {
-            showToast('в›” Р“СЂСѓРїРїР° В«' + cur + 'В» СѓРґР°Р»РµРЅР°. Р’С‹ РІРѕР·РІСЂР°С‰РµРЅС‹ РІ РѕСЃРЅРѕРІРЅСѓСЋ РіСЂСѓРїРїСѓ');
+            showToast('⛔ Группа «' + cur + '» удалена. Вы возвращены в основную группу');
             await switchActiveRoom(DEFAULT_ROOM, '');
         }
     }
 }
 
 /**
- * 6. REALTIME РЎРР“РќРђР›Р«, РџР РћР‘РЈР–Р”Р•РќРР• Р РћРўРњР•РќРђ Р’Р«Р—РћР’Рђ
+ * 6. REALTIME СИГНАЛЫ, ПРОБУЖДЕНИЕ И ОТМЕНА ВЫЗОВА
  */
 async function subscribeToSupabaseRealtime() {
     if (!supabaseClient) return;
@@ -3142,7 +3142,7 @@ async function subscribeToSupabaseRealtime() {
 }
 
 async function handleIncomingSignal(sig) {
-    if (isGuest) return;                 // РЅР°Р±Р»СЋРґР°С‚РµР»СЏ РЅРµ Р±СѓРґСЏС‚ Рё РѕРЅ РЅРµ РѕС‚РІРµС‡Р°РµС‚ РЅР° СЃРёРіРЅР°Р»С‹
+    if (isGuest) return;                 // наблюдателя не будят и он не отвечает на сигналы
     if (!sig || sameName(sig.sender, myName)) return;
 
     if (sig.signal_type === 'WAKE_CALL') {
@@ -3161,7 +3161,7 @@ async function handleIncomingSignal(sig) {
                 call_word: '',
                 caller_name: ''
             });
-            showToast(`рџ›‘ ${sig.sender} РѕС‚РјРµРЅРёР» РІС‹Р·РѕРІ Р±СѓРґРёР»СЊРЅРёРєР°`);
+            showToast(`🛑 ${sig.sender} отменил вызов будильника`);
         }
     } else if (sig.signal_type === 'WAKE_RINGING') {
         userCallStates[keyOfName(networkUsers, sig.sender) || sig.sender] = {
@@ -3177,16 +3177,16 @@ async function handleIncomingSignal(sig) {
             word: sig.word || ''
         };
         renderMembers();
-        showToast(`вњ“ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
+        showToast(`✓ ${sig.sender} ${DICTIONARY[currentLang].toastReplyReceived} "${sig.word}"`);
     } else if (sig.signal_type === 'KICK') {
         if (sameName(sig.target, myName) && currentRoom.trim() !== DEFAULT_ROOM) {
-            showToast('в›” Р’Р°СЃ РёСЃРєР»СЋС‡РёР»Рё РёР· РіСЂСѓРїРїС‹');
+            showToast('⛔ Вас исключили из группы');
             await switchActiveRoom(DEFAULT_ROOM, '');
         }
     } else if (sig.signal_type === 'USER_DELETED') {
         if (sameName(sig.target, myName)) {
             isBanned = false;
-            showToast('рџ—‘пёЏ Р’Р°С€ РїСЂРѕС„РёР»СЊ СѓРґР°Р»С‘РЅ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј. РџРµСЂРµР·Р°РїСѓСЃРєвЂ¦');
+            showToast('🗑️ Ваш профиль удалён администратором. Перезапуск…');
             setTimeout(() => { try { location.reload(); } catch (e) {} }, 900);
         }
     }
@@ -3203,17 +3203,17 @@ async function sendSupabaseSignal(signalType, target, word) {
     }]); } catch (e) {}
 }
 
-// РћС‚РјРµРЅР° РѕС‚РїСЂР°РІР»РµРЅРЅРѕРіРѕ РІС‹Р·РѕРІР° Р±СѓРґРёР»СЊРЅРёРєР° (РґР»СЏ РѕРґРЅРѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР° РёР»Рё РґР»СЏ РІСЃРµС… СЃСЂР°Р·Сѓ)
+// Отмена отправленного вызова будильника (для одного участника или для всех сразу)
 window.cancelWakeSignal = async function(targetUser) {
     if (requireRegistration()) return;
 
     if (targetUser === 'ALL') {
-        // 1) СЃРЅРёРјР°РµРј РІСЃРµ Р°РєС‚РёРІРЅС‹Рµ РІС‹Р·РѕРІС‹ Р»РѕРєР°Р»СЊРЅРѕ
+        // 1) снимаем все активные вызовы локально
         Object.keys(userCallStates).forEach(u => {
             const st = userCallStates[u] && userCallStates[u].state;
             if (st === 'calling' || st === 'ringing') delete userCallStates[u];
         });
-        // 2) С‡РёСЃС‚РёРј РІ Р‘Р” РІСЃРµС… РІ СЌС‚РѕР№ РіСЂСѓРїРїРµ, РєРѕРіРѕ РІС‹Р·РІР°Р» РёРјРµРЅРЅРѕ СЏ вЂ” Сѓ РЅРёС… СЃРёСЂРµРЅР° РјРѕРіР»Р° РѕСЃС‚Р°С‚СЊСЃСЏ РІРёСЃРµС‚СЊ
+        // 2) чистим в БД всех в этой группе, кого вызвал именно я — у них сирена могла остаться висеть
         if (supabaseClient) {
             try {
                 await supabaseClient
@@ -3224,7 +3224,7 @@ window.cancelWakeSignal = async function(targetUser) {
             } catch (e) {}
         }
         renderMembers();
-        // 3) РѕР±С‰РёР№ СЃРёРіРЅР°Р» РЅР°РґС‘Р¶РЅРµРµ С‚РѕС‡РµС‡РЅС‹С…: СЃРёСЂРµРЅР° РіР»РѕС…РЅРµС‚ РґР°Р¶Рµ Сѓ С‚РµС…, С‡РµР№ WAKE_RINGING РµС‰С‘ РЅРµ РґРѕС€С‘Р»
+        // 3) общий сигнал надёжнее точечных: сирена глохнет даже у тех, чей WAKE_RINGING ещё не дошёл
         await sendSupabaseSignal('WAKE_CANCEL', 'ALL', '');
         showToast(DICTIONARY[currentLang].toastWakeCancelled);
         return;
@@ -3245,17 +3245,17 @@ window.cancelWakeSignal = async function(targetUser) {
 };
 
 /**
- * 7. РџР•Р Р•Р”РђР§Рђ Р§РРЎРўРћ РљРђР РўРРќРљР QR-РљРћР”Рђ (Р‘Р•Р— РЎРЎР«Р›РћРљ) Р РћРўР”Р•Р›Р¬РќРћ РЎРЎР«Р›РљР РќРђ РџР РћР“Р РђРњРњРЈ
+ * 7. ПЕРЕДАЧА ЧИСТО КАРТИНКИ QR-КОДА (БЕЗ ССЫЛОК) И ОТДЕЛЬНО ССЫЛКИ НА ПРОГРАММУ
  */
 function roomQrPayload() { return JSON.stringify({ room: currentRoom, pass: roomPass }); }
 
 async function sharePureQrImageOnly() {
     if (!(await loadLib('qrcode', () => typeof QRCode !== 'undefined'))) {
-        showToast('вљ пёЏ РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РіРµРЅРµСЂР°С‚РѕСЂ QR. РџСЂРѕРІРµСЂСЊС‚Рµ РёРЅС‚РµСЂРЅРµС‚');
+        showToast('⚠️ Не удалось загрузить генератор QR. Проверьте интернет');
         return;
     }
-    // Р РёСЃСѓРµРј QR РІ РЅР°С‚СѓСЂР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ 320Г—320 вЂ” СЂР°РЅСЊС€Рµ РјР°Р»РµРЅСЊРєРёР№ 140Г—140 СЂР°СЃС‚СЏРіРёРІР°Р»СЃСЏ Рё СЂР°СЃРїР»С‹РІР°Р»СЃСЏ,
-    // РёР·-Р·Р° С‡РµРіРѕ С‚Р°РєСѓСЋ РєР°СЂС‚РёРЅРєСѓ РїР»РѕС…Рѕ СЃС‡РёС‚С‹РІР°Р» СЃРєР°РЅРµСЂ.
+    // Рисуем QR в натуральный размер 320×320 — раньше маленький 140×140 растягивался и расплывался,
+    // из-за чего такую картинку плохо считывал сканер.
     const holder = document.createElement('div');
     holder.style.cssText = 'position:fixed;left:-9999px;top:0;';
     document.body.appendChild(holder);
@@ -3281,7 +3281,7 @@ async function sharePureQrImageOnly() {
     ctx.font = 'bold 26px sans-serif';
     ctx.fillText('AL-FAJR AWAKE', 250, 62);
 
-    const title = `Р“Р РЈРџРџРђ: ${currentRoom}`;
+    const title = `ГРУППА: ${currentRoom}`;
     let px = 22;
     do { ctx.font = `bold ${px}px sans-serif`; px--; } while (ctx.measureText(title).width > 440 && px > 11);
     ctx.fillStyle = '#ffffff';
@@ -3294,7 +3294,7 @@ async function sharePureQrImageOnly() {
 
     ctx.fillStyle = '#a4b0be';
     ctx.font = 'bold 15px sans-serif';
-    ctx.fillText('РћС‚СЃРєР°РЅРёСЂСѓР№С‚Рµ СЌС‚РѕС‚ QR РІРЅСѓС‚СЂРё РїСЂРёР»РѕР¶РµРЅРёСЏ', 250, 520);
+    ctx.fillText('Отсканируйте этот QR внутри приложения', 250, 520);
 
     outCanvas.toBlob(async (blob) => {
         if (!blob) return;
@@ -3306,7 +3306,7 @@ async function sharePureQrImageOnly() {
                 await navigator.share({ files: [file] });
                 return;
             } catch (e) {
-                if (e && e.name === 'AbortError') return;   // С‡РµР»РѕРІРµРє Р·Р°РєСЂС‹Р» РѕРєРЅРѕ В«РџРѕРґРµР»РёС‚СЊСЃСЏВ» вЂ” РЅРёС‡РµРіРѕ РЅРµ СЃРєР°С‡РёРІР°РµРј
+                if (e && e.name === 'AbortError') return;   // человек закрыл окно «Поделиться» — ничего не скачиваем
             }
         }
 
@@ -3316,7 +3316,7 @@ async function sharePureQrImageOnly() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        showToast('рџ–јпёЏ Р§РёСЃС‚Р°СЏ РєР°СЂС‚РёРЅРєР° QR-РєРѕРґР° СЃРѕС…СЂР°РЅРµРЅР°!');
+        showToast('🖼️ Чистая картинка QR-кода сохранена!');
     }, 'image/png');
 }
 
@@ -3348,9 +3348,9 @@ function copyTextFallback(text, successToast) {
     el.select();
     try {
         document.execCommand('copy');
-        showToast(successToast || 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ!');
+        showToast(successToast || 'Скопировано!');
     } catch (err) {
-        prompt('РЎРєРѕРїРёСЂСѓР№С‚Рµ СЃСЃС‹Р»РєСѓ:', text);
+        prompt('Скопируйте ссылку:', text);
     }
     document.body.removeChild(el);
 }
@@ -3379,7 +3379,7 @@ async function generateQR() {
 }
 
 /**
- * 8. РњРћР”РђР›Р¬РќР«Р• РћРљРќРђ, РЎРљРђРќР•Р  QR Р РЎРџРРЎРћРљ РљРћРњРќРђРў
+ * 8. МОДАЛЬНЫЕ ОКНА, СКАНЕР QR И СПИСОК КОМНАТ
  */
 window.switchModalTab = function(tabName) {
     document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
@@ -3427,20 +3427,20 @@ window.selectSavedRoom = async function(rName) {
     const room = roomsCache[rName];
     if (!room) return;
 
-    // РџР°СЂРѕР»СЊ СЃРїСЂР°С€РёРІР°РµРј С‚РѕР»СЊРєРѕ Сѓ С‡РµР»РѕРІРµРєР°: РІ РєСЌС€Рµ С‡СѓР¶РёС… РїР°СЂРѕР»РµР№ РЅРµС‚. РЈР¶Рµ РІРІРµРґС‘РЅРЅС‹Р№ СЂР°РЅРµРµ РїР°СЂРѕР»СЊ
-    // СЃРІРѕРµР№ РіСЂСѓРїРїС‹ Р±РµСЂС‘Рј РёР· localStorage, С‡С‚РѕР±С‹ РЅРµ СЃРїСЂР°С€РёРІР°С‚СЊ РїРѕРІС‚РѕСЂРЅРѕ.
+    // Пароль спрашиваем только у человека: в кэше чужих паролей нет. Уже введённый ранее пароль
+    // своей группы берём из localStorage, чтобы не спрашивать повторно.
     let passToUse = getSavedRoomPass(room.name);
     if (room.hasPass && room.name !== currentRoom && !isSuperAdmin) {
-        // РЎРѕС…СЂР°РЅС‘РЅРЅС‹Р№ РїР°СЂРѕР»СЊ РјРѕРі СѓСЃС‚Р°СЂРµС‚СЊ (Р°РґРјРёРЅ РіСЂСѓРїРїС‹ СЃРјРµРЅРёР» РµРіРѕ) вЂ” РїСЂРѕРІРµСЂСЏРµРј РЅР° СЃС‚РѕСЂРѕРЅРµ Р‘Р”.
+        // Сохранённый пароль мог устареть (админ группы сменил его) — проверяем на стороне БД.
         if (passToUse && !(await canJoinRoom(room.name, passToUse))) {
             rememberRoomPass(room.name, '');
             passToUse = '';
         }
         if (!passToUse) {
-            const entered = prompt(`Р“СЂСѓРїРїР° "${rName}" Р·Р°С‰РёС‰РµРЅР° РїР°СЂРѕР»РµРј. Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ:`);
+            const entered = prompt(`Группа "${rName}" защищена паролем. Введите пароль:`);
             if (entered === null) return;
-            if (!(await canJoinRoom(room.name, entered))) {   // РїСЂРѕРІРµСЂРєР° РЅР° СЃС‚РѕСЂРѕРЅРµ Р‘Р”, Р±РµР· СЃСЂР°РІРЅРµРЅРёСЏ СЃ РєСЌС€РµРј
-                showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹!');
+            if (!(await canJoinRoom(room.name, entered))) {   // проверка на стороне БД, без сравнения с кэшем
+                showToast('❌ Неверный пароль группы!');
                 return;
             }
             passToUse = entered.trim();
@@ -3469,9 +3469,9 @@ async function switchActiveRoom(newRoomName, newRoomPass) {
         roomPass = newRoomPass || '';
         localStorage.setItem('fajr_room_name', currentRoom);
         localStorage.setItem('fajr_room_pass', roomPass);
-        if (roomPass) rememberRoomPass(currentRoom, roomPass);   // С‡С‚РѕР±С‹ РЅРµ СЃРїСЂР°С€РёРІР°С‚СЊ РїР°СЂРѕР»СЊ РїРѕРІС‚РѕСЂРЅРѕ
-        // Р¤РѕРЅРѕРІС‹Р№ СЃРµСЂРІРёСЃ РІ РїСЂРёР»РѕР¶РµРЅРёРё СЃР»СѓС€Р°РµС‚ РіСЂСѓРїРїСѓ РёР· СЃРѕС…СЂР°РЅС‘РЅРЅРѕР№ СЃРµСЃСЃРёРё вЂ” Р±РµР· СЌС‚РѕРіРѕ РїРѕСЃР»Рµ СЃРјРµРЅС‹
-        // РіСЂСѓРїРїС‹ Р±СѓРґРёР»СЊРЅРёРє РїСЂРёС…РѕРґРёР» Р±С‹ РёР· СЃС‚Р°СЂРѕР№ РіСЂСѓРїРїС‹, Р° РЅРµ РёР· РЅРѕРІРѕР№.
+        if (roomPass) rememberRoomPass(currentRoom, roomPass);   // чтобы не спрашивать пароль повторно
+        // Фоновый сервис в приложении слушает группу из сохранённой сессии — без этого после смены
+        // группы будильник приходил бы из старой группы, а не из новой.
         if (!isGuest) nativeCall('saveSession', myName, currentRoom, SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.getElementById('inpRoomName').value = currentRoom;
@@ -3486,7 +3486,7 @@ async function switchActiveRoom(newRoomName, newRoomPass) {
         await fetchRoomMembersFromDb();
         generateQR();
         renderUI();
-        showToast(`вњ“ Р’С‹ РїРµСЂРµС€Р»Рё РІ РіСЂСѓРїРїСѓ: ${currentRoom}`);
+        showToast(`✓ Вы перешли в группу: ${currentRoom}`);
     } finally {
         roomSwitchInProgress = false;
     }
@@ -3526,10 +3526,10 @@ function renderSavedRoomsList() {
         card.className = `room-card-box ${isCurrent ? 'active-room' : ''}`;
 
         const statusBadge = isCurrent
-            ? `<span class="room-badge-pill badge-active">вњ“ ${dict.activeRoomBadge}</span>`
+            ? `<span class="room-badge-pill badge-active">✓ ${dict.activeRoomBadge}</span>`
             : (r.hasPass
-                ? `<span class="room-badge-pill badge-lock">рџ”’ ${dict.lockBadge}</span>`
-                : `<span class="room-badge-pill badge-open">рџЊђ ${dict.openBadge}</span>`);
+                ? `<span class="room-badge-pill badge-lock">🔒 ${dict.lockBadge}</span>`
+                : `<span class="room-badge-pill badge-open">🌐 ${dict.openBadge}</span>`);
 
         card.innerHTML = `
             <div class="room-info-cell" data-room="${esc(r.name)}">
@@ -3543,7 +3543,7 @@ function renderSavedRoomsList() {
             </div>
             <div class="room-actions-cell">
                 ${!isCurrent ? `<button class="btn-enter-room" data-room="${esc(r.name)}">${dict.enterRoomBtn}</button>` : ''}
-                ${((!r.permanent && sameName(r.owner, myName)) || (isSuperAdmin && r.name !== DEFAULT_ROOM)) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" data-del="${esc(r.name)}">вњ•</button>` : ''}
+                ${((!r.permanent && sameName(r.owner, myName)) || (isSuperAdmin && r.name !== DEFAULT_ROOM)) ? `<button class="btn-trash-room" title="${dict.deleteBtn}" data-del="${esc(r.name)}">✕</button>` : ''}
             </div>
         `;
         container.appendChild(card);
@@ -3615,7 +3615,7 @@ async function checkSuperAdmin() {
 function showBannedScreen(reason) {
     const d = document.createElement('div');
     d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:400000;background:#1a0206;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;';
-    d.innerHTML = '<div style="font-size:56px">в›”</div><div style="font-size:20px;font-weight:800;margin:12px 0 8px">Р”РѕСЃС‚СѓРї Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ</div><div style="font-size:13px;color:#ffccd5;max-width:320px">РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ РѕРіСЂР°РЅРёС‡РёР» РґРѕСЃС‚СѓРї РґР»СЏ СЌС‚РѕРіРѕ РёРјРµРЅРё.' + (reason ? '<br><br>РџСЂРёС‡РёРЅР°: ' + esc(reason) : '') + '</div>';
+    d.innerHTML = '<div style="font-size:56px">⛔</div><div style="font-size:20px;font-weight:800;margin:12px 0 8px">Доступ заблокирован</div><div style="font-size:13px;color:#ffccd5;max-width:320px">Администратор ограничил доступ для этого имени.' + (reason ? '<br><br>Причина: ' + esc(reason) : '') + '</div>';
     document.body.appendChild(d);
 }
 
@@ -3624,7 +3624,7 @@ async function enforceBan() {
     try {
         const { data } = await supabaseClient.from('fajr_bans').select('reason').eq('user_name', myName.trim().toLowerCase()).maybeSingle();
         if (!data) {
-            // РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ СЃРЅСЏР» Р±Р»РѕРєРёСЂРѕРІРєСѓ (РёР»Рё СѓРґР°Р»РёР» РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ) вЂ” РІС‹С…РѕРґРёРј СЃ РєСЂР°СЃРЅРѕРіРѕ СЌРєСЂР°РЅР°.
+            // Администратор снял блокировку (или удалил пользователя) — выходим с красного экрана.
             if (isBanned) { isBanned = false; try { location.reload(); } catch (e) {} }
             return false;
         }
@@ -3641,67 +3641,67 @@ async function enforceBan() {
 
 async function doBan(target, why) {
     if (!isSuperAdmin || !supabaseClient) return;
-    if (sameName(target, myName)) { showToast('РќРµР»СЊР·СЏ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ СЃРµР±СЏ'); return; }
+    if (sameName(target, myName)) { showToast('Нельзя заблокировать себя'); return; }
     const { error } = await supabaseClient.rpc('fajr_admin_ban', {
         adm: myName.trim(), h: await hashSecret(userPass), target: target.trim(), why: why || ''
     });
-    if (error) { showToast('вќЊ ' + error.message); return; }
+    if (error) { showToast('❌ ' + error.message); return; }
     delete networkUsers[target];
     delete userCallStates[target];
     renderMembers();
-    showToast('рџљ« ' + target + ' Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ');
+    showToast('🚫 ' + target + ' заблокирован');
 }
 
 window.banUserPrompt = async function (name) {
     if (!isSuperAdmin) return;
-    const why = prompt('Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ В«' + name + 'В». РџСЂРёС‡РёРЅР° (РјРѕР¶РЅРѕ РѕСЃС‚Р°РІРёС‚СЊ РїСѓСЃС‚РѕР№):', '');
+    const why = prompt('Заблокировать «' + name + '». Причина (можно оставить пустой):', '');
     if (why === null) return;
     await doBan(name, why.trim());
 };
 
-// РџРѕР»РЅРѕРµ СѓРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ: СѓР±РёСЂР°РµРј РµРіРѕ Р·Р°РїРёСЃСЊ РёР· РіСЂСѓРїРї Рё СЃРЅРёРјР°РµРј Р±Р»РѕРєРёСЂРѕРІРєСѓ,
-// С‡С‚РѕР±С‹ РєСЂР°СЃРЅС‹Р№ СЌРєСЂР°РЅ РёСЃС‡РµР· Рё С‡РµР»РѕРІРµРє РјРѕРі Р·Р°Р№С‚Рё Р·Р°РЅРѕРІРѕ (РІ РѕС‚Р»РёС‡РёРµ РѕС‚ РїСЂРѕСЃС‚РѕР№ Р±Р»РѕРєРёСЂРѕРІРєРё).
+// Полное удаление пользователя: убираем его запись из групп и снимаем блокировку,
+// чтобы красный экран исчез и человек мог зайти заново (в отличие от простой блокировки).
 async function doDeleteUser(target) {
     if (!isSuperAdmin || !supabaseClient) return;
-    if (sameName(target, myName)) { showToast('РќРµР»СЊР·СЏ СѓРґР°Р»РёС‚СЊ СЃРµР±СЏ'); return; }
+    if (sameName(target, myName)) { showToast('Нельзя удалить себя'); return; }
     const t = target.trim();
     const likeName = t.replace(/[\\%_]/g, '\\$&');
 
-    // СЃРЅРёРјР°РµРј Р±Р»РѕРєРёСЂРѕРІРєСѓ, РµСЃР»Рё Р±С‹Р»Р° вЂ” РёРЅР°С‡Рµ С‡РµР»РѕРІРµРє РѕСЃС‚Р°РЅРµС‚СЃСЏ СЃ РєСЂР°СЃРЅС‹Рј СЌРєСЂР°РЅРѕРј
+    // снимаем блокировку, если была — иначе человек останется с красным экраном
     const unban = await supabaseClient.rpc('fajr_admin_unban', {
         adm: myName.trim(), h: await hashSecret(userPass), target: t
     });
-    // СѓР±РёСЂР°РµРј Р·Р°РїРёСЃСЊ СѓС‡Р°СЃС‚РЅРёРєР° РёР· РІСЃРµС… РіСЂСѓРїРї (СЂРµРіРёСЃС‚СЂ РёРјРµРЅРё РЅРµ РІР°Р¶РµРЅ)
+    // убираем запись участника из всех групп (регистр имени не важен)
     await supabaseClient.from('fajr_members').delete().ilike('user_name', likeName);
 
-    // РїРѕР»РЅРѕСЃС‚СЊСЋ СѓР±РёСЂР°РµРј РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ Р°РєРєР°СѓРЅС‚ РёР· public.fajr_users (РєР»СЋС‡ вЂ” РЅРёР¶РЅРёР№ СЂРµРіРёСЃС‚СЂ)
+    // полностью убираем постоянный аккаунт из public.fajr_users (ключ — нижний регистр)
     await supabaseClient.from('fajr_users').delete().eq('username', t.toLowerCase());
-    // Рё РІСЃРµ РµРіРѕ Р°РєС‚РёРІРЅС‹Рµ СЃРµСЃСЃРёРё СѓСЃС‚СЂРѕР№СЃС‚РІ
+    // и все его активные сессии устройств
     await supabaseClient.from('fajr_sessions').delete().eq('username', t.toLowerCase());
 
-    // СЃРѕРѕР±С‰Р°РµРј СѓРґР°Р»СЏРµРјРѕРјСѓ, С‡С‚РѕР±С‹ РѕРЅ РІС‹С€РµР» СЃ РєСЂР°СЃРЅРѕРіРѕ СЌРєСЂР°РЅР° Рё РїРµСЂРµР·Р°С€С‘Р»
+    // сообщаем удаляемому, чтобы он вышел с красного экрана и перезашёл
     await sendSupabaseSignal('USER_DELETED', t, '');
 
     const key = keyOfName(networkUsers, t);
     if (key) { delete networkUsers[key]; delete userCallStates[key]; }
     renderMembers();
-    showToast(unban && unban.error ? ('вљ пёЏ ' + t + ' СѓРґР°Р»С‘РЅ, РЅРѕ СЃРЅСЏС‚СЊ Р±Р»РѕРєРёСЂРѕРІРєСѓ РЅРµ СѓРґР°Р»РѕСЃСЊ') : ('рџ—‘пёЏ ' + t + ' СѓРґР°Р»С‘РЅ'));
+    showToast(unban && unban.error ? ('⚠️ ' + t + ' удалён, но снять блокировку не удалось') : ('🗑️ ' + t + ' удалён'));
 }
 
 window.deleteUserPrompt = async function (name) {
     if (!isSuperAdmin) return;
-    if (!confirm('РЈРґР°Р»РёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ В«' + name + 'В» РїРѕР»РЅРѕСЃС‚СЊСЋ?\n\nРћРЅ Р±СѓРґРµС‚ СѓР±СЂР°РЅ РёР· РіСЂСѓРїРїС‹ Рё СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ вЂ” СЃРјРѕР¶РµС‚ Р·Р°Р№С‚Рё Р·Р°РЅРѕРІРѕ.')) return;
+    if (!confirm('Удалить пользователя «' + name + '» полностью?\n\nОн будет убран из группы и разблокирован — сможет зайти заново.')) return;
     await doDeleteUser(name);
 };
 
 window.adminGroupMenu = async function () {
     if (!canAdmin() || !supabaseClient) return;
-    let menu = '1 вЂ” СЃРјРµРЅРёС‚СЊ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹';
-    if (isSuperAdmin) menu += '\n2 вЂ” Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ\n3 вЂ” СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ\n4 вЂ” СЃРїРёСЃРѕРє Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹С…\n5 вЂ” СѓРґР°Р»РёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ (РїРѕР»РЅРѕСЃС‚СЊСЋ)\n6 вЂ” СѓРґР°Р»РёС‚СЊ СЌС‚Сѓ РіСЂСѓРїРїСѓ';
-    const c = (prompt('рџ‘‘ РђРґРјРёРЅ-РїР°РЅРµР»СЊ\n' + menu + '\n\nР’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ:', '') || '').trim();
+    let menu = '1 — сменить пароль группы';
+    if (isSuperAdmin) menu += '\n2 — заблокировать пользователя\n3 — разблокировать пользователя\n4 — список заблокированных\n5 — удалить пользователя (полностью)\n6 — удалить эту группу';
+    const c = (prompt('👑 Админ-панель\n' + menu + '\n\nВведите номер:', '') || '').trim();
 
     if (c === '1') {
-        const np = prompt('РќРѕРІС‹Р№ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹ (РїСѓСЃС‚Рѕ = РѕС‚РєСЂС‹С‚Р°СЏ РіСЂСѓРїРїР°):', roomPass || '');
+        const np = prompt('Новый пароль группы (пусто = открытая группа):', roomPass || '');
         if (np === null) return;
         const clean = np.trim();
         await supabaseClient.from('fajr_rooms').update({ pass: clean }).eq('name', currentRoom.trim());
@@ -3709,45 +3709,45 @@ window.adminGroupMenu = async function () {
         localStorage.setItem('fajr_room_pass', roomPass);
         await fetchAllRoomsFromDb();
         generateQR();
-        showToast('вњ“ РџР°СЂРѕР»СЊ РіСЂСѓРїРїС‹ РѕР±РЅРѕРІР»С‘РЅ');
+        showToast('✓ Пароль группы обновлён');
     } else if (isSuperAdmin && c === '2') {
-        const n = prompt('РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РґР»СЏ Р±Р»РѕРєРёСЂРѕРІРєРё:', '');
+        const n = prompt('Имя пользователя для блокировки:', '');
         if (!n || !n.trim()) return;
-        const why = prompt('РџСЂРёС‡РёРЅР° (РјРѕР¶РЅРѕ РѕСЃС‚Р°РІРёС‚СЊ РїСѓСЃС‚РѕР№):', '');
+        const why = prompt('Причина (можно оставить пустой):', '');
         if (why === null) return;
         await doBan(n.trim(), why.trim());
     } else if (isSuperAdmin && c === '3') {
-        const n = prompt('РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РґР»СЏ СЂР°Р·Р±Р»РѕРєРёСЂРѕРІРєРё:', '');
+        const n = prompt('Имя пользователя для разблокировки:', '');
         if (!n || !n.trim()) return;
         const { error } = await supabaseClient.rpc('fajr_admin_unban', {
             adm: myName.trim(), h: await hashSecret(userPass), target: n.trim()
         });
-        showToast(error ? 'вќЊ ' + error.message : 'вњ“ ' + n.trim() + ' СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ');
+        showToast(error ? '❌ ' + error.message : '✓ ' + n.trim() + ' разблокирован');
     } else if (isSuperAdmin && c === '4') {
         const { data } = await supabaseClient.from('fajr_bans').select('user_name,reason');
-        const list = (data && data.length) ? data.map(b => b.user_name + (b.reason ? ' вЂ” ' + b.reason : '')).join('\n') : 'РЎРїРёСЃРѕРє РїСѓСЃС‚';
-        prompt('Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹Рµ:', list);
+        const list = (data && data.length) ? data.map(b => b.user_name + (b.reason ? ' — ' + b.reason : '')).join('\n') : 'Список пуст';
+        prompt('Заблокированные:', list);
     } else if (isSuperAdmin && c === '5') {
-        const n = prompt('РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РґР»СЏ РїРѕР»РЅРѕРіРѕ СѓРґР°Р»РµРЅРёСЏ:', '');
+        const n = prompt('Имя пользователя для полного удаления:', '');
         if (!n || !n.trim()) return;
         await deleteUserPrompt(n.trim());
     } else if (isSuperAdmin && c === '6') {
-        if (currentRoom.trim() === DEFAULT_ROOM) { showToast('РћСЃРЅРѕРІРЅСѓСЋ РіСЂСѓРїРїСѓ СѓРґР°Р»СЏС‚СЊ РЅРµР»СЊР·СЏ'); return; }
-        if (!confirm('РЈРґР°Р»РёС‚СЊ РіСЂСѓРїРїСѓ В«' + currentRoom + 'В» С†РµР»РёРєРѕРј?')) return;
+        if (currentRoom.trim() === DEFAULT_ROOM) { showToast('Основную группу удалять нельзя'); return; }
+        if (!confirm('Удалить группу «' + currentRoom + '» целиком?')) return;
         await deleteRoomByName(currentRoom.trim());
     }
 };
 
 window.kickMember = async function (name) {
     if (!canAdmin() || !supabaseClient || sameName(name, myName)) return;
-    if (!confirm('РСЃРєР»СЋС‡РёС‚СЊ В«' + name + 'В» РёР· РіСЂСѓРїРїС‹?')) return;
+    if (!confirm('Исключить «' + name + '» из группы?')) return;
     await sendSupabaseSignal('KICK', name, '');
     await supabaseClient.from('fajr_members').delete()
         .eq('room_name', currentRoom.trim()).eq('user_name', name);
     delete networkUsers[name];
     delete userCallStates[name];
     renderMembers();
-    showToast('в›” ' + name + ' РёСЃРєР»СЋС‡С‘РЅ РёР· РіСЂСѓРїРїС‹');
+    showToast('⛔ ' + name + ' исключён из группы');
 };
 
 function nativeCall(method, ...args) {
@@ -3793,7 +3793,7 @@ async function applyParsedRoomPayload(rawText) {
     }
 
     if (rName) {
-        if (!(await canJoinRoom(rName, rPass))) { showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РіСЂСѓРїРїС‹!'); return false; }
+        if (!(await canJoinRoom(rName, rPass))) { showToast('❌ Неверный пароль группы!'); return false; }
         await ensureRoomExistsInDb(rName, rPass, false);
         await switchActiveRoom(rName, rPass);
         document.getElementById('roomModal').classList.remove('open');
@@ -3804,7 +3804,7 @@ async function applyParsedRoomPayload(rawText) {
 }
 
 async function startCameraScanner() {
-    if (isScannerStarting) return;   // РІС‚РѕСЂРѕР№ Р·Р°РїСѓСЃРє Р»РѕРјР°РµС‚ РїРѕС‚РѕРє РєР°РјРµСЂС‹ Рё РѕСЃС‚Р°РІР»СЏРµС‚ В«РІРёСЃСЏС‰РёР№В» СЃРєР°РЅРµСЂ
+    if (isScannerStarting) return;   // второй запуск ломает поток камеры и оставляет «висящий» сканер
     isScannerStarting = true;
     const modal = document.getElementById('scannerModal');
     try {
@@ -3875,7 +3875,7 @@ document.getElementById('inpQrGallery').addEventListener('change', async (e) => 
     } catch (err) {
         showToast(DICTIONARY[currentLang].toastQrScanFailed);
     } finally {
-        // Р‘РµР· clear() РєР°Р¶РґС‹Р№ СЂР°Р·Р±РѕСЂ РєР°СЂС‚РёРЅРєРё РѕСЃС‚Р°РІР»СЏР» РІ СЃРєСЂС‹С‚РѕРј РєРѕРЅС‚РµР№РЅРµСЂРµ СЃРІРѕР№ canvas/video вЂ” СѓС‚РµС‡РєР°.
+        // Без clear() каждый разбор картинки оставлял в скрытом контейнере свой canvas/video — утечка.
         try { if (fileQrScanner) await fileQrScanner.clear(); } catch (e) {}
         fileQrScanner = null;
         e.target.value = '';
@@ -3883,7 +3883,7 @@ document.getElementById('inpQrGallery').addEventListener('change', async (e) => 
 });
 
 /**
- * 9. Р’Р«Р—РћР’ РџРћ РЎР›РћР’РЈ Р РђРЎРўР РћРќРћРњРР§Р•РЎРљРР™ РўРђР™РњР•Р  РќРђРњРђР—РћР’
+ * 9. ВЫЗОВ ПО СЛОВУ И АСТРОНОМИЧЕСКИЙ ТАЙМЕР НАМАЗОВ
  */
 function openWakeWordSelector(targetUser) {
     if (requireRegistration()) return;
@@ -3922,7 +3922,7 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', async ()
 
     if (pendingWakeTarget === 'ALL' && targets.length === 0) {
         document.getElementById('wakeWordModal').classList.remove('open');
-        showToast('РЎРїСЏС‰РёС… СѓС‡Р°СЃС‚РЅРёРєРѕРІ СЃРµР№С‡Р°СЃ РЅРµС‚');
+        showToast('Спящих участников сейчас нет');
         return;
     }
 
@@ -3947,16 +3947,16 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', async ()
 });
 
 async function triggerAlarm(senderName, incomingWord) {
-    // РќР°Р±Р»СЋРґР°С‚РµР»СЏ Р±СѓРґРёС‚СЊ РЅРµР»СЊР·СЏ (РЅР°С‚РёРІРЅС‹Р№ РјРѕСЃС‚ РІС‹Р·С‹РІР°РµС‚ СЌС‚РѕС‚ РјРµС‚РѕРґ РЅР°РїСЂСЏРјСѓСЋ, РјРёРЅСѓСЏ РїСЂРѕРІРµСЂРєРё СЃРёРіРЅР°Р»РѕРІ).
+    // Наблюдателя будить нельзя (нативный мост вызывает этот метод напрямую, минуя проверки сигналов).
     if (isGuest) return;
-    // РћРґРёРЅ Рё С‚РѕС‚ Р¶Рµ РІС‹Р·РѕРІ РјРѕР¶РµС‚ РїСЂРёР№С‚Рё РґРІР°Р¶РґС‹ (realtime + РЅР°С‚РёРІРЅС‹Р№ СЃРµСЂРІРёСЃ) вЂ” РЅРµ РїРµСЂРµР·Р°РїСѓСЃРєР°РµРј Р·РІСѓРє Рё РЅРµ СЃС‚РёСЂР°РµРј РІРІРµРґС‘РЅРЅРѕРµ СЃР»РѕРІРѕ
+    // Один и тот же вызов может прийти дважды (realtime + нативный сервис) — не перезапускаем звук и не стираем введённое слово
     if (document.getElementById('alarmOverlay').classList.contains('active')) return;
     const dict = DICTIONARY[currentLang];
     lastAlarmInitiator = senderName;
 
     let word = incomingWord;
     if (!word) {
-        // Р’С‹Р·РѕРІ РїСЂРёС€С‘Р» РёР· Android-РјРѕСЃС‚Р° Р±РµР· СЃР»РѕРІР° (window.onNativeAlarm) вЂ” Р±РµСЂС‘Рј СЃР»РѕРІРѕ Рё С‚РѕРіРѕ, РєС‚Рѕ Р±СѓРґРёС‚, РёР· СЃРІРѕРµР№ СЃС‚СЂРѕРєРё РІ Р‘Р”.
+        // Вызов пришёл из Android-моста без слова (window.onNativeAlarm) — берём слово и того, кто будит, из своей строки в БД.
         try {
             if (supabaseClient && myName && navigator.onLine) {
                 const { data } = await supabaseClient
@@ -3969,11 +3969,11 @@ async function triggerAlarm(senderName, incomingWord) {
                 if (data && data.caller_name) lastAlarmInitiator = data.caller_name;
             }
         } catch (e) {}
-        // Р—Р° РІСЂРµРјСЏ Р·Р°РїСЂРѕСЃР° РјРѕРі РїСЂРёР»РµС‚РµС‚СЊ РµС‰С‘ РѕРґРёРЅ РІС‹Р·РѕРІ вЂ” РІС‚РѕСЂРѕР№ СЂР°Р· С‚СЂРµРІРѕРіСѓ РЅРµ РїРѕРґРЅРёРјР°РµРј.
+        // За время запроса мог прилететь ещё один вызов — второй раз тревогу не поднимаем.
         if (document.getElementById('alarmOverlay').classList.contains('active')) return;
     }
 
-    // РЎР»РѕРІРѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РїСЂРµРґСЃРєР°Р·СѓРµРјС‹Рј (СЃРѕРІРїР°РґР°С‚СЊ СЃ С‚РµРј, С‡С‚Рѕ РІРёРґРёС‚ РІС‹Р·С‹РІР°СЋС‰РёР№): С‚РѕР»СЊРєРѕ РµСЃР»Рё РІ Р‘Р” РїСѓСЃС‚Рѕ вЂ” РїРµСЂРІРѕРµ РёР· СЃР»РѕРІР°СЂСЏ.
+    // Слово должно быть предсказуемым (совпадать с тем, что видит вызывающий): только если в БД пусто — первое из словаря.
     targetCaptchaWord = word || dict.words[0];
 
     document.getElementById('lblTargetWord').innerText = targetCaptchaWord.toUpperCase();
@@ -4115,11 +4115,11 @@ function setLanguage(lang) {
     document.getElementById('btnRefreshMembers').innerText = dict.refreshBtn;
     document.getElementById('btnAdminGroup').innerText = dict.adminBtn;
 
-    // РџР»Р°С€РєР° СЂРµР¶РёРјР° РЅР°Р±Р»СЋРґР°С‚РµР»СЏ
+    // Плашка режима наблюдателя
     document.getElementById('txtGuestBanner').innerText = dict.guestBanner;
     document.getElementById('btnGuestRegister').innerText = dict.guestRegisterBtn;
 
-    // РћРєРЅРѕ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕР№ СЂРµРіРёСЃС‚СЂР°С†РёРё
+    // Окно обязательной регистрации
     document.getElementById('txtAuthTitle').innerText = dict.authTitle;
     document.getElementById('txtAuthDesc').innerText = dict.authDesc;
     document.getElementById('lblRegName').innerText = dict.authNameLabel;
@@ -4132,7 +4132,7 @@ function setLanguage(lang) {
     document.getElementById('btnBrowseAsGuest').innerText = dict.authGuestBtn;
     document.getElementById('txtGuestHint').innerText = dict.authGuestHint;
 
-    // Р’РєР»Р°РґРєР° РЅР°СЃС‚СЂРѕРµРє Р·РІСѓРєР°
+    // Вкладка настроек звука
     document.getElementById('txtAlarmSoundHeader').innerText = dict.alarmSoundHeader;
     document.getElementById('optAlarmSiren').innerText = dict.alarmOptSiren;
     document.getElementById('optAlarmRadar').innerText = dict.alarmOptRadar;
@@ -4149,7 +4149,7 @@ function setLanguage(lang) {
     document.getElementById('btnStopAdhanSound').innerText = dict.stopSoundBtn;
     refreshCustomSoundLabels();
 
-    // Р’РєР»Р°РґРєР° РїСЂРѕС„РёР»СЏ
+    // Вкладка профиля
     document.getElementById('lblGeoUpdates').innerText = dict.geoUpdatesLabel;
     document.getElementById('txtCheckUpdateBtn').innerText = dict.checkUpdateBtn;
     document.getElementById('btnSaveProfileOnly').innerText = dict.saveProfileBtn;
@@ -4188,9 +4188,9 @@ function renderUI() {
 
     document.getElementById('lblMyNamePill').innerText = isGuest ? dict.guestPill : (myName || '---');
     document.getElementById('lblRoomBadge').innerText = currentRoom.toUpperCase();
-    document.getElementById('lblCityDisplay').innerText = userCoords.label || `${userCoords.lat.toFixed(2)}В°, ${userCoords.lng.toFixed(2)}В°`;
+    document.getElementById('lblCityDisplay').innerText = userCoords.label || `${userCoords.lat.toFixed(2)}°, ${userCoords.lng.toFixed(2)}°`;
 
-    // РќР°Р±Р»СЋРґР°С‚РµР»СЋ СѓС‡Р°СЃС‚РёРµ РЅРµРґРѕСЃС‚СѓРїРЅРѕ: РїРѕРєР°Р·С‹РІР°РµРј РїР»Р°С€РєСѓ Рё Р±Р»РѕРєРёСЂСѓРµРј РєРЅРѕРїРєРё РґРµР№СЃС‚РІРёР№.
+    // Наблюдателю участие недоступно: показываем плашку и блокируем кнопки действий.
     const guestBanner = document.getElementById('guestBanner');
     if (guestBanner) guestBanner.style.display = isGuest ? 'flex' : 'none';
     [document.getElementById('btnToggleDone'), document.getElementById('btnToggleState'), document.getElementById('btnWakeAll')].forEach(b => {
@@ -4220,10 +4220,10 @@ function renderMembers() {
         const callInfo = callKey ? userCallStates[callKey] : null;
         const row = document.createElement('div');
         const isOnline = isOnlineFn(username);
-        // РќР° СЃРєРѕР»СЊРєРёС… Р°РїРїР°СЂР°С‚Р°С… СѓС‡Р°СЃС‚РЅРёРє РѕРЅР»Р°Р№РЅ (С‚Р°Р±Р»РёС†Р° fajr_sessions, Р°РєС‚РёРІРЅРѕСЃС‚СЊ < 2 РјРёРЅ).
+        // На скольких аппаратах участник онлайн (таблица fajr_sessions, активность < 2 мин).
         const devCount = deviceCounts[(u.name || '').trim().toLowerCase()] || 0;
         const devBadge = devCount > 1
-            ? ` <span style="display:inline-block; margin-left:4px; padding:1px 6px; border-radius:8px; background:rgba(112,161,255,0.18); border:1px solid rgba(112,161,255,0.5); color:#70a1ff; font-size:10px; font-weight:700;" title="РћРЅР»Р°Р№РЅ СЃ ${devCount} СѓСЃС‚СЂРѕР№СЃС‚РІ">рџ“±Г—${devCount}</span>`
+            ? ` <span style="display:inline-block; margin-left:4px; padding:1px 6px; border-radius:8px; background:rgba(112,161,255,0.18); border:1px solid rgba(112,161,255,0.5); color:#70a1ff; font-size:10px; font-weight:700;" title="Онлайн с ${devCount} устройств">📱×${devCount}</span>`
             : '';
 
         let extraRowClass = '';
@@ -4237,13 +4237,13 @@ function renderMembers() {
         if (callInfo) {
             if (callInfo.state === 'calling') {
                 extraRowClass = 'ringing';
-                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">рџ“Ў</span> ${dict.callSending} [${esc(callInfo.word)}]</div>`;
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">📡</span> ${dict.callSending} [${esc(callInfo.word)}]</div>`;
             } else if (callInfo.state === 'ringing') {
                 extraRowClass = 'ringing';
-                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">рџ””</span> ${dict.callRinging} <b>"${esc(callInfo.word)}"</b></div>`;
+                callStatusHtml = `<div class="u-call-status calling"><span class="ring-icon">🔔</span> ${dict.callRinging} <b>"${esc(callInfo.word)}"</b></div>`;
             } else if (callInfo.state === 'replied') {
                 extraRowClass = 'replied';
-                callStatusHtml = `<div class="u-call-status ack">вњ“ ${dict.callReplied} <b>"${esc(callInfo.word)}"</b></div>`;
+                callStatusHtml = `<div class="u-call-status ack">✓ ${dict.callReplied} <b>"${esc(callInfo.word)}"</b></div>`;
             }
         }
 
@@ -4253,24 +4253,24 @@ function renderMembers() {
         let badgeTxt = dict.stateSleep;
         if (u.status === 'awake') { badgeClass = 'b-awake'; badgeTxt = dict.stateAwake; }
         if (u.status === 'done') { badgeClass = 'b-done'; badgeTxt = dict.stateDone; }
-        if (!isOnline) { badgeClass = 'b-off'; badgeTxt = 'вљ« ' + dict.offlineBadge + ' В· ' + agoText(u.lastSeen); }
+        if (!isOnline) { badgeClass = 'b-off'; badgeTxt = '⚫ ' + dict.offlineBadge + ' · ' + agoText(u.lastSeen); }
 
         let actionBtnHtml = '';
         if (!isMe && !isGuest) {
             if (isCurrentlyCalling) {
-                actionBtnHtml = `<button class="btn-cancel-nudge" data-cancel="${esc(u.name)}">рџ›‘ ${dict.cancelNudgeBtn}</button>`;
+                actionBtnHtml = `<button class="btn-cancel-nudge" data-cancel="${esc(u.name)}">🛑 ${dict.cancelNudgeBtn}</button>`;
             } else {
-                actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">рџ”” ${dict.nudgeBtn}</button>`;
+                actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`;
             }
         }
 
         if (!isMe && canAdmin()) {
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#444; color:#fff; border-color:#666;" data-kick="${esc(u.name)}">в›”</button>`;
+            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#444; color:#fff; border-color:#666;" data-kick="${esc(u.name)}">⛔</button>`;
         }
 
         if (!isMe && isSuperAdmin) {
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#7a0010; color:#fff; border-color:#b00020;" data-ban="${esc(u.name)}">рџљ«</button>`;
-            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#333; color:#fff; border-color:#666;" title="РЈРґР°Р»РёС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РїРѕР»РЅРѕСЃС‚СЊСЋ" data-del-user="${esc(u.name)}">рџ—‘пёЏ</button>`;
+            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#7a0010; color:#fff; border-color:#b00020;" data-ban="${esc(u.name)}">🚫</button>`;
+            actionBtnHtml += ` <button class="btn-cancel-nudge" style="background:#333; color:#fff; border-color:#666;" title="Удалить пользователя полностью" data-del-user="${esc(u.name)}">🗑️</button>`;
         }
 
         row.innerHTML = `
@@ -4278,7 +4278,7 @@ function renderMembers() {
                 <div class="u-avatar">${esc((Array.from(u.name)[0] || '?').toUpperCase())}</div>
                 <div>
                     <div class="u-name">
-                        <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'Р’ СЃРµС‚Рё' : 'РћС„С„Р»Р°Р№РЅ'}"></span>
+                        <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
                         ${esc(u.name)} ${isMe ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}${devBadge}
                     </div>
                     <span class="u-badge ${badgeClass}">${badgeTxt}</span>
@@ -4306,7 +4306,7 @@ function showToast(text) {
     const banner = document.getElementById('toastBanner');
     banner.innerText = text;
     banner.classList.add('show');
-    clearTimeout(toastTimer);   // СЂР°РЅСЊС€Рµ РїСЂРµРґС‹РґСѓС‰РёР№ С‚Р°Р№РјРµСЂ РіР°СЃРёР» РЅРѕРІС‹Р№ С‚РѕСЃС‚ СЂР°РЅСЊС€Рµ РІСЂРµРјРµРЅРё
+    clearTimeout(toastTimer);   // раньше предыдущий таймер гасил новый тост раньше времени
     toastTimer = setTimeout(() => {
         banner.classList.remove('show');
     }, 3500);
@@ -4345,7 +4345,7 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
             (pos) => {
                 userCoords.lat = pos.coords.latitude;
                 userCoords.lng = pos.coords.longitude;
-                userCoords.label = `${pos.coords.latitude.toFixed(2)}В°, ${pos.coords.longitude.toFixed(2)}В°`;
+                userCoords.label = `${pos.coords.latitude.toFixed(2)}°, ${pos.coords.longitude.toFixed(2)}°`;
                 localStorage.setItem('fajr_coords', JSON.stringify(userCoords));
                 showToast(dict.toastGeoSuccess);
                 updatePrayerCycle();
@@ -4361,15 +4361,15 @@ document.getElementById('btnRequestGeo').addEventListener('click', () => {
 });
 
 document.getElementById('btnSaveRoomOnly').addEventListener('click', async () => {
-    if (requireRegistration()) return;      // СЃРѕР·РґР°РІР°С‚СЊ РіСЂСѓРїРїС‹ РЅР°Р±Р»СЋРґР°С‚РµР»СЊ РЅРµ РјРѕР¶РµС‚
+    if (requireRegistration()) return;      // создавать группы наблюдатель не может
     const r = document.getElementById('inpRoomName').value.trim() || DEFAULT_ROOM;
     const rp = document.getElementById('inpRoomPass').value.trim() || '';
 
-    if (!(await canJoinRoom(r, rp))) { showToast('вќЊ Р“СЂСѓРїРїР° СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РїР°СЂРѕР»СЊ РЅРµРІРµСЂРЅС‹Р№!'); return; }
+    if (!(await canJoinRoom(r, rp))) { showToast('❌ Группа уже существует, пароль неверный!'); return; }
     await ensureRoomExistsInDb(r, rp, true);
     await switchActiveRoom(r, rp);
     switchModalTab('rooms');
-    showToast(`Р“СЂСѓРїРїР° "${r}" СЃРѕР·РґР°РЅР°!`);
+    showToast(`Группа "${r}" создана!`);
 });
 
 document.getElementById('btnSaveProfileOnly').addEventListener('click', async () => {
@@ -4378,23 +4378,17 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     const up = document.getElementById('inpUserPass').value.trim();
 
     if (!n) {
-        showToast('РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РІР°С€Рµ РёРјСЏ!');
+        showToast('Пожалуйста, введите ваше имя!');
         return;
     }
     if (isGuest && !up) {
-        showToast('рџ‘Ђ Р”Р»СЏ СѓС‡Р°СЃС‚РёСЏ Р·Р°РґР°Р№С‚Рµ РїР°СЂРѕР»СЊ Р°РєРєР°СѓРЅС‚Р°');
+        showToast('👀 Для участия задайте пароль аккаунта');
         return;
     }
     const nameErr = validateUserName(n);
     if (nameErr) { showToast(nameErr); return; }
 
-    // РџРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ: РёРјСЏ РЅРµ РґРѕР»Р¶РЅРѕ РїСЂРёРЅР°РґР»РµР¶Р°С‚СЊ С‡СѓР¶РѕРјСѓ Р°РєРєР°СѓРЅС‚Сѓ СЃ РґСЂСѓРіРёРј РїР°СЂРѕР»РµРј.
-    if (!sameName(n, oldName) && !(await isNameAllowedForPass(n, up))) {
-        showToast('вќЊ Р­С‚Рѕ РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ РґСЂСѓРіРёРј СѓС‡Р°СЃС‚РЅРёРєРѕРј (РЅРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ)!');
-        return;
-    }
-
-    // РџРѕСЃС‚РѕСЏРЅРЅС‹Р№ Р°РєРєР°СѓРЅС‚ public.fajr_users (РєР»СЋС‡ вЂ” РёРјСЏ РІ РЅРёР¶РЅРµРј СЂРµРіРёСЃС‚СЂРµ).
+    // Постоянный аккаунт public.fajr_users (ключ — имя в нижнем регистре).
     if (supabaseClient) {
         const newUsername = n.toLowerCase();
         const oldUsername = (oldName || '').trim().toLowerCase();
@@ -4402,12 +4396,12 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
         const newHash = await hashSecret(up || '');
 
         if (!sameName(n, oldName)) {
-            // РќРѕРІРѕРµ РёРјСЏ: СЃРѕР·РґР°С‘Рј/РїСЂРѕРІРµСЂСЏРµРј Р°РєРєР°СѓРЅС‚ Рё РІС‹СЂР°РІРЅРёРІР°РµРј С…СЌС€ РІРѕ РІСЃРµС… СЃС‚СЂРѕРєР°С… fajr_members.
+            // Новое имя: создаём/проверяем аккаунт и выравниваем хэш во всех строках fajr_members.
             if (!(await verifyOrCreateUserInDb(n, up)).ok) {
-                showToast('вќЊ РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ РѕС‚ СЌС‚РѕРіРѕ Р°РєРєР°СѓРЅС‚Р° (РёР»Рё РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ)!');
+                showToast('❌ Неверный пароль от этого аккаунта (или имя уже занято)!');
                 return;
             }
-            // РЎС‚Р°СЂС‹Р№ username РѕСЃРІРѕР±РѕР¶РґР°РµРј С‚РѕР»СЊРєРѕ РµСЃР»Рё СЌС‚Рѕ Р±С‹Р» РЅР°С€ Р°РєРєР°СѓРЅС‚ СЃ С‚РµРј Р¶Рµ РїР°СЂРѕР»РµРј.
+            // Старый username освобождаем только если это был наш аккаунт с тем же паролем.
             if (oldUsername && oldUsername !== newUsername) {
                 const { data: oldRow } = await supabaseClient
                     .from('fajr_users').select('password').eq('username', oldUsername).maybeSingle();
@@ -4416,10 +4410,10 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
                 }
             }
         } else if (oldHash !== newHash) {
-            // РЎРјРµРЅР° С‚РѕР»СЊРєРѕ РїР°СЂРѕР»СЏ Сѓ С‚РѕРіРѕ Р¶Рµ РёРјРµРЅРё вЂ” РѕР±РЅРѕРІР»СЏРµРј РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ Р°РєРєР°СѓРЅС‚.
+            // Смена только пароля у того же имени — обновляем постоянный аккаунт.
             await supabaseClient.from('fajr_users').update({ password: up }).eq('username', newUsername);
         } else {
-            // РРјСЏ Рё РїР°СЂРѕР»СЊ РЅРµ РјРµРЅСЏР»РёСЃСЊ вЂ” РїСЂРѕРІРµСЂСЏРµРј Р°РєРєР°СѓРЅС‚ Рё РІС‹СЂР°РІРЅРёРІР°РµРј fajr_members.
+            // Имя и пароль не менялись — проверяем аккаунт и выравниваем fajr_members.
             await verifyOrCreateUserInDb(n, up);
         }
     }
@@ -4431,8 +4425,8 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
             .eq('room_name', currentRoom.trim())
             .eq('user_name', oldName.trim());
     }
-    // РЎРјРµРЅР° РїР°СЂРѕР»СЏ Р±РµР· СЃРјРµРЅС‹ РёРјРµРЅРё: РїРµСЂРµРЅРѕСЃРёРј РЅРѕРІС‹Р№ С…СЌС€ РїСЂСЏРјРѕ РІ СЃРІРѕСЋ СЃС‚СЂРѕРєСѓ Р‘Р”, РёРЅР°С‡Рµ
-    // upsertMyPresenceInDb СѓРІРёРґРёС‚ СЃС‚Р°СЂС‹Р№ user_pass Рё Р»РѕР¶РЅРѕ СЃСЂР°Р±РѕС‚Р°РµС‚ Р·Р°С‰РёС‚Р° РѕС‚ Р·Р°С…РІР°С‚Р° РёРјРµРЅРё.
+    // Смена пароля без смены имени: переносим новый хэш прямо в свою строку БД, иначе
+    // upsertMyPresenceInDb увидит старый user_pass и ложно сработает защита от захвата имени.
     if (sameName(n, oldName) && supabaseClient) {
         const oldHash = await hashSecret(userPass || '');
         const newHash = await hashSecret(up || '');
@@ -4463,7 +4457,7 @@ document.getElementById('btnSaveProfileOnly').addEventListener('click', async ()
     renderMySessions();
     renderUI();
     document.getElementById('roomModal').classList.remove('open');
-    showToast(`РџСЂРѕС„РёР»СЊ "${myName}" СЃРѕС…СЂР°РЅРµРЅ!`);
+    showToast(`Профиль "${myName}" сохранен!`);
 });
 
 document.getElementById('btnLogoutProfile').addEventListener('click', async () => {
@@ -4474,7 +4468,7 @@ document.getElementById('btnLogoutProfile').addEventListener('click', async () =
             .eq('room_name', currentRoom.trim())
             .eq('user_name', myName.trim());
     }
-    // РЈР±РёСЂР°РµРј СЌС‚Рѕ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ РёР· СЃРїРёСЃРєР° Р°РєС‚РёРІРЅС‹С… СЃРµСЃСЃРёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.
+    // Убираем это устройство из списка активных сессий пользователя.
     if (supabaseClient) {
         await supabaseClient.from('fajr_sessions').delete().eq('session_id', deviceId);
     }
@@ -4494,13 +4488,13 @@ document.getElementById('btnLogoutProfile').addEventListener('click', async () =
     document.getElementById('mandatoryAuthModal').classList.add('open');
 });
 
-// РќР°Р±Р»СЋРґР°С‚РµР»СЊ РјРѕР¶РµС‚ РІ Р»СЋР±РѕР№ РјРѕРјРµРЅС‚ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ.
+// Наблюдатель может в любой момент зарегистрироваться.
 document.getElementById('btnGuestRegister').addEventListener('click', async () => {
     await loadRegRooms();
     document.getElementById('mandatoryAuthModal').classList.add('open');
 });
 
-// РЈРґР°Р»С‘РЅРЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ СЃРµСЃСЃРёРё РґСЂСѓРіРѕРіРѕ СѓСЃС‚СЂРѕР№СЃС‚РІР° (РєРЅРѕРїРєР° РІ СЃРїРёСЃРєРµ В«РњРѕРё СѓСЃС‚СЂРѕР№СЃС‚РІР°В»).
+// Удалённое завершение сессии другого устройства (кнопка в списке «Мои устройства»).
 document.getElementById('mySessionsList').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-end-session]');
     if (!btn) return;
@@ -4625,7 +4619,7 @@ function updatePrayerCycle() {
     });
 }
 
-// РўР°Р№РјРµСЂС‹ РІ СЃРІС‘СЂРЅСѓС‚РѕРј РїСЂРёР»РѕР¶РµРЅРёРё Р·Р°РјРµРґР»СЏСЋС‚СЃСЏ вЂ” РїСЂРё РІРѕР·РІСЂР°С‰РµРЅРёРё СЃСЂР°Р·Сѓ СЃРёРЅС…СЂРѕРЅРёР·РёСЂСѓРµРјСЃСЏ, РЅРµ Р¶РґС‘Рј 15 СЃРµРєСѓРЅРґ
+// Таймеры в свёрнутом приложении замедляются — при возвращении сразу синхронизируемся, не ждём 15 секунд
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
     updatePrayerCycle();
