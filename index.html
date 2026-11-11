@@ -99,35 +99,6 @@
             margin-bottom: 22px;
         }
 
-        /* 2. РџР›РђРЁРљРђ РћРўРђ-РћР‘РќРћР’Р›Р•РќРРЇ (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK) */
-        .ota-update-banner {
-            background: linear-gradient(135deg, #d4af37, #b8860b);
-            color: #020705;
-            padding: 12px 14px;
-            border-radius: 16px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            font-weight: 800;
-            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
-        }
-        .ota-update-banner.show {
-            display: flex;
-        }
-        .btn-ota-apply {
-            background: #020705;
-            color: #2ed573;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
         /* Top Bar */
         .top-bar {
             background: var(--emerald-card);
@@ -1098,12 +1069,6 @@
 </div>
 
 <div class="app-shell">
-    <!-- Р‘РђРќРќР•Р  РђР’РўРћ-РћР‘РќРћР’Р›Р•РќРРЇ РРќР”Р•РљРЎ-Р¤РђР™Р›Рђ РЎ GITHUB (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK) -->
-    <div class="ota-update-banner" id="otaUpdateBanner">
-        <span>вљЎ Р’С‹С€Р»Рѕ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° РїСЂРѕРіСЂР°РјРјС‹!</span>
-        <button class="btn-ota-apply" onclick="applyOtaUpdateNow()">РћР‘РќРћР’РРўР¬ Р РџР•Р Р•Р—РђРџРЈРЎРўРРўР¬</button>
-    </div>
-
     <!-- Р’РµСЂС…РЅСЏСЏ РїР°РЅРµР»СЊ -->
     <div class="top-bar">
         <div class="lang-switch">
@@ -1344,10 +1309,6 @@
 
             <div class="m-label" id="lblGeoUpdates">Р“Р•РћР›РћРљРђР¦РРЇ Р РћР‘РќРћР’Р›Р•РќРРЇ</div>
             <button class="btn-geo" id="btnRequestGeo">рџ“Ќ <span id="txtGeoBtn">РћРїСЂРµРґРµР»РёС‚СЊ GPS-РєРѕРѕСЂРґРёРЅР°С‚С‹ (СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ РєСЌС€)</span></button>
-            
-            <button class="btn-geo" style="border-color: var(--gold-accent); color: var(--gold-accent);" onclick="checkForGithubIndexUpdate(true)">
-                рџ”„ <span id="txtCheckUpdateBtn">РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° СЃ GitHub (Р±РµР· СЃРєР°С‡РёРІР°РЅРёСЏ APK)</span>
-            </button>
 
             <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 4px;">
                 РЎРћРҐР РђРќРРўР¬ РџР РћР¤РР›Р¬
@@ -1430,7 +1391,6 @@
 })();
 
 const GITHUB_APP_BASE_URL = 'https://nachhosalim-dotcom.github.io/fajr-awake/';
-const GITHUB_INDEX_URL = GITHUB_APP_BASE_URL + 'index.html';
 const GITHUB_APK_URL = GITHUB_APP_BASE_URL + 'fajr-awake.apk';
 
 const SUPABASE_URL = 'https://kgkhfjpaxmkibhjrhwnl.supabase.co';
@@ -1679,7 +1639,6 @@ const DICTIONARY = {
         placeholderRoomPass: 'РџР°СЂРѕР»СЊ РіСЂСѓРїРїС‹ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)',
         geoBtn: 'РћРїСЂРµРґРµР»РёС‚СЊ GPS-РєРѕРѕСЂРґРёРЅР°С‚С‹ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё',
         geoUpdatesLabel: 'Р“Р•РћР›РћРљРђР¦РРЇ Р РћР‘РќРћР’Р›Р•РќРРЇ',
-        checkUpdateBtn: 'РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РЅРѕРІР»РµРЅРёРµ РєРѕРґР° СЃ GitHub (Р±РµР· СЃРєР°С‡РёРІР°РЅРёСЏ APK)',
         saveProfileBtn: 'РЎРћРҐР РђРќРРўР¬ РџР РћР¤РР›Р¬',
         logoutProfileBtn: 'Р’Р«Р™РўР РР— РђРљРљРђРЈРќРўРђ',
         sessionsHeader: 'рџ“± РђРљРўРР’РќР«Р• РЈРЎРўР РћР™РЎРўР’Рђ (РЎР•РЎРЎРР)',
@@ -1803,7 +1762,6 @@ const DICTIONARY = {
         placeholderRoomPass: 'ЩѓЩ„Щ…Ш© Щ…Ш±Щ€Ш± Ш§Щ„ШєШ±ЩЃШ©',
         geoBtn: 'ШЄШ­ШЇЩЉШЇ Ш§Щ„Щ…Щ€Щ‚Ш№ ШЄЩ„Щ‚Ш§Ш¦ЩЉШ§Щ‹ Ш№ШЁШ± GPS',
         geoUpdatesLabel: 'Ш§Щ„Щ…Щ€Щ‚Ш№ Ш§Щ„Ш¬ШєШ±Ш§ЩЃЩЉ Щ€Ш§Щ„ШЄШ­ШЇЩЉШ«Ш§ШЄ',
-        checkUpdateBtn: 'Ш§Щ„ШЄШ­Щ‚Щ‚ Щ…Щ† ШЄШ­ШЇЩЉШ« Ш§Щ„ЩѓЩ€ШЇ Щ…Щ† GitHub (ШЁШЇЩ€Щ† ШЄШ­Щ…ЩЉЩ„ APK)',
         saveProfileBtn: 'Ш­ЩЃШё Ш§Щ„Щ…Щ„ЩЃ Ш§Щ„ШґШ®ШµЩЉ',
         logoutProfileBtn: 'ШЄШіШ¬ЩЉЩ„ Ш§Щ„Ш®Ш±Щ€Ш¬ Щ…Щ† Ш§Щ„Ш­ШіШ§ШЁ',
         sessionsHeader: 'рџ“± Ш§Щ„ШЈШ¬Щ‡ШІШ© Ш§Щ„Щ†ШґШ·Ш© (Ш§Щ„Ш¬Щ„ШіШ§ШЄ)',
@@ -1927,7 +1885,6 @@ const DICTIONARY = {
         placeholderRoomPass: 'Oda Еџifresi',
         geoBtn: 'GPS Konumunu Otomatik Belirle',
         geoUpdatesLabel: 'KONUM VE GГњNCELLEMELER',
-        checkUpdateBtn: 'GitHub\'tan kod gГјncellemesini denetle (APK indirmeden)',
         saveProfileBtn: 'PROFД°LД° KAYDET',
         logoutProfileBtn: 'HESAPTAN Г‡IKIЕћ YAP',
         sessionsHeader: 'рџ“± AKTД°F CД°HAZLAR (OTURUMLAR)',
@@ -2051,7 +2008,6 @@ const DICTIONARY = {
         placeholderRoomPass: 'Room Password (Optional)',
         geoBtn: 'Auto-Detect Precise GPS Coordinates',
         geoUpdatesLabel: 'GEO-LOCATION & UPDATES',
-        checkUpdateBtn: 'Check code update from GitHub (without downloading APK)',
         saveProfileBtn: 'SAVE PROFILE',
         logoutProfileBtn: 'LOG OUT OF ACCOUNT',
         sessionsHeader: 'рџ“± ACTIVE DEVICES (SESSIONS)',
@@ -2338,6 +2294,7 @@ let selectedChallengeWord = '';
 let alarmInterval = null;
 let audioCtx = null;
 let activeHtmlAudio = null;
+let userInteracted = false;   // РїРµСЂРІС‹Р№ РєР»РёРє/РєР°СЃР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ вЂ” С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РЅРµРіРѕ СЂР°Р·СЂРµС€Р°РµРј Р·Р°РїСѓСЃРє AudioContext
 
 // РќР°СЃС‚СЂРѕР№РєРё Р·РІСѓРєРѕРІ Рё РђР·Р°РЅР°
 let alarmSoundType = localStorage.getItem('fajr_alarm_sound_type') || 'siren_fast';
@@ -2366,7 +2323,6 @@ let isBanned = false;
 let html5QrScanner = null;
 let isScannerStarting = false;   // Р·Р°С‰РёС‚Р° РѕС‚ РґРІРѕР№РЅРѕРіРѕ Р·Р°РїСѓСЃРєР° РєР°РјРµСЂС‹ (РґРІР° РїРѕС‚РѕРєР° + В«РєР°РјРµСЂР° Р·Р°РЅСЏС‚Р°В»)
 let fileQrScanner = null;        // РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ СЃРєР°РЅРµСЂР° РєР°СЂС‚РёРЅРєРё РёР· РіР°Р»РµСЂРµРё
-let pendingOtaHtmlContent = null;
 
 // РџСЂРѕРІРµСЂРєР° СЃСЃС‹Р»РєРё РїСЂРёРіР»Р°С€РµРЅРёСЏ ?room=...
 const urlParams = new URLSearchParams(window.location.search);
@@ -2427,63 +2383,6 @@ window.checkInternetAndReconnect = async function() {
         updateOfflineBlockerState(false);
         showToast('РЎРµСЂРІРµСЂ РЅРµРґРѕСЃС‚СѓРїРµРЅ. РџСЂРѕРІРµСЂСЊС‚Рµ РёРЅС‚РµСЂРЅРµС‚!');
     }
-};
-
-/**
- * 2. OTA РћР‘РќРћР’Р›Р•РќРР• РРќР”Р•РљРЎ-Р¤РђР™Р›Рђ РЎ GITHUB (Р‘Р•Р— РЎРљРђР§РР’РђРќРРЇ APK Р Р‘Р•Р— РЎР‘Р РћРЎРђ Р РђР—Р Р•РЁР•РќРР™)
- */
-async function checkForGithubIndexUpdate(manualNotify = false) {
-    if (!navigator.onLine) return;
-    try {
-        const resp = await fetch(`${GITHUB_INDEX_URL}?t=${Date.now()}`, { cache: 'no-store' });
-        if (!resp.ok) {
-            if (manualNotify) showToast('РќРµ СѓРґР°Р»РѕСЃСЊ СЃРІСЏР·Р°С‚СЊСЃСЏ СЃ GitHub');
-            return;
-        }
-        const remoteHtml = await resp.text();
-        if (!remoteHtml.includes('AL-FAJR')) return;
-        let hh = 5381;
-        for (let i = 0; i < remoteHtml.length; i++) hh = ((hh * 33) ^ remoteHtml.charCodeAt(i)) >>> 0;
-        const remoteHash = remoteHtml.length + '_' + hh;
-        const savedHash = localStorage.getItem('fajr_ota_index_hash');
-
-        if (!savedHash) {
-            localStorage.setItem('fajr_ota_index_hash', remoteHash);
-            if (manualNotify) showToast('вњ“ РЈ РІР°СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅР° СЃР°РјР°СЏ СЃРІРµР¶Р°СЏ РІРµСЂСЃРёСЏ!');
-            return;
-        }
-
-        if (savedHash !== remoteHash) {
-            pendingOtaHtmlContent = { html: remoteHtml, hash: remoteHash };
-            document.getElementById('otaUpdateBanner').classList.add('show');
-            if (manualNotify) showToast('вљЎ РќР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ! РќР°Р¶РјРёС‚Рµ Р¶РµР»С‚СѓСЋ РєРЅРѕРїРєСѓ СЃРІРµСЂС…Сѓ.');
-        } else if (manualNotify) {
-            showToast('вњ“ РћР±РЅРѕРІР»РµРЅРёР№ РЅРµС‚, Сѓ РІР°СЃ Р°РєС‚СѓР°Р»СЊРЅР°СЏ РІРµСЂСЃРёСЏ!');
-        }
-    } catch (e) {
-        if (manualNotify) showToast('РџСЂРѕРІРµСЂРєР° РѕР±РЅРѕРІР»РµРЅРёР№ СЃРµР№С‡Р°СЃ РЅРµРґРѕСЃС‚СѓРїРЅР°');
-    }
-}
-
-window.applyOtaUpdateNow = function() {
-    if (pendingOtaHtmlContent) {
-        localStorage.setItem('fajr_ota_index_hash', pendingOtaHtmlContent.hash);
-    }
-    const targetUrl = new URL(GITHUB_INDEX_URL);
-    targetUrl.searchParams.set('room', currentRoom);
-    if (roomPass) targetUrl.searchParams.set('pass', roomPass);
-    targetUrl.searchParams.set('ota_reload', Date.now());
-    const urlStr = targetUrl.toString();
-
-    // Р’РЅСѓС‚СЂРё APK СЃС‚СЂР°РЅРёС†Р° РѕС‚РєСЂС‹С‚Р° РїРѕ file:// вЂ” WebView РјРѕР¶РµС‚ Р·Р°РїСЂРµС‚РёС‚СЊ РІРЅРµС€РЅСЋСЋ РЅР°РІРёРіР°С†РёСЋ
-    // РёР»Рё РїРѕС‚РµСЂСЏС‚СЊ РЅР°С‚РёРІРЅС‹Р№ РјРѕСЃС‚. РЎРЅР°С‡Р°Р»Р° РїСЂРѕСЃРёРј РѕР±РѕР»РѕС‡РєСѓ Р·Р°РіСЂСѓР·РёС‚СЊ Р°РґСЂРµСЃ, Рё С‚РѕР»СЊРєРѕ РїРѕС‚РѕРј СЂРµРґРёСЂРµРєС‚.
-    if (location.protocol === 'file:') {
-        const bridge = window.AndroidBridge || window.Android || window.AlarmBridge || window.AndroidAlarm;
-        if (bridge && typeof bridge.loadUpdateUrl === 'function') {
-            try { bridge.loadUpdateUrl(urlStr); return; } catch (e) {}
-        }
-    }
-    window.location.replace(urlStr);
 };
 
 /**
@@ -2597,6 +2496,7 @@ function ensureAudioContext() {
 }
 
 ['pointerdown', 'keydown', 'touchend'].forEach(ev => document.addEventListener(ev, function unlock() {
+    userInteracted = true;
     try { ensureAudioContext(); } catch (e) {}
     if (audioCtx && audioCtx.state === 'running') document.removeEventListener(ev, unlock);
 }, { passive: true }));
@@ -2620,6 +2520,8 @@ window.stopAllAudioPlayback = function() {
 };
 
 function playSynthPattern(type) {
+    // РќРµ РґР°С‘Рј Р±СЂР°СѓР·РµСЂСѓ Р·Р°РїСѓСЃРєР°С‚СЊ AudioContext РґРѕ РїРµСЂРІРѕРіРѕ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃРѕ СЃС‚СЂР°РЅРёС†РµР№.
+    if (!userInteracted && (!audioCtx || audioCtx.state !== 'running')) return;
     try {
         ensureAudioContext();
         const osc = audioCtx.createOscillator();
@@ -2730,6 +2632,8 @@ document.getElementById('btnOpenSoundsQuick').addEventListener('click', () => {
  * 5. РРќРР¦РРђР›РР—РђР¦РРЇ SUPABASE Р РћР‘РЇР—РђРўР•Р›Р¬РќРђРЇ Р Р•Р“РРЎРўР РђР¦РРЇ
  */
 async function initSupabase() {
+    // OTA-РѕР±РЅРѕРІР»РµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ вЂ” РїСЂРѕРіСЂР°РјРјР° РІСЃРµРіРґР° СЂР°Р±РѕС‚Р°РµС‚ РёР· С‚РµРєСѓС‰РµРіРѕ РѕС‚РєСЂС‹С‚РѕРіРѕ С„Р°Р№Р»Р°.
+    localStorage.removeItem('fajr_ota_index_hash');
     updateOfflineBlockerState(navigator.onLine);
     await loadCustomAudiosFromDb();
 
@@ -2749,7 +2653,6 @@ async function initSupabase() {
     }
 
     await startOnlineSession();
-    checkForGithubIndexUpdate(false);
 }
 
 document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', async () => {
@@ -4039,10 +3942,6 @@ setInterval(() => {
     }
 }, 15000);
 
-setInterval(() => {
-    checkForGithubIndexUpdate(false);
-}, 180000);
-
 function setLanguage(lang) {
     if (!DICTIONARY[lang]) lang = 'ru';
     currentLang = lang;
@@ -4151,7 +4050,6 @@ function setLanguage(lang) {
 
     // Р’РєР»Р°РґРєР° РїСЂРѕС„РёР»СЏ
     document.getElementById('lblGeoUpdates').innerText = dict.geoUpdatesLabel;
-    document.getElementById('txtCheckUpdateBtn').innerText = dict.checkUpdateBtn;
     document.getElementById('btnSaveProfileOnly').innerText = dict.saveProfileBtn;
     document.getElementById('btnLogoutProfile').innerText = dict.logoutProfileBtn;
     document.getElementById('lblSessions').innerText = dict.sessionsHeader;
