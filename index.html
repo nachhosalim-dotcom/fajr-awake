@@ -7,19 +7,22 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #020705;
-            --emerald-card: rgba(6, 32, 21, 0.88);
-            --emerald-border: rgba(46, 213, 115, 0.3);
-            --emerald-accent: #2ed573;
-            --gold-accent: #d4af37;
-            --ruby-danger: #e71d36;
+            --bg-main: #060908;
+            --emerald-card: rgba(12, 20, 17, 0.78);
+            --emerald-border: rgba(212, 175, 55, 0.16);
+            --emerald-accent: #10b981;
+            --gold-accent: #e5c158;
+            --gold-gradient: linear-gradient(135deg, #f3d87d 0%, #c99e32 50%, #9c7316 100%);
+            --ruby-danger: #e11d48;
             --diamond-cyan: #70a1ff;
-            --text-primary: #f1f2f6;
-            --text-secondary: #a4b0be;
-            --radius-card: 20px;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --radius-card: 22px;
+            --font-body: 'Plus Jakarta Sans', 'Inter', 'Cairo', system-ui, -apple-system, sans-serif;
+            --font-display: 'Cormorant Garamond', 'Cinzel', 'Cairo', system-ui, serif;
         }
 
         * {
@@ -33,11 +36,14 @@
         body {
             background-color: var(--bg-main);
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(20, 85, 52, 0.5) 0%, transparent 65%),
-                radial-gradient(circle at 100% 100%, rgba(5, 32, 19, 0.4) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(3, 18, 11, 0.6) 0%, transparent 50%);
+                radial-gradient(ellipse 80% 50% at 50% -15%, rgba(16, 185, 129, 0.18), transparent 70%),
+                radial-gradient(circle at 85% 15%, rgba(212, 175, 55, 0.08), transparent 45%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             color: var(--text-primary);
-            font-family: 'Inter', 'Cairo', system-ui, -apple-system, sans-serif;
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
             min-height: 100dvh;
             display: flex;
@@ -85,10 +91,10 @@
             100% { transform: scale(1.08); opacity: 1; }
         }
         .offline-title {
-            font-family: 'Montserrat', 'Cairo', system-ui, sans-serif;
+            font-family: var(--font-display);
             font-size: 22px;
             font-weight: 800;
-            color: #ff6b81;
+            color: #fb7185;
             margin-bottom: 10px;
         }
         .offline-desc {
@@ -108,17 +114,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 16px 34px -14px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(212, 175, 55, 0.08);
             gap: 8px;
         }
 
         .lang-switch {
             display: flex;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 11px;
-            padding: 2px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 999px;
+            padding: 3px;
             gap: 2px;
         }
 
@@ -128,14 +135,15 @@
             color: var(--text-secondary);
             font-size: 11px;
             font-weight: 700;
-            padding: 5px 8px;
-            border-radius: 8px;
+            padding: 5px 9px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: color 0.2s ease, background 0.25s ease, box-shadow 0.25s ease;
         }
         .btn-lang.active {
-            background: var(--emerald-accent);
-            color: #020705;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(212, 175, 55, 0.85));
+            color: #060908;
+            box-shadow: 0 2px 10px -2px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
         }
 
         .top-actions {
@@ -145,18 +153,19 @@
         }
 
         .btn-room-badge {
-            background: linear-gradient(135deg, rgba(46, 213, 115, 0.2), rgba(6, 43, 26, 0.7));
-            border: 1px solid rgba(46, 213, 115, 0.45);
-            color: #ffffff;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.16), rgba(10, 16, 14, 0.85));
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: #f3d87d;
             font-size: 11px;
             font-weight: 700;
             padding: 7px 11px;
-            border-radius: 10px;
+            border-radius: 999px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
             max-width: 155px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         .btn-room-badge span.truncate {
             white-space: nowrap;
@@ -166,25 +175,28 @@
         .btn-room-badge:active { transform: scale(0.96); }
 
         .btn-icon-top {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
             width: 32px;
             height: 32px;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             font-size: 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: transform 0.16s ease, border-color 0.2s ease;
         }
+        .btn-icon-top:active { transform: scale(0.94); border-color: rgba(212, 175, 55, 0.4); }
 
         .network-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #ffa502;
-            box-shadow: 0 0 8px #ffa502;
+            background: #e5c158;
+            box-shadow: 0 0 8px #e5c158;
             display: inline-block;
             margin-right: 2px;
         }
@@ -193,41 +205,58 @@
             box-shadow: 0 0 8px var(--emerald-accent);
         }
 
-        /* Main Prayer Hero Card */
+        /* Main Prayer Hero Card — эффект дорогого хронометра */
         .prayer-hero {
-            background: linear-gradient(160deg, rgba(9, 44, 30, 0.92) 0%, rgba(3, 18, 12, 0.96) 100%);
+            background: linear-gradient(160deg, rgba(16, 26, 22, 0.82) 0%, rgba(6, 10, 9, 0.94) 100%);
             border: 1px solid var(--emerald-border);
-            border-radius: 24px;
-            padding: 20px 16px;
+            border-radius: 26px;
+            padding: 22px 16px;
             text-align: center;
             position: relative;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
+            overflow: hidden;
+            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+        }
+        .prayer-hero::before {
+            content: "";
+            position: absolute;
+            top: -60%; left: 50%;
+            width: 120%; height: 100%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212, 175, 55, 0.12), transparent 70%);
+            pointer-events: none;
         }
 
         .prayer-hero-tag {
             font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #7bed9f;
+            letter-spacing: 2.4px;
+            color: #cbbd94;
             font-weight: 700;
         }
 
         .prayer-hero-title {
-            font-family: 'Montserrat', 'Cairo', system-ui, sans-serif;
-            font-size: 30px;
-            font-weight: 800;
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
             color: #ffffff;
-            margin: 4px 0 2px;
-            text-shadow: 0 2px 14px rgba(46, 213, 115, 0.35);
+            margin: 6px 0 2px;
+            letter-spacing: 0.02em;
+            text-shadow: 0 2px 18px rgba(212, 175, 55, 0.22);
         }
 
         .prayer-hero-time {
-            font-size: 38px;
+            font-size: 46px;
             font-weight: 800;
-            color: var(--gold-accent);
+            background: linear-gradient(180deg, #fff6d6 0%, #e5c158 55%, #b38728 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 18px rgba(212, 175, 55, 0.25));
             font-variant-numeric: tabular-nums;
-            margin-bottom: 10px;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
         }
 
         .meta-strip {
@@ -238,39 +267,43 @@
         }
 
         .pill {
-            background: rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 12px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 600;
             color: #dcdde1;
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
-        .pill b { color: var(--emerald-accent); font-weight: 700; }
+        .pill b { color: var(--gold-accent); font-weight: 700; }
 
         /* 6-Box Astronomical Timeline */
         .timeline-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
+            gap: 6px;
         }
 
         .tl-box {
-            background: var(--emerald-card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 8px 2px;
+            background: rgba(14, 22, 19, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 10px 4px;
             text-align: center;
-            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
         }
 
         .tl-box.active {
-            background: linear-gradient(180deg, rgba(46, 213, 115, 0.28) 0%, rgba(6, 40, 24, 0.9) 100%);
-            border-color: var(--emerald-accent);
-            box-shadow: 0 0 15px rgba(46, 213, 115, 0.3);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.16) 0%, rgba(16, 185, 129, 0.08) 100%);
+            border-color: rgba(229, 193, 88, 0.55);
+            box-shadow: 0 8px 20px -4px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .tl-name {
@@ -283,16 +316,17 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .tl-box.active .tl-name { color: var(--emerald-accent); }
+        .tl-box.active .tl-name { color: var(--gold-accent); }
 
         .tl-time {
             font-size: 11px;
             font-weight: 700;
             color: #ffffff;
             font-variant-numeric: tabular-nums;
+            letter-spacing: -0.03em;
         }
 
-        /* Action Buttons Cluster */
+        /* Action Buttons Cluster — тактильные кнопки с верхней световой гранью */
         .action-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -300,70 +334,78 @@
         }
 
         .btn-act {
-            padding: 13px 10px;
-            border-radius: 14px;
+            padding: 14px 10px;
+            border-radius: 16px;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
-            border: none;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 3px;
-            transition: all 0.2s ease;
+            transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
             text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
         .btn-act:active { transform: scale(0.97); }
 
         .btn-done-prayer {
-            background: linear-gradient(135deg, #10ac84, #065e47);
+            background: linear-gradient(145deg, #0d9488 0%, #065f46 100%);
+            border: 1px solid rgba(52, 211, 153, 0.35);
             color: #ffffff;
-            box-shadow: 0 4px 18px rgba(16, 172, 132, 0.3);
+            box-shadow: 0 10px 24px -8px rgba(13, 148, 136, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
         }
         .btn-done-prayer.done {
-            background: linear-gradient(135deg, #2ed573, #1e90ff);
-            box-shadow: 0 0 20px rgba(46, 213, 115, 0.5);
+            background: linear-gradient(145deg, #10b981 0%, #a5811f 100%);
+            border-color: rgba(229, 193, 88, 0.6);
+            box-shadow: 0 12px 30px -8px rgba(212, 175, 55, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.28);
         }
 
         .btn-my-state {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
+            background: linear-gradient(145deg, rgba(30, 41, 38, 0.85), rgba(15, 23, 21, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff;
+            box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .btn-dnd {
-            background: linear-gradient(135deg, #6c5ce7, #4834d4);
-            color: #ffffff;
-            box-shadow: 0 4px 18px rgba(108, 92, 231, 0.4);
+            background: linear-gradient(145deg, rgba(37, 31, 61, 0.9), rgba(20, 16, 36, 0.95));
+            border: 1px solid rgba(124, 92, 255, 0.35);
+            color: #c7bdff;
+            box-shadow: 0 10px 24px -10px rgba(72, 52, 212, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.14);
             grid-column: span 2;
             flex-direction: row;
             gap: 8px;
         }
         .btn-dnd.active {
-            background: linear-gradient(135deg, #00b894, #00997a);
-            box-shadow: 0 0 20px rgba(0, 184, 148, 0.5);
+            background: linear-gradient(145deg, #00b894 0%, #0f766e 100%);
+            border-color: rgba(52, 211, 153, 0.55);
+            color: #ffffff;
+            box-shadow: 0 12px 28px -8px rgba(0, 184, 148, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
         }
 
         .btn-wake-jamaat {
-            background: linear-gradient(135deg, #e71d36, #990011);
+            background: linear-gradient(135deg, #be123c 0%, #881337 100%);
+            border: 1px solid rgba(251, 113, 133, 0.4);
             color: #ffffff;
-            box-shadow: 0 4px 18px rgba(231, 29, 54, 0.45);
+            box-shadow: 0 10px 28px -6px rgba(225, 29, 72, 0.45), inset 0 1px 0 rgba(255,255,255,0.22);
             grid-column: span 2;
-            padding: 15px;
+            padding: 16px;
             font-size: 12px;
             flex-direction: row;
             gap: 8px;
         }
 
         .btn-cancel-all-calls {
-            background: linear-gradient(135deg, #ffa502, #cc8400);
-            color: #020705;
-            box-shadow: 0 4px 18px rgba(255, 165, 2, 0.4);
+            background: linear-gradient(135deg, #d99a2b 0%, #8a5a10 100%);
+            color: #0a0805;
+            box-shadow: 0 10px 26px -8px rgba(212, 175, 55, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
             grid-column: span 2;
-            padding: 13px;
+            padding: 14px;
             font-size: 12px;
             font-weight: 800;
             flex-direction: row;
@@ -380,7 +422,9 @@
             border: 1px solid var(--emerald-border);
             border-radius: var(--radius-card);
             padding: 15px;
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .members-head {
@@ -388,7 +432,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             padding-bottom: 8px;
         }
 
@@ -396,8 +440,8 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--emerald-accent);
+            letter-spacing: 1.6px;
+            color: var(--gold-accent);
         }
 
         .room-ttl-banner {
@@ -405,7 +449,7 @@
             color: var(--text-secondary);
             background: rgba(0, 0, 0, 0.35);
             padding: 6px 10px;
-            border-radius: 10px;
+            border-radius: 999px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
@@ -417,30 +461,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 11px 10px;
-            margin-bottom: 6px;
-            border-radius: 14px;
-            background: rgba(0, 0, 0, 0.28);
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.025);
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: all 0.3s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
         .user-item:last-child { margin-bottom: 0; }
 
         .user-item.ringing {
-            background: linear-gradient(90deg, rgba(231, 29, 54, 0.28), rgba(80, 5, 18, 0.4));
-            border-color: #ff6b81;
+            background: linear-gradient(90deg, rgba(225, 29, 72, 0.24), rgba(80, 5, 18, 0.4));
+            border-color: rgba(251, 113, 133, 0.7);
             animation: rowRingPulse 0.9s infinite alternate;
         }
 
         .user-item.replied {
-            background: linear-gradient(90deg, rgba(46, 213, 115, 0.25), rgba(6, 45, 28, 0.4));
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(6, 45, 28, 0.4));
             border-color: var(--emerald-accent);
-            box-shadow: 0 0 18px rgba(46, 213, 115, 0.25);
+            box-shadow: 0 0 18px rgba(16, 185, 129, 0.22);
         }
 
         @keyframes rowRingPulse {
-            0% { box-shadow: 0 0 6px rgba(231, 29, 54, 0.3); transform: scale(1); }
-            100% { box-shadow: 0 0 20px rgba(231, 29, 54, 0.75); transform: scale(1.01); }
+            0% { box-shadow: 0 0 6px rgba(225, 29, 72, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 20px rgba(225, 29, 72, 0.7); transform: scale(1.01); }
         }
 
         @keyframes bellShake {
@@ -462,8 +507,8 @@
             align-items: center;
             gap: 5px;
         }
-        .u-call-status.calling { color: #ffccd5; }
-        .u-call-status.ack { color: #7bed9f; }
+        .u-call-status.calling { color: #fda4af; }
+        .u-call-status.ack { color: #6ee7b7; }
 
         .u-left {
             display: flex;
@@ -472,17 +517,18 @@
         }
 
         .u-avatar {
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background: rgba(46, 213, 115, 0.15);
-            border: 1px solid rgba(46, 213, 115, 0.4);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(16, 185, 129, 0.15));
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            color: #f3d87d;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 800;
-            color: var(--emerald-accent);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 3px rgba(16, 185, 129, 0.07);
         }
 
         .u-name {
@@ -494,52 +540,58 @@
         .u-badge {
             font-size: 10px;
             font-weight: 600;
-            padding: 2px 7px;
-            border-radius: 10px;
+            letter-spacing: 0.4px;
+            padding: 3px 9px;
+            border-radius: 999px;
             display: inline-block;
-            margin-top: 2px;
+            margin-top: 3px;
         }
-        .b-sleep { background: rgba(231, 29, 54, 0.2); color: #ff6b81; border: 1px solid rgba(231, 29, 54, 0.35); }
-        .b-awake { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid rgba(255, 165, 2, 0.35); }
-        .b-done { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); }
-        .b-dnd { background: rgba(124, 92, 255, 0.22); color: #a29bfe; border: 1px solid rgba(124, 92, 255, 0.5); }
+        .b-sleep { background: rgba(225, 29, 72, 0.14); color: #fda4af; border: 1px solid rgba(225, 29, 72, 0.32); }
+        .b-awake { background: rgba(229, 193, 88, 0.14); color: #f3d87d; border: 1px solid rgba(229, 193, 88, 0.34); }
+        .b-done { background: rgba(16, 185, 129, 0.14); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.34); }
+        .b-dnd { background: rgba(124, 92, 255, 0.16); color: #b8adff; border: 1px solid rgba(124, 92, 255, 0.4); }
 
         /* Неактивная плашка в списке участников: будить нельзя (встал / помолился / не беспокоить) */
         .plaque-done {
             display: inline-block;
-            padding: 7px 12px;
-            border-radius: 9px;
+            padding: 8px 13px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 700;
+            letter-spacing: 0.2px;
             white-space: nowrap;
-            background: rgba(46, 213, 115, 0.12);
-            border: 1px solid rgba(46, 213, 115, 0.35);
-            color: #7bed9f;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.32);
+            color: #6ee7b7;
         }
 
         .btn-nudge {
-            background: linear-gradient(135deg, rgba(231, 29, 54, 0.25), rgba(153, 0, 17, 0.4));
-            border: 1px solid rgba(231, 29, 54, 0.55);
-            color: #ffccd5;
-            padding: 7px 12px;
-            border-radius: 9px;
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.22), rgba(136, 19, 55, 0.38));
+            border: 1px solid rgba(251, 113, 133, 0.45);
+            color: #ffd9c2;
+            padding: 8px 13px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 6px 16px -8px rgba(225, 29, 72, 0.6);
+            transition: transform 0.16s ease, box-shadow 0.2s ease;
         }
-        .btn-nudge:active { transform: scale(0.92); }
+        .btn-nudge:active { transform: scale(0.93); }
 
         .btn-cancel-nudge {
-            background: linear-gradient(135deg, #ffa502, #d98200);
-            border: 1px solid #ffbe4d;
-            color: #020705;
-            padding: 7px 12px;
-            border-radius: 9px;
+            background: linear-gradient(135deg, #d99a2b, #8a5a10);
+            border: 1px solid rgba(229, 193, 88, 0.6);
+            color: #0a0805;
+            padding: 8px 13px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 800;
             cursor: pointer;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: transform 0.16s ease;
         }
-        .btn-cancel-nudge:active { transform: scale(0.92); }
+        .btn-cancel-nudge:active { transform: scale(0.93); }
 
         .u-online-dot {
             width: 7px;
@@ -548,17 +600,18 @@
             display: inline-block;
             margin-right: 4px;
         }
-        .u-online-dot.on { background: #2ed573; box-shadow: 0 0 6px #2ed573; }
-        .u-online-dot.off { background: #747d8c; }
-        .b-off { background: rgba(116, 125, 140, 0.2); color: #a4b0be; border: 1px solid rgba(116, 125, 140, 0.4); }
-        .user-item.offline { opacity: 0.6; }
+        .u-online-dot.on { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .u-online-dot.off { background: #64748b; }
+        .b-off { background: rgba(100, 116, 139, 0.16); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.35); }
+        .user-item.offline { opacity: 0.55; }
 
         /* Modals Common */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(20px);
+            background: rgba(2, 4, 3, 0.86);
+            backdrop-filter: blur(26px);
+            -webkit-backdrop-filter: blur(26px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -572,15 +625,15 @@
             max-width: 440px;
             max-height: 92vh;
             max-height: 92dvh;
-            background: linear-gradient(160deg, #072517 0%, #03130b 100%);
-            border: 1px solid var(--emerald-border);
-            border-radius: 24px;
+            background: linear-gradient(165deg, #0c1512 0%, #050807 100%);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 26px;
             padding: 18px 16px 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             position: relative;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.85);
+            box-shadow: 0 32px 64px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -601,13 +654,13 @@
             left: 16px;
         }
 
-        /* Tabs (4 tabs) */
+        /* Tabs (4 tabs) — сегментированный контрол iOS */
         .modal-tabs-header {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 999px;
             padding: 3px;
             gap: 3px;
             margin-top: 24px;
@@ -619,10 +672,11 @@
             color: var(--text-secondary);
             font-size: 10px;
             font-weight: 800;
+            letter-spacing: 0.3px;
             padding: 9px 2px;
-            border-radius: 9px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: color 0.2s ease, background 0.25s ease, box-shadow 0.25s ease;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -630,9 +684,9 @@
         }
 
         .modal-tab-btn.active {
-            background: var(--emerald-accent);
-            color: #020705;
-            box-shadow: 0 2px 10px rgba(46, 213, 115, 0.3);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(212, 175, 55, 0.85));
+            color: #060908;
+            box-shadow: 0 2px 12px -3px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
         }
 
         .tab-content-panel {
@@ -662,6 +716,11 @@
             font-size: 13px;
             outline: none;
             font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .search-room-input:focus {
+            border-color: rgba(212, 175, 55, 0.65);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
         }
         .search-room-icon {
             position: absolute;
@@ -682,19 +741,21 @@
         }
 
         .room-card-box {
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
             padding: 12px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            transition: border-color 0.2s ease, background 0.25s ease;
         }
 
         .room-card-box.active-room {
-            border-color: var(--emerald-accent);
-            background: linear-gradient(135deg, rgba(46, 213, 115, 0.18), rgba(6, 40, 24, 0.5));
+            border-color: rgba(229, 193, 88, 0.5);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(16, 185, 129, 0.08));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .room-info-cell {
@@ -722,13 +783,14 @@
         .room-badge-pill {
             font-size: 9px;
             font-weight: 800;
-            padding: 2px 7px;
-            border-radius: 6px;
+            padding: 2px 8px;
+            border-radius: 999px;
             text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
-        .badge-active { background: var(--emerald-accent); color: #020705; }
-        .badge-lock { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid rgba(255, 165, 2, 0.4); }
-        .badge-open { background: rgba(112, 161, 255, 0.2); color: #70a1ff; border: 1px solid rgba(112, 161, 255, 0.4); }
+        .badge-active { background: linear-gradient(135deg, #10b981, #0d9488); color: #04120d; }
+        .badge-lock { background: rgba(229, 193, 88, 0.16); color: #f3d87d; border: 1px solid rgba(229, 193, 88, 0.38); }
+        .badge-open { background: rgba(112, 161, 255, 0.16); color: #a9c4ff; border: 1px solid rgba(112, 161, 255, 0.35); }
 
         .room-sub-meta {
             font-size: 11px;
@@ -742,23 +804,24 @@
         }
 
         .btn-enter-room {
-            background: linear-gradient(135deg, #2ed573, #10ac84);
-            border: none;
-            color: #020705;
+            background: linear-gradient(135deg, #10b981, #0d9488);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            color: #04120d;
             padding: 8px 14px;
-            border-radius: 9px;
+            border-radius: 999px;
             font-size: 11px;
             font-weight: 800;
             cursor: pointer;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 16px -8px rgba(16, 185, 129, 0.7);
         }
 
         .btn-trash-room {
-            background: rgba(231, 29, 54, 0.15);
-            border: 1px solid rgba(231, 29, 54, 0.35);
-            color: #ff6b81;
+            background: rgba(225, 29, 72, 0.14);
+            border: 1px solid rgba(225, 29, 72, 0.32);
+            color: #fda4af;
             width: 32px;
             height: 32px;
-            border-radius: 9px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -796,10 +859,10 @@
 
         .btn-qr-action {
             flex: 1;
-            background: rgba(46, 213, 115, 0.15);
-            border: 1px solid rgba(46, 213, 115, 0.4);
-            color: #7bed9f;
-            border-radius: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.32);
+            color: #f3d87d;
+            border-radius: 12px;
             padding: 10px 8px;
             font-size: 11px;
             font-weight: 700;
@@ -813,7 +876,7 @@
         .m-label {
             font-size: 11px;
             font-weight: 700;
-            color: #7bed9f;
+            color: #cbbd94;
             margin-bottom: -4px;
             display: flex;
             justify-content: space-between;
@@ -823,23 +886,28 @@
         .m-input, .m-select {
             width: 100%;
             background: rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.14);
             border-radius: 12px;
             padding: 12px 14px;
             color: #ffffff;
             font-size: 13px;
             outline: none;
             font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .m-input:focus, .m-select:focus {
+            border-color: rgba(212, 175, 55, 0.65);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
         }
         .m-select option {
-            background: #041b11;
+            background: #0a1210;
             color: #fff;
         }
 
         .sound-card {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
             padding: 12px;
             display: flex;
             flex-direction: column;
@@ -847,9 +915,9 @@
         }
 
         .btn-geo {
-            background: rgba(46, 213, 115, 0.12);
-            border: 1px dashed var(--emerald-accent);
-            color: #7bed9f;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px dashed rgba(212, 175, 55, 0.5);
+            color: #f3d87d;
             padding: 12px;
             border-radius: 12px;
             font-size: 11px;
@@ -859,16 +927,17 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #2ed573, #10ac84);
-            color: #020705;
+            background: linear-gradient(135deg, #10b981, #0d9488);
+            color: #04120d;
             font-weight: 800;
-            padding: 13px;
-            border-radius: 12px;
-            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(52, 211, 153, 0.4);
             cursor: pointer;
             font-size: 12px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             text-transform: uppercase;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 10px 24px -10px rgba(16, 185, 129, 0.7);
         }
 
         .scanner-view-container {
@@ -881,7 +950,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(46, 213, 115, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.35);
         }
 
         #qrReaderBox { width: 100%; border: none !important; }
@@ -895,27 +964,28 @@
         }
 
         .word-chip {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
             padding: 10px 8px;
             text-align: center;
             font-size: 13px;
             font-weight: 700;
             color: #ffffff;
             cursor: pointer;
+            transition: border-color 0.2s ease, background 0.25s ease, box-shadow 0.25s ease;
         }
         .word-chip.selected {
-            background: rgba(231, 29, 54, 0.3);
-            border-color: #ff6b81;
+            background: rgba(225, 29, 72, 0.24);
+            border-color: rgba(251, 113, 133, 0.7);
             color: #ffffff;
-            box-shadow: 0 0 14px rgba(231, 29, 54, 0.4);
+            box-shadow: 0 0 16px rgba(225, 29, 72, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.14);
         }
 
         .alarm-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, #59040e 0%, #0d0103 100%);
+            background: radial-gradient(circle at 50% 30%, #3f0a14 0%, #0b0204 70%, #050102 100%);
             z-index: 250000;
             display: none;
             flex-direction: column;
@@ -928,73 +998,87 @@
         .alarm-screen.active { display: flex; }
 
         @keyframes rubyPulse {
-            0% { box-shadow: inset 0 0 50px rgba(231, 29, 54, 0.6); }
-            100% { box-shadow: inset 0 0 140px rgba(231, 29, 54, 0.95); }
+            0% { box-shadow: inset 0 0 60px rgba(225, 29, 72, 0.5); }
+            100% { box-shadow: inset 0 0 150px rgba(225, 29, 72, 0.85); }
         }
 
         .alarm-title {
-            font-family: 'Montserrat', 'Cairo', system-ui, sans-serif;
-            font-size: 26px;
-            font-weight: 800;
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
             color: #ffffff;
             margin-bottom: 6px;
-            text-shadow: 0 0 20px #e71d36;
+            letter-spacing: 0.03em;
+            text-shadow: 0 0 22px rgba(225, 29, 72, 0.8);
         }
 
         .alarm-sender {
             font-size: 14px;
-            color: #ffccd5;
+            color: #ffd0d9;
             margin-bottom: 18px;
         }
 
         .captcha-box {
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            border-radius: 16px;
-            padding: 16px;
+            background: rgba(8, 3, 5, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 18px;
             width: 100%;
             max-width: 340px;
             margin-bottom: 18px;
+            box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
         }
 
         .captcha-challenge {
-            font-size: 24px;
+            font-family: 'SFMono-Regular', ui-monospace, 'Menlo', 'Consolas', monospace;
+            font-size: 30px;
             font-weight: 800;
-            color: var(--gold-accent);
-            letter-spacing: 2px;
-            margin: 10px 0;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px dashed rgba(212, 175, 55, 0.4);
+            letter-spacing: 6px;
+            margin: 12px 0;
+            padding: 14px 10px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.14), rgba(212, 175, 55, 0.04));
+            border: 1.5px solid rgba(229, 193, 88, 0.6);
+            color: #f7e2a4;
+            text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
         }
 
         .captcha-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 12px;
+            padding: 13px;
             color: #ffffff;
             font-size: 16px;
             font-weight: 700;
             text-align: center;
             outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .captcha-input:focus {
+            border-color: rgba(229, 193, 88, 0.7);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
         }
 
         .btn-confirm-awake {
-            background: #ffffff;
-            color: #990011;
+            background: linear-gradient(180deg, #ffffff 0%, #dfe4e8 100%);
+            color: #8a0f2b;
             font-size: 13px;
             font-weight: 800;
-            padding: 16px 28px;
-            border-radius: 28px;
-            border: none;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+            padding: 17px 30px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 12px 34px -8px rgba(255, 255, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9);
             cursor: pointer;
-            letter-spacing: 1px;
+            letter-spacing: 1.4px;
             text-transform: uppercase;
+            transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
         }
+        .btn-confirm-awake:active { transform: scale(0.96); }
 
         /* Оверлей Азана */
         .adhan-banner {
@@ -1002,15 +1086,15 @@
             top: 18px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #093624, #03170e);
-            border: 2px solid var(--gold-accent);
-            border-radius: 18px;
+            background: linear-gradient(135deg, #10251d, #060d0a);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 20px;
             padding: 14px 18px;
             z-index: 95000;
             display: none;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.85);
+            box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             width: 92%;
             max-width: 420px;
             justify-content: space-between;
@@ -1022,18 +1106,20 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(8, 42, 27, 0.96);
-            border: 1px solid var(--emerald-accent);
+            background: rgba(10, 20, 16, 0.96);
+            border: 1px solid rgba(212, 175, 55, 0.45);
             color: #ffffff;
             padding: 12px 20px;
-            border-radius: 14px;
+            border-radius: 999px;
             font-size: 12px;
             font-weight: 700;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             z-index: 260000;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: center;
             max-width: 90%;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
         .toast-banner.show {
             transform: translateX(-50%) translateY(0);
@@ -1062,13 +1148,13 @@
             <div style="font-size:11px; color:#dcdde1;" id="adhanSubText">Звучит призыв на молитву</div>
         </div>
     </div>
-    <button class="btn-primary" style="background:#e71d36; color:#fff; padding:8px 14px;" id="adhanStopBtn" onclick="stopAdhanPlayback()">СТОП</button>
+    <button class="btn-primary" style="background:linear-gradient(135deg, #be123c, #881337); color:#fff; padding:8px 14px;" id="adhanStopBtn" onclick="stopAdhanPlayback()">СТОП</button>
 </div>
 
 <!-- 0. ОБЯЗАТЕЛЬНАЯ РЕГИСТРАЦИЯ ПРИ ПЕРВОМ ВХОДЕ -->
 <div class="modal-overlay" id="mandatoryAuthModal" style="z-index: 50000;">
     <div class="modal-body">
-        <h3 style="font-family: 'Montserrat', 'Cairo', system-ui, sans-serif; font-size: 18px; color: var(--emerald-accent); text-align: center;" id="txtAuthTitle">РЕГИСТРАЦИЯ / ВХОД</h3>
+        <h3 style="font-family: var(--font-display); font-size: 18px; color: var(--emerald-accent); text-align: center;" id="txtAuthTitle">РЕГИСТРАЦИЯ / ВХОД</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center; line-height: 1.4;" id="txtAuthDesc">
             Укажите ваше имя (логин) и пароль. Каждый участник отображается под своим настоящим именем. Разрешения сохраняются один раз навсегда.
         </p>
@@ -1167,7 +1253,7 @@
         </button>
 
         <button class="btn-act btn-my-state" id="btnToggleState">
-            <span><span id="txtStatusPrefix">СТАТУС:</span> <b id="lblMyState" style="color:#ffa502;">СПЛЮ</b></span>
+            <span><span id="txtStatusPrefix">СТАТУС:</span> <b id="lblMyState" style="color:#e5c158;">СПЛЮ</b></span>
             <small style="font-size: 9px; opacity: 0.7;" id="txtStateSub">нажмите чтобы сменить</small>
         </button>
 
@@ -1192,8 +1278,8 @@
         <div class="members-head">
             <span class="members-title" id="txtMembersTitle">УЧАСТНИКИ В ЭТОЙ ГРУППЕ</span>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(46,213,115,0.18); border: 1px solid rgba(46,213,115,0.4); color: #7bed9f; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
-                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #d4af37; border-radius: 8px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
+                <button id="btnRefreshMembers" onclick="fetchRoomMembersFromDb()" style="background: rgba(212,175,55,0.14); border: 1px solid rgba(212,175,55,0.38); color: #f3d87d; border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer;">🔄 Обновить</button>
+                <button id="btnAdminGroup" onclick="adminGroupMenu()" style="display: none; background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: #f3d87d; border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer;">👑 Админ</button>
                 <span style="font-size: 11px; color: var(--emerald-accent); font-weight: 700;" id="lblUserCount">0</span>
             </div>
         </div>
@@ -1209,14 +1295,14 @@
 <div class="modal-overlay" id="wakeWordModal">
     <div class="modal-body">
         <button class="modal-close" id="btnCloseWakeModal">✕</button>
-        <h3 style="font-family: 'Montserrat', 'Cairo', system-ui, sans-serif; font-size: 15px; color: #ff6b81; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
+        <h3 style="font-family: var(--font-display); font-size: 16px; color: #fda4af; text-align: center;" id="txtWakeModalTitle">ОТПРАВИТЬ СЛОВО ПРОБУЖДЕНИЯ</h3>
         <p style="font-size: 12px; color: var(--text-secondary); text-align: center;" id="txtWakeModalDesc">
             Выберите контрольное слово. У адресата зазвенит будильник (без лишнего звука уведомлений), пока он не напишет это слово:
         </p>
 
         <div class="words-grid" id="wakeWordsGrid"></div>
 
-        <button class="btn-primary" id="btnConfirmSendWake" style="background: linear-gradient(135deg, #e71d36, #990011); color: #fff; margin-top: 6px;">
+        <button class="btn-primary" id="btnConfirmSendWake" style="background: linear-gradient(135deg, #be123c, #881337); border-color: rgba(251, 113, 133, 0.4); color: #fff; margin-top: 6px;">
             <span id="txtSendWakeBtn">ОТПРАВИТЬ ВЫЗОВ И ВКЛЮЧИТЬ БУДИЛЬНИК</span>
         </button>
     </div>
@@ -1265,7 +1351,7 @@
                     </label>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
-                    <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(46, 213, 115, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #7bed9f; padding: 11px;">
+                    <button class="btn-primary" id="btnShareRoomQr" style="width: 100%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 40, 24, 0.6)); border: 1px solid var(--emerald-accent); color: #6ee7b7; padding: 11px;">
                         🖼️ <span id="txtShareRoomBtn">ОТПРАВИТЬ ЧИСТО КАРТИНКУ QR</span>
                     </button>
                     <button class="btn-primary" id="btnShareApkLink" style="width: 100%; background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(80, 60, 10, 0.5)); border: 1px solid var(--gold-accent); color: var(--gold-accent); padding: 11px;">
@@ -1305,7 +1391,7 @@
 
                 <div style="display:flex; gap:8px;">
                     <button class="btn-primary" style="flex:1; padding:9px;" id="btnTestAlarmSound" onclick="testSelectedAlarmSound()">▶️ ПРОСЛУШАТЬ</button>
-                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAlarmSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(225,29,72,0.3); color:#fb7185;" id="btnStopAlarmSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
                 </div>
             </div>
 
@@ -1328,7 +1414,7 @@
 
                 <div style="display:flex; gap:8px;">
                     <button class="btn-primary" style="flex:1; padding:9px; background:var(--gold-accent);" id="btnTestAdhanSound" onclick="testSelectedAdhanSound()">▶️ ПРОВЕРИТЬ АЗАН</button>
-                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(231,29,54,0.3); color:#ff6b81;" id="btnStopAdhanSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
+                    <button class="btn-primary" style="flex:1; padding:9px; background:rgba(225,29,72,0.3); color:#fb7185;" id="btnStopAdhanSound" onclick="stopAllAudioPlayback()">⏹️ СТОП</button>
                 </div>
             </div>
         </div>
@@ -1345,7 +1431,7 @@
             <button class="btn-primary" id="btnSaveProfileOnly" style="margin-top: 4px;">
                 СОХРАНИТЬ ПРОФИЛЬ
             </button>
-            <button class="btn-primary" id="btnLogoutProfile" style="background: rgba(231,29,54,0.2); color: #ff6b81; border: 1px solid rgba(231,29,54,0.4);">
+            <button class="btn-primary" id="btnLogoutProfile" style="background: rgba(225,29,72,0.2); color: #fb7185; border: 1px solid rgba(225,29,72,0.4);">
                 ВЫЙТИ ИЗ АККАУНТА
             </button>
 
@@ -1362,7 +1448,7 @@
 <div class="modal-overlay" id="scannerModal">
     <div class="modal-body" style="max-width: 390px;">
         <button class="modal-close" id="btnCloseScannerModal">✕</button>
-        <h3 style="font-family: 'Montserrat', 'Cairo', system-ui, sans-serif; font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
+        <h3 style="font-family: var(--font-display); font-size: 15px; color: var(--emerald-accent); text-align: center;" id="txtScannerModalTitle">СКАНИРОВАНИЕ QR-КОДА</h3>
         <p style="font-size: 11px; color: var(--text-secondary); text-align: center;" id="txtScannerModalDesc">
             Наведите камеру на QR-код комнаты для мгновенного подключения
         </p>
@@ -2267,14 +2353,14 @@ function renderMySessions() {
         const ts = new Date(s.last_seen).getTime();
         const online = (Date.now() - ts) < 90000;
         const statusTxt = online
-            ? `<span style="color:#2ed573;font-weight:700;">● ${esc(d.sessionOnline)}</span>`
+            ? `<span style="color:#10b981;font-weight:700;">● ${esc(d.sessionOnline)}</span>`
             : `<span style="color:#a4b0be;">${esc(agoText(ts))}</span>`;
         return `<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-top:1px solid rgba(255,255,255,0.06);">
             <div style="min-width:0;">
-                <div style="font-size:12px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.device_name || '—')} ${isThis ? `<small style="color:#7bed9f;">(${esc(d.sessionsThisDevice)})</small>` : ''}</div>
+                <div style="font-size:12px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(s.device_name || '—')} ${isThis ? `<small style="color:#6ee7b7;">(${esc(d.sessionsThisDevice)})</small>` : ''}</div>
                 <div style="font-size:10px; color:var(--text-secondary);">${statusTxt} · 🌐 ${esc(s.room_name || '')}</div>
             </div>
-            ${isThis ? '' : `<button data-end-session="${esc(s.session_id)}" style="background:rgba(231,29,54,0.2); color:#ff6b81; border:1px solid rgba(231,29,54,0.4); border-radius:8px; padding:4px 8px; font-size:10px; font-weight:700; cursor:pointer;">✕ ${esc(d.sessionsEnd)}</button>`}
+            ${isThis ? '' : `<button data-end-session="${esc(s.session_id)}" style="background:rgba(225,29,72,0.2); color:#fb7185; border:1px solid rgba(225,29,72,0.4); border-radius:8px; padding:4px 8px; font-size:10px; font-weight:700; cursor:pointer;">✕ ${esc(d.sessionsEnd)}</button>`}
         </div>`;
     }).join('');
 }
@@ -3304,12 +3390,12 @@ async function sharePureQrImageOnly() {
 
     ctx.fillStyle = '#041f13';
     ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
-    ctx.strokeStyle = '#2ed573';
+    ctx.strokeStyle = '#10b981';
     ctx.lineWidth = 6;
     ctx.strokeRect(14, 14, outCanvas.width - 28, outCanvas.height - 28);
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#2ed573';
+    ctx.fillStyle = '#10b981';
     ctx.font = 'bold 26px sans-serif';
     ctx.fillText('AL-FAJR AWAKE', 250, 62);
 
@@ -4060,7 +4146,7 @@ async function verifyCaptchaAndStop() {
         });
         await sendSupabaseSignal('WAKE_ACK', lastAlarmInitiator || 'ALL', targetCaptchaWord.toUpperCase());
     } else {
-        document.getElementById('inpCaptchaAnswer').style.borderColor = '#e71d36';
+        document.getElementById('inpCaptchaAnswer').style.borderColor = '#e11d48';
         showToast(DICTIONARY[currentLang].toastWrongWord);
         if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
     }
@@ -4218,7 +4304,7 @@ function renderUI() {
         txtDone.innerText = dict.doneTitle;
         btnDone.classList.remove('done');
         lblState.innerText = dict.stateAwake;
-        lblState.style.color = '#ffa502';
+        lblState.style.color = '#e5c158';
     } else if (myStatus === 'dnd') {
         txtDone.innerText = dict.doneTitle;
         btnDone.classList.remove('done');
@@ -4228,7 +4314,7 @@ function renderUI() {
         txtDone.innerText = dict.doneTitle;
         btnDone.classList.remove('done');
         lblState.innerText = dict.stateSleep;
-        lblState.style.color = '#e71d36';
+        lblState.style.color = '#e11d48';
     }
 
     // Кнопка-переключатель «НЕ БЕСПОКОИТЬ»: подсвечена, пока режим включён.
@@ -4335,7 +4421,7 @@ function renderMembers() {
             } else if (u.status === 'sleep') {
                 actionBtnHtml = `<button class="btn-nudge" data-wake="${esc(u.name)}">🔔 ${dict.nudgeBtn}</button>`;
             } else if (u.status === 'awake') {
-                actionBtnHtml = `<span class="plaque-done" style="background:rgba(255,165,2,0.12); border-color:rgba(255,165,2,0.35); color:#ffa502;">${dict.nudgeBlockedAwake}</span>`;
+                actionBtnHtml = `<span class="plaque-done" style="background:rgba(229,193,88,0.12); border-color:rgba(229,193,88,0.35); color:#e5c158;">${dict.nudgeBlockedAwake}</span>`;
             } else if (u.status === 'done') {
                 actionBtnHtml = `<span class="plaque-done">${dict.nudgeBlockedDone}</span>`;
             } else if (u.status === 'dnd') {
@@ -4358,7 +4444,7 @@ function renderMembers() {
                 <div>
                     <div class="u-name">
                         <span class="u-online-dot ${isOnline ? 'on' : 'off'}" title="${isOnline ? 'В сети' : 'Оффлайн'}"></span>
-                        ${esc(u.name)} ${isMe ? `<small style="color:#7bed9f">${dict.youBadge}</small>` : ''}${devBadge}
+                        ${esc(u.name)} ${isMe ? `<small style="color:#6ee7b7">${dict.youBadge}</small>` : ''}${devBadge}
                     </div>
                     <span class="u-badge ${badgeClass}">${badgeTxt}</span>
                     ${callStatusHtml}
