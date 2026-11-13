@@ -2479,19 +2479,28 @@ function updatePrayerCycle() {
         diff = (24 - currentDec) + firstMorning.time;
     }
 
-    const periodPrayerId = next ? next.id : 'fajr';
+const periodPrayerId = next ? next.id : 'fajr';
+    const fajrCycleDate = new Date(now.getTime());
+    if (!next) fajrCycleDate.setDate(fajrCycleDate.getDate() + 1);
+    const fajrCycleKey = `${fajrCycleDate.getFullYear()}-${String(fajrCycleDate.getMonth() + 1).padStart(2, '0')}-${String(fajrCycleDate.getDate()).padStart(2, '0')}_fajr_cycle`;
     const newPeriodId = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${periodPrayerId}`;
 
-    // Автоматический сброс статуса на «СПЛЮ» при наступлении нового периода перед Фаджром/Сухуром (если не включён DND)
-    if (prayerPeriodId && prayerPeriodId !== newPeriodId && lastAutoResetPeriodId !== newPeriodId) {
-        lastAutoResetPeriodId = newPeriodId;
-        localStorage.setItem('fajr_last_reset_period', newPeriodId);
-        if (myStatus !== 'dnd' && (periodPrayerId === 'fajr' || periodPrayerId === 'suhoor')) {
+    // Автоматический сброс статуса на «СПЛЮ» перед новым Фаджром/Сухуром (срабатывает и при запуске приложения)
+    if ((periodPrayerId === 'fajr' || periodPrayerId === 'suhoor') && lastAutoResetPeriodId !== fajrCycleKey) {
+        lastAutoResetPeriodId = fajrCycleKey;
+        localStorage.setItem('fajr_last_reset_period', fajrCycleKey);
+        if (myStatus !== 'dnd' && myStatus !== 'sleep') {
             myStatus = 'sleep';
+            myQuickNote = '';
+            localStorage.setItem('fajr_quick_note', '');
             saveMyStatus();
-            if (typeof upsertMyPresenceInDb === 'function') upsertMyPresenceInDb({}, true);
+            syncStatusToNative();
+            if (typeof upsertMyPresenceInDb === 'function') {
+                upsertMyPresenceInDb({ status: 'sleep', quick_note: '', call_state: '', call_word: '', caller_name: '' }, true);
+            }
         }
     }
+    prayerPeriodId = newPeriodId;
     prayerPeriodId = newPeriodId;
 
     const totalSec = Math.max(0, Math.floor(diff * 3600));
@@ -3400,6 +3409,60 @@ let fetchMembersTimer = null, fetchRoomsTimer = null;
 function debouncedFetchMembers() { clearTimeout(fetchMembersTimer); fetchMembersTimer = setTimeout(fetchRoomMembersFromDb, 450); }
 function debouncedFetchRooms() { clearTimeout(fetchRoomsTimer); fetchRoomsTimer = setTimeout(fetchAllRoomsFromDb, 450); }
 
+function shouldResetMemberForNewFajr(cand) {
+    if (!cand || cand.status === 'sleep' || cand.status === 'dnd') return false;
+    const tzOff = isFinite(cand.tzOffset) ? cand.tzOffset : getMyTzOffsetHours();
+    const nowUtcMs = Date.now() + (new Date().getTimezoneOffset() * 60000);
+    const memberLocalDate = new Date(nowUtcMs + tzOff * 3600000);
+    const curDec = memberLocalDate.getHours() + memberLocalDate.getMinutes() / 60.0;
+
+    const times = calculateSunTimesForParams(
+        new Date(),
+        cand.lat || userCoords.lat,
+        cand.lng || userCoords.lng,
+        tzOff,
+        cand.calcMethod || 'MWL',
+        cand.asrMadhab || 1,
+        cand.offsets || { fajr: 0, sunrise: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 }
+    );
+
+    const isFajrWindow = (curDec >= times.isha) || (curDec <= times.sunrise);
+    const hoursSinceSeen = (Date.now() - (cand.lastSeen || 0)) / 3600000;
+
+    // Если у человека наступило окно ожидания Фаджра (после Иша и до Восхода), а его старый статус висит с прошлого намаза (> 4 часов)
+    // или вообще больше 10 часов — сбрасываем его статус на «СПЛЮ»
+    if (isFajrWindow && hoursSinceSeen > 4.0) return true;
+    if (hoursSinceSeen > 10.0) return true;
+    return false;
+}
+
+function shouldResetMemberForNewFajr(cand) {
+    if (!cand || cand.status === 'sleep' || cand.status === 'dnd') return false;
+    const tzOff = isFinite(cand.tzOffset) ? cand.tzOffset : getMyTzOffsetHours();
+    const nowUtcMs = Date.now() + (new Date().getTimezoneOffset() * 60000);
+    const memberLocalDate = new Date(nowUtcMs + tzOff * 3600000);
+    const curDec = memberLocalDate.getHours() + memberLocalDate.getMinutes() / 60.0;
+
+    const times = calculateSunTimesForParams(
+        new Date(),
+        cand.lat || userCoords.lat,
+        cand.lng || userCoords.lng,
+        tzOff,
+        cand.calcMethod || 'MWL',
+        cand.asrMadhab || 1,
+        cand.offsets || { fajr: 0, sunrise: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 }
+    );
+
+    const isFajrWindow = (curDec >= times.isha) || (curDec <= times.sunrise);
+    const hoursSinceSeen = (Date.now() - (cand.lastSeen || 0)) / 3600000;
+
+    // Если у человека наступило окно ожидания Фаджра (после Иша и до Восхода), а его старый статус висит с прошлого намаза (> 4 часов)
+    // или вообще больше 10 часов — сбрасываем его статус на «СПЛЮ»
+    if (isFajrWindow && hoursSinceSeen > 4.0) return true;
+    if (hoursSinceSeen > 10.0) return true;
+    return false;
+}
+
 async function fetchRoomMembersFromDb() {
     if (!supabaseClient || !currentRoom || !navigator.onLine) return;
     const cleanRoom = currentRoom.trim();
@@ -3412,6 +3475,8 @@ async function fetchRoomMembersFromDb() {
 
     if (!error && data) {
         const byKey = {};
+        const staleUsersToResetInDb = [];
+
         data.forEach(m => {
             const raw = (m.user_name || '').trim();
             if (!raw || raw.toLowerCase().startsWith('user_')) return;
@@ -3435,10 +3500,29 @@ async function fetchRoomMembersFromDb() {
                 callState: m.call_state || '',
                 callWord: m.call_word || ''
             };
+
+            if (shouldResetMemberForNewFajr(cand)) {
+                cand.status = 'sleep';
+                cand.quickNote = '';
+                cand.callState = '';
+                cand.callWord = '';
+                staleUsersToResetInDb.push(raw);
+            }
+
             const key = raw.toLowerCase();
             const prev = byKey[key];
             if (!prev || cand.lastSeen >= prev.lastSeen) byKey[key] = cand;
         });
+
+        if (staleUsersToResetInDb.length > 0 && !isGuest) {
+            staleUsersToResetInDb.forEach(uName => {
+                supabaseClient.from('fajr_members')
+                    .update({ status: 'sleep', quick_note: '', call_state: '', call_word: '', caller_name: '' })
+                    .eq('room_name', cleanRoom)
+                    .eq('user_name', uName)
+                    .then(() => {});
+            });
+        }
 
         networkUsers = {};
         userCallStates = {};
@@ -4357,6 +4441,30 @@ document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
     renderSavedRoomsList();
 });
 
+
+async function checkSuperAdmin() {
+    isSuperAdmin = false;
+    if (myName && supabaseClient && userPass) {
+        try {
+            const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
+            isSuperAdmin = data === true;
+        } catch (e) {}
+    }
+    updateRoomTtlBanner();
+    renderSavedRoomsList();
+}
+
+async function checkSuperAdmin() {
+    isSuperAdmin = false;
+    if (myName && supabaseClient && userPass) {
+        try {
+            const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
+            isSuperAdmin = data === true;
+        } catch (e) {}
+    }
+    updateRoomTtlBanner();
+    renderSavedRoomsList();
+}
 
 async function enforceBan() {
     if (!supabaseClient || !myName) return false;
