@@ -1411,6 +1411,9 @@
                 <button class="btn-primary" id="btnUpdateCurrentRoomPass" style="background:linear-gradient(135deg, #e5c158, #b38728); color:#060908;">
                     💾 СОХРАНИТЬ НАСТРОЙКИ ГРУППЫ
                 </button>
+                <button class="btn-primary" id="btnRenameRoom" style="background:linear-gradient(135deg, #70a1ff, #2f6bd8); color:#fff; margin-top:4px;">
+                    ✏️ ПЕРЕИМЕНОВАТЬ ГРУППУ
+                </button>
             </div>
 
             <div class="m-label" id="lblCreateRoomHeader">➕ СОЗДАТЬ НОВУЮ ГРУППУ</div>
@@ -2903,6 +2906,28 @@ async function forceLogoutRemote() {
 }
 
 async function forceLogoutDeletedAccount() {
+    // Защита: реально ли аккаунт удалён?
+    if (supabaseClient && myName) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('fajr_users')
+                .select('username')
+                .eq('username', myName.trim().toLowerCase())
+                .maybeSingle();
+            if (error) {
+                // Сетевая ошибка — НЕ выкидываем
+                console.warn('forceLogout guard: не удалось проверить аккаунт', error.message);
+                return;
+            }
+            if (data) {
+                // Аккаунт существует — значит, это был ложный вызов
+                console.warn('forceLogout guard: аккаунт существует, отмена');
+                return;
+            }
+        } catch (e) {
+            return;
+        }
+    }
     window.__wasInRoomDb = false;
     stopAllAudioPlayback();
     nativeCall('stopAlarm');
@@ -3314,12 +3339,19 @@ async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = f
             await q;
             window.__wasInRoomDb = true;
         } else {
-            const { data: uExists } = await supabaseClient
+            const { data: uExists, error: uErr } = await supabaseClient
                 .from('fajr_users')
                 .select('username')
                 .eq('username', cleanUser.toLowerCase())
                 .maybeSingle();
 
+            // Если запрос УПАЛ (сеть, RLS, таймаут) — НЕ выкидываем пользователя
+            if (uErr) {
+                console.warn('fajr_users check failed:', uErr.message);
+                return;
+            }
+
+            // Выкидываем только если пользователь реально НЕ найден в базе
             if (!uExists) {
                 await forceLogoutDeletedAccount();
                 return;
@@ -4325,18 +4357,6 @@ document.getElementById('inpSearchRooms').addEventListener('input', (e) => {
     renderSavedRoomsList();
 });
 
-// Админка, модераторы и чёрный список группы
-async function checkSuperAdmin() {
-    isSuperAdmin = false;
-    if (myName && supabaseClient && userPass) {
-        try {
-            const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
-            isSuperAdmin = data === true;
-        } catch (e) {}
-    }
-    updateRoomTtlBanner();
-    renderSavedRoomsList();
-}
 
 async function enforceBan() {
     if (!supabaseClient || !myName) return false;
@@ -4633,6 +4653,45 @@ document.getElementById('btnSaveRoomOnly').addEventListener('click', async () =>
     switchModalTab('rooms');
     showToast(`✓ Группа «${r}» создана!`);
 });
+    document.getElementById('btnRenameRoom').addEventListener('click', async () => {
+    if (requireRegistration()) return;
+    if (!isSuperAdmin && !canAdmin()) return;
+    if (!supabaseClient) return;
+    if (currentRoom.trim() === DEFAULT_ROOM) {
+        showToast('Основную группу переименовать нельзя');
+        return;
+    }
+    const newName = (prompt('Новое имя группы:', currentRoom.trim()) || '').trim();
+    if (!newName || newName === currentRoom.trim()) return;
+
+    // Проверяем, что такого имени ещё нет
+    const { data: exists } = await supabaseClient
+        .from('fajr_rooms').select('name').eq('name', newName).maybeSingle();
+    if (exists) {
+        showToast('⚠️ Группа с таким именем уже существует');
+        return;
+    }
+
+    const oldName = currentRoom.trim();
+    // 1) Переименовываем саму комнату
+    await supabaseClient.from('fajr_rooms').update({ name: newName }).eq('name', oldName);
+    // 2) Перекидываем всех участников на новое имя
+    await supabaseClient.from('fajr_members').update({ room_name: newName }).eq('room_name', oldName);
+    // 3) Перекидываем сообщения чата
+    await supabaseClient.from('fajr_messages').update({ room_name: newName }).eq('room_name', oldName);
+
+    currentRoom = newName;
+    localStorage.setItem('fajr_room_name', currentRoom);
+    if (roomPass) rememberRoomPass(currentRoom, roomPass);
+    if (!isGuest) nativeCall('saveSession', myName, currentRoom, SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    await fetchAllRoomsFromDb();
+    await fetchRoomMembersFromDb();
+    await fetchMiniChatMessages();
+    generateQR();
+    renderUI();
+    showToast(`✅ Группа переименована: ${oldName} → ${newName}`);
+});
 
 document.getElementById('btnCompleteMandatoryAuth').addEventListener('click', async () => {
     const uName = document.getElementById('regUserName').value.trim();
@@ -4866,7 +4925,8 @@ async function startOnlineSession() {
         renderUI();
         if (!isGuest) {
             if (await enforceBan()) return;
-            if (!(await verifyOrCreateUserInDb(myName, userPass, recoveryPin)).ok) {
+            const authRes = await verifyOrCreateUserInDb(myName, userPass, recoveryPin);
+            if (!authRes.ok) {
                 showToast('❌ Неверный пароль от этого аккаунта!');
                 document.getElementById('mandatoryAuthModal').classList.add('open');
                 return;
