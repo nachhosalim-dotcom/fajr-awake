@@ -1657,6 +1657,10 @@ const hasSupabase = () => typeof window.supabase !== 'undefined' && !!window.sup
 function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+// Экранирование спецсимволов шаблона LIKE/ILIKE для Postgres
+function escLike(s) {
+    return String(s == null ? '' : s).replace(/[\\%_]/g, '\\$&');
+}
 function sameName(a, b) {
     return String(a == null ? '' : a).trim().toLowerCase() === String(b == null ? '' : b).trim().toLowerCase();
 }
@@ -2167,9 +2171,11 @@ function calculateSunTimesForParams(date, lat, lng, tzHours, methodKey, madhabVa
     const dhuhrRaw = noon + (2 / 60);
 
     const noonShadow = Math.tan(toRad(Math.abs(lat - decl)));
-    const asrAngleVal = toDeg(Math.atan(1 / (shadowFactor + noonShadow)));
+    const asrShadow = shadowFactor + (isFinite(noonShadow) ? Math.max(noonShadow, 0) : 0);
+    const asrAngleVal = toDeg(Math.atan(1 / Math.max(asrShadow, 0.001)));
     const asrA = sunAngleTime(asrAngleVal);
-    const asrRaw = noon + (isNaN(asrA) ? sunriseAngle / 2 : asrA);
+    // На высоких широтах солнце может не достигать высоты Асра — берём середину между Зухром и Магрибом
+    const asrRaw = isNaN(asrA) ? ((dhuhrRaw + sunsetRaw + (2 / 60)) / 2) : (noon + asrA);
 
     const maghribRaw = sunsetRaw + (2 / 60);
     let ishaRaw;
@@ -2501,7 +2507,6 @@ const periodPrayerId = next ? next.id : 'fajr';
         }
     }
     prayerPeriodId = newPeriodId;
-    prayerPeriodId = newPeriodId;
 
     const totalSec = Math.max(0, Math.floor(diff * 3600));
     const hh = String(Math.floor(totalSec / 3600)).padStart(2, '0');
@@ -2831,7 +2836,7 @@ async function verifyOrCreateUserInDb(name, pass, pinOpt) {
     await supabaseClient
         .from('fajr_members')
         .update({ user_pass: hash })
-        .ilike('user_name', clean.replace(/[\\%_]/g, '\\$&'));
+        .ilike('user_name', escLike(clean));
 
     return { ok: true };
 }
@@ -3309,7 +3314,7 @@ async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = f
             ...extraFields
         };
 
-        const likeUser = cleanUser.replace(/[\\%_]/g, '\\$&');
+        const likeUser = escLike(cleanUser);
         const likeRes = await supabaseClient
             .from('fajr_members')
             .select('user_name,user_pass')
@@ -3408,33 +3413,6 @@ async function upsertMyPresenceInDb(extraFields = {}, isExplicitStatusChange = f
 let fetchMembersTimer = null, fetchRoomsTimer = null;
 function debouncedFetchMembers() { clearTimeout(fetchMembersTimer); fetchMembersTimer = setTimeout(fetchRoomMembersFromDb, 450); }
 function debouncedFetchRooms() { clearTimeout(fetchRoomsTimer); fetchRoomsTimer = setTimeout(fetchAllRoomsFromDb, 450); }
-
-function shouldResetMemberForNewFajr(cand) {
-    if (!cand || cand.status === 'sleep' || cand.status === 'dnd') return false;
-    const tzOff = isFinite(cand.tzOffset) ? cand.tzOffset : getMyTzOffsetHours();
-    const nowUtcMs = Date.now() + (new Date().getTimezoneOffset() * 60000);
-    const memberLocalDate = new Date(nowUtcMs + tzOff * 3600000);
-    const curDec = memberLocalDate.getHours() + memberLocalDate.getMinutes() / 60.0;
-
-    const times = calculateSunTimesForParams(
-        new Date(),
-        cand.lat || userCoords.lat,
-        cand.lng || userCoords.lng,
-        tzOff,
-        cand.calcMethod || 'MWL',
-        cand.asrMadhab || 1,
-        cand.offsets || { fajr: 0, sunrise: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 }
-    );
-
-    const isFajrWindow = (curDec >= times.isha) || (curDec <= times.sunrise);
-    const hoursSinceSeen = (Date.now() - (cand.lastSeen || 0)) / 3600000;
-
-    // Если у человека наступило окно ожидания Фаджра (после Иша и до Восхода), а его старый статус висит с прошлого намаза (> 4 часов)
-    // или вообще больше 10 часов — сбрасываем его статус на «СПЛЮ»
-    if (isFajrWindow && hoursSinceSeen > 4.0) return true;
-    if (hoursSinceSeen > 10.0) return true;
-    return false;
-}
 
 function shouldResetMemberForNewFajr(cand) {
     if (!cand || cand.status === 'sleep' || cand.status === 'dnd') return false;
@@ -3714,7 +3692,7 @@ window.cancelWakeSignal = async function(targetUser) {
                     .from('fajr_members')
                     .update({ call_state: '', call_word: '', caller_name: '' })
                     .eq('room_name', currentRoom.trim())
-                    .ilike('caller_name', myName.trim().replace(/[\\%_]/g, '\\$&'));
+                    .ilike('caller_name', escLike(myName.trim()));
             } catch (e) {}
         }
         renderMembers();
@@ -4021,7 +3999,7 @@ async function triggerAlarm(senderName, incomingWord) {
                 .from('fajr_members')
                 .select('call_word,caller_name')
                 .eq('room_name', currentRoom.trim())
-                .ilike('user_name', myName.trim().replace(/[\\%_]/g, '\\$&'))
+                .ilike('user_name', escLike(myName.trim()))
                 .maybeSingle();
             if (data && data.call_word) word = data.call_word;
             if (data && data.caller_name) lastAlarmInitiator = data.caller_name;
@@ -4454,18 +4432,6 @@ async function checkSuperAdmin() {
     renderSavedRoomsList();
 }
 
-async function checkSuperAdmin() {
-    isSuperAdmin = false;
-    if (myName && supabaseClient && userPass) {
-        try {
-            const { data } = await supabaseClient.rpc('fajr_is_admin', { n: myName.trim(), h: await hashSecret(userPass) });
-            isSuperAdmin = data === true;
-        } catch (e) {}
-    }
-    updateRoomTtlBanner();
-    renderSavedRoomsList();
-}
-
 async function enforceBan() {
     if (!supabaseClient || !myName) return false;
     try {
@@ -4509,7 +4475,7 @@ window.deleteUserPrompt = async function (name) {
     if (!confirm(`Удалить пользователя «${name}» полностью?`)) return;
     const t = name.trim();
     await supabaseClient.rpc('fajr_admin_unban', { adm: myName.trim(), h: await hashSecret(userPass), target: t });
-    await supabaseClient.from('fajr_members').delete().ilike('user_name', t.replace(/[\\%_]/g, '\\$&'));
+    await supabaseClient.from('fajr_members').delete().ilike('user_name', escLike(t));
     await supabaseClient.from('fajr_users').delete().eq('username', t.toLowerCase());
     await supabaseClient.from('fajr_sessions').delete().eq('username', t.toLowerCase());
     await sendSupabaseSignal('USER_DELETED', t, '');
