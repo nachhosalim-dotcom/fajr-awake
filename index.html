@@ -2013,6 +2013,8 @@ let personalAlarmEnabled = localStorage.getItem('fajr_personal_alarm_on') === 't
 let personalAlarmLeadMin = parseInt(localStorage.getItem('fajr_personal_alarm_lead') || '20', 10);
 let lastPersonalAlarmFiredPeriod = localStorage.getItem('fajr_last_personal_period') || '';
 let personalSosTimeoutId = null;
+let scheduledPersonalAlarmKey = '';
+let alarmTriggerInProgress = false;
 
 // Стрик (серия дней Фаджра без пропусков) и быстрая заметка
 let myStreakDays = parseInt(localStorage.getItem('fajr_streak_days') || '0', 10);
@@ -2528,12 +2530,18 @@ const periodPrayerId = next ? next.id : 'fajr';
 
 function checkPersonalAutoAlarmInWeb(now, currentDec, times) {
     if (!personalAlarmEnabled || isGuest) {
-        nativeCall('cancelPersonalAlarm');
+        if (scheduledPersonalAlarmKey) {
+            nativeCall('cancelPersonalAlarm');
+            scheduledPersonalAlarmKey = '';
+        }
         return;
     }
     // Если человека уже разбудили из группы или он сам встал / на сухуре / прочитал — авто-будильник аннулируется!
     if (myStatus !== 'sleep') {
-        nativeCall('cancelPersonalAlarm');
+        if (scheduledPersonalAlarmKey) {
+            nativeCall('cancelPersonalAlarm');
+            scheduledPersonalAlarmKey = '';
+        }
         return;
     }
 
@@ -2542,16 +2550,25 @@ function checkPersonalAutoAlarmInWeb(now, currentDec, times) {
     const triggerDec = ((targetDec - (personalAlarmLeadMin / 60.0)) % 24 + 24) % 24;
     const periodKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}_${targetId}`;
 
-    // Передаём точное время в нативный Android-сервис для пробуждения заблокированного экрана
-    let diffHours = triggerDec - currentDec;
-    if (diffHours < -0.05) diffHours += 24;
-    if (diffHours > 0) {
-        const triggerMs = Date.now() + Math.floor(diffHours * 3600 * 1000);
+    const todayTrigger = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    todayTrigger.setTime(todayTrigger.getTime() + triggerDec * 3600000);
+    const prayerTimeHasPassed = triggerDec > targetDec && currentDec < targetDec;
+    if (prayerTimeHasPassed) todayTrigger.setDate(todayTrigger.getDate() - 1);
+
+    // Запланировать нативный будильник один раз на конкретное срабатывание, а не сдвигать его каждую секунду.
+    const nextTrigger = new Date(todayTrigger);
+    if (nextTrigger.getTime() <= now.getTime()) nextTrigger.setDate(nextTrigger.getDate() + 1);
+    const triggerMs = nextTrigger.getTime();
+    const scheduleKey = `${periodKey}_${triggerMs}`;
+    if (scheduledPersonalAlarmKey !== scheduleKey) {
         nativeCall('schedulePersonalAlarm', triggerMs, isRamadanActiveNow ? 'Личный будильник Сухура' : 'Личный будильник Фаджра');
+        scheduledPersonalAlarmKey = scheduleKey;
     }
 
-    // Если наступила минута личного авто-будильника, а статус всё ещё 'sleep' — поднимаем тревогу
-    if (Math.abs(currentDec - triggerDec) < (1.2 / 60.0) && lastPersonalAlarmFiredPeriod !== periodKey) {
+    // Если браузер задержал таймер, запускаем пропущенный сигнал с небольшим запасом по времени.
+    const alarmIsDue = now.getTime() >= todayTrigger.getTime()
+        && now.getTime() - todayTrigger.getTime() <= 2 * 60 * 1000;
+    if (alarmIsDue && lastPersonalAlarmFiredPeriod !== periodKey) {
         lastPersonalAlarmFiredPeriod = periodKey;
         localStorage.setItem('fajr_last_personal_period', periodKey);
         if (typeof triggerAlarm === 'function') {
@@ -3476,7 +3493,8 @@ async function fetchRoomMembersFromDb() {
                 offsets: parsedOffsets,
                 lastSeen: new Date(m.last_seen).getTime(),
                 callState: m.call_state || '',
-                callWord: m.call_word || ''
+                callWord: m.call_word || '',
+                callerName: m.caller_name || ''
             };
 
             if (shouldResetMemberForNewFajr(cand)) {
@@ -3517,6 +3535,13 @@ async function fetchRoomMembersFromDb() {
             networkUsers[c.name] = c;
             if (c.callState) userCallStates[c.name] = { state: c.callState, word: c.callWord };
         });
+        const myMember = Object.values(byKey).find(c => sameName(c.name, myName));
+        if (myMember && myStatus === 'sleep'
+            && (myMember.callState === 'calling' || myMember.callState === 'ringing')
+            && myMember.callerName
+            && Date.now() - myMember.lastSeen < 120000) {
+            triggerAlarm(myMember.callerName, myMember.callWord);
+        }
         renderMembers();
     }
 }
@@ -3667,16 +3692,24 @@ async function handleIncomingSignal(sig) {
 }
 
 async function sendSupabaseSignal(signalType, target, word) {
-    if (!supabaseClient || !myName) return;
+    if (!supabaseClient || !myName || !navigator.onLine) return false;
     try {
-        await supabaseClient.from('fajr_signals').insert([{
+        const { error } = await supabaseClient.from('fajr_signals').insert([{
             room_name: currentRoom.trim(),
             sender: myName.trim(),
             target: target,
             signal_type: signalType,
             word: word
         }]);
-    } catch (e) {}
+        if (error) {
+            console.warn('Wake signal could not be sent:', error.message);
+            return false;
+        }
+        return true;
+    } catch (e) {
+        console.warn('Wake signal could not be sent:', e);
+        return false;
+    }
 }
 
 window.cancelWakeSignal = async function(targetUser) {
@@ -3988,37 +4021,29 @@ function prepareDismissChallengeUI(wordText) {
 async function triggerAlarm(senderName, incomingWord) {
     if (isGuest) return;
     if (myStatus !== 'sleep') return;
-    if (document.getElementById('alarmOverlay').classList.contains('active')) return;
+    if (alarmTriggerInProgress || document.getElementById('alarmOverlay').classList.contains('active')) return;
+    alarmTriggerInProgress = true;
     const dict = DICTIONARY[currentLang];
     lastAlarmInitiator = senderName;
 
-    let word = incomingWord;
-    if (!word && supabaseClient && myName && navigator.onLine) {
-        try {
-            const { data } = await supabaseClient
-                .from('fajr_members')
-                .select('call_word,caller_name')
-                .eq('room_name', currentRoom.trim())
-                .ilike('user_name', escLike(myName.trim()))
-                .maybeSingle();
-            if (data && data.call_word) word = data.call_word;
-            if (data && data.caller_name) lastAlarmInitiator = data.caller_name;
-        } catch (e) {}
+    try {
+        targetCaptchaWord = incomingWord || dict.words[0];
+        document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${lastAlarmInitiator}`;
+        prepareDismissChallengeUI(targetCaptchaWord);
+
+        document.getElementById('alarmOverlay').classList.add('active');
+        startAlarmAudioLoop();
+
+        await upsertMyPresenceInDb({
+            call_state: 'ringing',
+            call_word: targetCaptchaWord.toUpperCase(),
+            caller_name: lastAlarmInitiator
+        });
+        if (!document.getElementById('alarmOverlay').classList.contains('active')) return;
+        await sendSupabaseSignal('WAKE_RINGING', lastAlarmInitiator, targetCaptchaWord.toUpperCase());
+    } finally {
+        alarmTriggerInProgress = false;
     }
-
-    targetCaptchaWord = word || dict.words[0];
-    document.getElementById('txtAlarmSender').innerText = `${dict.wakeSenderPrefix} ${lastAlarmInitiator}`;
-    prepareDismissChallengeUI(targetCaptchaWord);
-
-    document.getElementById('alarmOverlay').classList.add('active');
-    startAlarmAudioLoop();
-
-    await upsertMyPresenceInDb({
-        call_state: 'ringing',
-        call_word: targetCaptchaWord.toUpperCase(),
-        caller_name: lastAlarmInitiator
-    });
-    await sendSupabaseSignal('WAKE_RINGING', lastAlarmInitiator, targetCaptchaWord.toUpperCase());
 }
 
 async function completeAlarmDismissal(replyLabel) {
@@ -4089,6 +4114,8 @@ document.getElementById('btnCloseWakeModal').addEventListener('click', () => {
 });
 
 document.getElementById('btnConfirmSendWake').addEventListener('click', async () => {
+    const sendButton = document.getElementById('btnConfirmSendWake');
+    if (sendButton.disabled) return;
     const wordToSend = (selectedChallengeWord || DICTIONARY[currentLang].words[0]).toUpperCase();
     const targets = pendingWakeTarget === 'ALL'
         ? Object.keys(networkUsers).filter(u => !sameName(u, myName) && networkUsers[u].status === 'sleep')
@@ -4109,22 +4136,45 @@ document.getElementById('btnConfirmSendWake').addEventListener('click', async ()
         return;
     }
 
-    for (const tName of targets) {
-        userCallStates[tName] = { state: 'calling', word: wordToSend };
-        if (supabaseClient) {
-            await supabaseClient
-                .from('fajr_members')
-                .update({ call_state: 'calling', call_word: wordToSend, caller_name: myName })
-                .eq('room_name', currentRoom.trim())
-                .eq('user_name', tName);
+    let memberUpdateSucceeded = false;
+    sendButton.disabled = true;
+    try {
+        for (const tName of targets) {
+            userCallStates[tName] = { state: 'calling', word: wordToSend };
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('fajr_members')
+                        .update({ call_state: 'calling', call_word: wordToSend, caller_name: myName })
+                        .eq('room_name', currentRoom.trim())
+                        .eq('user_name', tName);
+                    if (!error) memberUpdateSucceeded = true;
+                    else console.warn('Wake target status could not be saved:', error.message);
+                } catch (error) {
+                    console.warn('Wake target status could not be saved:', error);
+                }
+            }
         }
-    }
 
-    renderMembers();
-    await sendSupabaseSignal('WAKE_CALL', pendingWakeTarget, wordToSend);
-    registerWakeAttempt(wakeKey);
-    showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend}"`);
-    document.getElementById('wakeWordModal').classList.remove('open');
+        const signalSent = await sendSupabaseSignal('WAKE_CALL', pendingWakeTarget, wordToSend);
+        if (!signalSent && !memberUpdateSucceeded) {
+            targets.forEach(name => { delete userCallStates[name]; });
+            renderMembers();
+            showToast('⚠️ Не удалось отправить сигнал. Проверьте подключение и повторите попытку.');
+            return;
+        }
+
+        renderMembers();
+        if (!signalSent) {
+            showToast('⚠️ Сигнал передан резервным способом; доставка может задержаться.');
+        } else {
+            showToast(`${DICTIONARY[currentLang].toastWakeSent} "${wordToSend}"`);
+        }
+        registerWakeAttempt(wakeKey);
+        document.getElementById('wakeWordModal').classList.remove('open');
+    } finally {
+        sendButton.disabled = false;
+    }
 });
 
 window.wakeIndividual = function(name) {
